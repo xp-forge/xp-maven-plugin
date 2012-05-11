@@ -12,8 +12,9 @@ of an XP-Framework project:
 Build and install the Maven XP-Framework plugin
 -----------------------------------------------------------------------
 
-    ~/maven-xpframework-plugin $ mvn install
-
+```sh
+~/maven-xpframework-plugin $ mvn install
+```
 
 Install XP-framework
 -----------------------------------------------------------------------
@@ -76,35 +77,39 @@ dummy projects.
 Example pom.xml file
 -----------------------------------------------------------------------
 
-    <project>
-      <modelVersion>4.0.0</modelVersion>
+```xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
 
-      <groupId>org.company.app</groupId>
-      <artifactId>app-hello</artifactId>
-      <version>1.0</version>
-      <name>Hello world application</name>
-      <packaging>xar</packaging>
-      <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      </properties>
+  <groupId>org.company.app</groupId>
+  <artifactId>app-hello</artifactId>
+  <version>1.0</version>
+  <name>Hello world application</name>
+  <packaging>xar</packaging>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-xpframework-plugin</artifactId>
-            <version>1.1</version>
-            <extensions>true</extensions>
-          </plugin>
-        </plugins>
-      </build>
-    </project>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-xpframework-plugin</artifactId>
+        <version>1.1</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+```
 
 
 Build a project
 -----------------------------------------------------------------------
 
-    ~/app-hello $ mvn package
+```sh
+~/app-hello $ mvn package
+```
 
 This will:
 
@@ -126,19 +131,21 @@ Dependencies
 If your XP-Framework project depends on other XP-Framework project,
 alter the "pom.xml" file as follow:
 
-    <project>
-      ...
-      <dependencies>
-        <dependency>
-          <groupId>org.company.lib</groupId>
-          <artifactId>lib-common</artifactId>
-          <version>1.0</version>
-          <type>xar</type>
-          <optional>false</optional>
-       </dependency>
-      </dependencies>
-      ...
-    </project>
+```xml
+<project>
+  ...
+  <dependencies>
+    <dependency>
+      <groupId>org.company.lib</groupId>
+      <artifactId>lib-common</artifactId>
+      <version>1.0</version>
+      <type>xar</type>
+      <optional>false</optional>
+    </dependency>
+  </dependencies>
+  ...
+</project>
+```
 
 The maven-xpframework-plugin will handle all dependencies, no
 "project.pth" bootstrapping needed.
@@ -150,15 +157,18 @@ Uber-XARs
 If you want to distribute "app-hello" with all dependencies bundled,
 just execute:
 
-    ~/app-hello $ mvn -Dxpframework.xar.mergeDependencies package
+```sh
+~/app-hello $ mvn -Dxpframework.xar.mergeDependencies package
+```
 
 This will create an "uber-XAR" archive containing all sources and
 required dependencies into "target/app-hello-1.0-uber.xar". If you have
 a "manifest.ini" file into "src/main/resources/META-INF" that sets the
 main XAR class, you can run the application as follow:
 
-    ~/app-hello $ xp -xar target/app-hello-1.0-uber.xar
-
+```sh
+~/app-hello $ xp -xar target/app-hello-1.0-uber.xar
+```
 
 Running XP code
 ---------------
@@ -166,32 +176,34 @@ Running XP code
 If you have the need to run an XP class (like w/ xp f.q.c.n or xp -e "code"),
 then you can use the "xp" goal):
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-xpframework-plugin</artifactId>
-        <version>1.1</version>
-        <extensions>true</extensions>
+```xml
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-xpframework-plugin</artifactId>
+      <version>1.1</version>
+      <extensions>true</extensions>
 
-        <executions>
-          <execution>
-            <id>runclass</id>
-            <phase>test</phase>
-            <configuration>
-              <code>Console::writeLine('* Hello World from XP Framework.');</code>
-            </configuration>
-            <goals>
-              <goal>xp</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      <executions>
+        <execution>
+          <id>runclass</id>
+          <phase>test</phase>
+          <configuration>
+            <code>Console::writeLine('* Hello World from XP Framework.');</code>
+          </configuration>
+          <goals>
+            <goal>xp</goal>
+          </goals>
+        </execution>
+      </executions>
     </plugin>
-  </build>
+  </plugin>
+</build>
+```
 
 As configuration, you can either pass:
 
-* <code> with inline source code (limitation: either single or double quotes may
+* `<code>` with inline source code (limitation: either single or double quotes may
   be used - mixing not supported)
-* <className> runs the given class w/ "public static function main($args) {...}"
+* `<className>` runs the given class w/ "public static function main($args) {...}"
