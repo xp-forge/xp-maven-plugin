@@ -1,24 +1,21 @@
-Maven XP-Framework plugin ChangeLog
-=======================================================================
+maven-xpframework-plugin (1.1)
 
-Version 1.1, released ????-??-??
------------------------------------------------------------------------
+  * fix coding style issues
+  * fix environment variables names:
+    - all names are in uppercase now
 
-Heads up!
-~~~~~~~~~
-- Fix environment variables names: all in uppercase now
-- Fix coding style issues
-  (mrosoiu)
+  * add Maven archetypes:
+    - XP-Language library
+    - XP standard library
 
-Bugfixes
-~~~~~~~~
-Features
-~~~~~~~~
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 10 Jan 2012
 
-Version 1.0, released 2011-08-10
------------------------------------------------------------------------
+  * add support for running XP code
 
-Heads up!
-~~~~~~~~~
-- Initial release
-  (mrosoiu)
+ -- Alex Kiesel <alex@kiesel.name> Mon, 6 Feb 2012
+
+maven-xpframework-plugin (1.0)
+
+  * initial release
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Wed, 10 Aug 2011
