@@ -93,9 +93,9 @@ Example pom.xml file
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>maven-xpframework-plugin</artifactId>
-        <version>1.1</version>
+        <version>2.0.0</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -180,9 +180,9 @@ then you can use the "xp" goal):
 <build>
   <plugins>
     <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
+      <groupId>net.xp-forge.maven.plugins</groupId>
       <artifactId>maven-xpframework-plugin</artifactId>
-      <version>1.1</version>
+      <version>2.0.0</version>
       <extensions>true</extensions>
 
       <executions>

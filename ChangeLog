@@ -1,4 +1,13 @@
-maven-xpframework-plugin (1.1)
+maven-xpframework-plugin (2.0.0)
+
+  * update pom.xml:
+    - change <groupId> from "org.apache.maven.plugins" to "net.xp-forge.maven.plugins"
+    - use Sonatype OSS <parent> POM
+    - add sources and javadoc artifacts
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 10 Jan 2012
+
+maven-xpframework-plugin (1.1.0)
 
   * fix coding style issues
   * fix environment variables names:
@@ -14,7 +23,7 @@ maven-xpframework-plugin (1.1)
 
  -- Alex Kiesel <alex@kiesel.name> Mon, 6 Feb 2012
 
-maven-xpframework-plugin (1.0)
+maven-xpframework-plugin (1.0.0)
 
   * initial release
 
