@@ -31,11 +31,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <scm>
-    <connection>scm:git:git://github.com/xp-forge/maven-xpframework-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:xp-forge/maven-xpframework-plugin.git</developerConnection>
-    <url>https://github.com/xp-forge/maven-xpframework-plugin</url>
-  </scm>
 
   <!-- Environment Settings -->
   <prerequisites>
@@ -148,4 +143,17 @@
       <version>2.0.5</version>
     </dependency>
   </dependencies>
+
+  <!-- Source Code Management -->
+  <scm>
+    <connection>scm:git:git://github.com/xp-forge/maven-xpframework-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:xp-forge/maven-xpframework-plugin.git</developerConnection>
+    <url>https://github.com/xp-forge/maven-xpframework-plugin</url>
+  </scm>
+
+  <!-- Issue Management -->
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/xp-forge/maven-xpframework-plugin/issues</url>
+  </issueManagement>
 </project>
