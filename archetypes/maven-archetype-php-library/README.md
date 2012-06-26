@@ -34,9 +34,6 @@ about the new library you want to create.
 Compile and install the sample library to local repository
 -----------------------------------------------------------------------
 
-Note: In order to compile the sample library, you first need to have
-the `maven-xpframework-plugin` installed to local repository.
-
 Compile the sample library with the following command:
 
 ```sh

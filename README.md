@@ -1,4 +1,4 @@
-Maven XP-Framework plugin
+XP-Framework plugin for Maven
 =======================================================================
 
 Maven XP-Framework plugin is a Maven 2/3 plugin to manage the lifecycle
@@ -13,7 +13,7 @@ Build and install the Maven XP-Framework plugin
 -----------------------------------------------------------------------
 
 ```sh
-~/maven-xpframework-plugin $ mvn install
+~/xp-maven-plugin $ mvn install
 ```
 
 Install XP-framework
@@ -94,8 +94,8 @@ Example pom.xml file
     <plugins>
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
-        <artifactId>maven-xpframework-plugin</artifactId>
-        <version>2.0.0</version>
+        <artifactId>xp-maven-plugin</artifactId>
+        <version>3.0.0</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -147,7 +147,7 @@ alter the "pom.xml" file as follow:
 </project>
 ```
 
-The maven-xpframework-plugin will handle all dependencies, no
+The xp-maven-plugin will handle all dependencies, no
 "project.pth" bootstrapping needed.
 
 
@@ -181,8 +181,8 @@ then you can use the "xp" goal):
   <plugins>
     <plugin>
       <groupId>net.xp-forge.maven.plugins</groupId>
-      <artifactId>maven-xpframework-plugin</artifactId>
-      <version>2.0.0</version>
+      <artifactId>xp-maven-plugin</artifactId>
+      <version>3.0.0</version>
       <extensions>true</extensions>
 
       <executions>

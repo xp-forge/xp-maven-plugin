@@ -1,3 +1,10 @@
+xp-maven-plugin (3.0.0)
+
+  * update pom.xml:
+    - change <artifactId> from "maven-xpframework-plugin" to "xp-maven-plugin"
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 26 Jun 2012
+
 maven-xpframework-plugin (2.0.0)
 
   * update pom.xml:

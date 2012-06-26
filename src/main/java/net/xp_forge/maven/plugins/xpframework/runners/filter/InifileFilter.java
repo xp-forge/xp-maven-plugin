@@ -1,7 +1,7 @@
 /**
  * This file is part of the XP-Framework
  *
- * Maven XP-Framework plugin
+ * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
 package net.xp_forge.maven.plugins.xpframework.runners.filter;

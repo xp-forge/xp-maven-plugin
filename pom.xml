@@ -11,14 +11,14 @@
 
   <!-- The Basics -->
   <groupId>net.xp-forge.maven.plugins</groupId>
-  <artifactId>maven-xpframework-plugin</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <artifactId>xp-maven-plugin</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <!-- More Project Information -->
-  <name>Maven XP-Framework plugin</name>
+  <name>Maven plugin for XP-Framework</name>
   <description>Maven 2/3 plugin to manage the lifecycle of an XP-Framework project</description>
-  <url>https://github.com/xp-forge/maven-xpframework-plugin</url>
+  <url>https://github.com/xp-forge/xp-maven-plugin</url>
   <inceptionYear>2011</inceptionYear>
   <organization>
     <name>XP-Framework Team</name>
@@ -146,14 +146,14 @@
 
   <!-- Source Code Management -->
   <scm>
-    <connection>scm:git:git://github.com/xp-forge/maven-xpframework-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:xp-forge/maven-xpframework-plugin.git</developerConnection>
-    <url>https://github.com/xp-forge/maven-xpframework-plugin</url>
+    <connection>scm:git:git://github.com/xp-forge/xp-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:xp-forge/xp-maven-plugin.git</developerConnection>
+    <url>https://github.com/xp-forge/xp-maven-plugin</url>
   </scm>
 
   <!-- Issue Management -->
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/xp-forge/maven-xpframework-plugin/issues</url>
+    <url>https://github.com/xp-forge/xp-maven-plugin/issues</url>
   </issueManagement>
 </project>

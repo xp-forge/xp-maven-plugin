@@ -6,14 +6,14 @@
       <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
       <configuration>
         <phases>
-          <validate>net.xp-forge.maven.plugins:maven-xpframework-plugin:validate</validate>
+          <validate>net.xp-forge.maven.plugins:xp-maven-plugin:validate</validate>
           <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
           <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-          <compile>net.xp-forge.maven.plugins:maven-xpframework-plugin:compile</compile>
-          <test-compile>net.xp-forge.maven.plugins:maven-xpframework-plugin:test-compile</test-compile>
-          <test>net.xp-forge.maven.plugins:maven-xpframework-plugin:test</test>
-          <package>net.xp-forge.maven.plugins:maven-xpframework-plugin:package</package>
-          <test-package>net.xp-forge.maven.plugins:maven-xpframework-plugin:test-package</test-package>
+          <compile>net.xp-forge.maven.plugins:xp-maven-plugin:compile</compile>
+          <test-compile>net.xp-forge.maven.plugins:xp-maven-plugin:test-compile</test-compile>
+          <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
+          <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
+          <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
         </phases>
