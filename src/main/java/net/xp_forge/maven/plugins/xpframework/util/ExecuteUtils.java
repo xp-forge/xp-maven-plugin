@@ -7,6 +7,7 @@
 package net.xp_forge.maven.plugins.xpframework.util;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.apache.commons.exec.OS;
  *
  */
 public final class ExecuteUtils {
+  public static final String RUNNERS_RESOURCE_PATH= "/net/xp_framework/runners";
 
   /**
    * Utility classes should not have a public or default constructor
@@ -52,9 +54,11 @@ public final class ExecuteUtils {
    * will in general return different values. However, on platforms with case-insensitive environment
    * variables like Windows, all variable names will be normalized to upper case
    *
-   * @return java.util.Map List of environment variables
+   * @return java.util.Map<java.lang.String, java.lang.String> List of environment variables
+   * @throws java.io.IOException when I/O errors occur
    */
-  public static Map getEnvVars() throws IOException {
+  @SuppressWarnings("unchecked")
+  public static Map<String, String> getEnvVars() throws IOException {
     Map retVal= new HashMap();
 
     Properties systemEnvVars= CommandLineUtils.getSystemEnvVars();
@@ -70,7 +74,7 @@ public final class ExecuteUtils {
    *
    * @param  java.lang.String executable Executable name
    * @return java.io.File Executable absolute path
-   * @throws java.io.FileNotFoundException When cannot get executable absolute path
+   * @throws java.io.FileNotFoundException when cannot get executable absolute path
    */
   public static File getExecutable(String executable) throws FileNotFoundException {
     String executableFilename= executable;
@@ -78,7 +82,7 @@ public final class ExecuteUtils {
     // Get PATH
     String path;
     try {
-      path= (String) ExecuteUtils.getEnvVars().get("PATH");
+      path= ExecuteUtils.getEnvVars().get("PATH");
     } catch (IOException ex) {
       throw new FileNotFoundException("Cannot get PATH");
     }
@@ -88,16 +92,13 @@ public final class ExecuteUtils {
     }
 
     // Add ".exe" on Windows
-    if (OS.isFamilyWindows()) {
-      executableFilename+= ".exe";
-    }
+    executableFilename+= ExecuteUtils.getExecutableExtension();
 
     // Look in PATH
-    String[] elems= StringUtils.split(path, File.pathSeparator);
-    for (int i= 0; i < elems.length; i++) {
-      File f= new File(new File(elems[i]), executableFilename);
-      if (f.exists()) {
-        return f;
+    for (String elem : StringUtils.split(path, File.pathSeparator)) {
+      File file = new File(new File(elem), executableFilename);
+      if (file.exists()) {
+        return file;
       }
     }
 
@@ -112,39 +113,43 @@ public final class ExecuteUtils {
    * @param  java.util.List<String> argument Executable arguments
    * @param  java.io.File workingDirectory Executable working directory
    * @param  org.apache.maven.plugin.logging.Log cat Log trace
-   * @throws RunnerException When command execution failed
+   * @throws java.util.concurrent.ExecutionException when command execution failed
    */
-  public static void executeCommand(File executable, List<String> arguments, File workingDirectory, final Log cat) throws ExecutionException {
+  public static void executeCommand(
+    File executable,
+    List<String> arguments,
+    File workingDirectory,
+    Map<String, String> environment,
+    final Log cat
+  ) throws ExecutionException {
 
     // Debug
     if (cat != null) {
       cat.debug("Executable        [" + executable.getAbsolutePath() + "]");
       cat.debug("Arguments         [" + arguments.toString() + "]");
       cat.debug("Working directory [" + workingDirectory + "]");
+      cat.debug("Environment vars  [" + environment.toString() + "]");
     }
 
     // Init command line
     CommandLine commandLine= new CommandLine(executable.getAbsolutePath());
 
     // Add arguments
-    Iterator i= arguments.iterator();
-    while (i.hasNext()) {
-      String argument= (String) i.next();
-
+    for (String arg : arguments) {
       // This line makes the resulting command line way shorter (and prettier), but might break a thing or two
-      argument= ExecuteUtils.getRelativeToWorkingDirectory(argument, workingDirectory);
+        arg = ExecuteUtils.getRelativeToWorkingDirectory(arg, workingDirectory);
 
       // If complex command line arguments like such as for `xp -e <code>` are given,
       // prevent quoting those...
-      boolean quote= false;
-      if (argument.contains("'") || argument.contains("\"")) {
-          quote= false;
-      } else if (argument.contains(" ")) {
-          quote= true;
+      boolean quote = false;
+      if (arg.contains("'") || arg.contains("\"")) {
+        quote = false;
+      } else if (arg.contains(" ")) {
+        quote = true;
       }
 
       // Escape arguments that contain spaces
-      commandLine.addArgument(argument, quote);
+      commandLine.addArgument(arg, quote);
     }
 
     Executor executor= new DefaultExecutor();
@@ -164,11 +169,25 @@ public final class ExecuteUtils {
       }
     }));*/
 
+    // Prepare environment
+    Map<String, String> env;
+    try {
+
+      // Get values from system
+      env= ExecuteUtils.getEnvVars();
+
+      // Add user-defined values
+      env.putAll(environment);
+
+    } catch (IOException ex) {
+      throw new ExecutionException("Cannot setup execution environment", ex);
+    }
+
     // Execute command
     try {
-      if (null != cat) cat.debug("Executing [" + commandLine + "]");
-      int retCode= executor.execute(commandLine, ExecuteUtils.getEnvVars());
-      if (null != cat) cat.debug("Retcode [" + retCode + "]");
+      if (null != cat) cat.debug("Command line      [" + commandLine + "]");
+      int retCode= executor.execute(commandLine, env);
+      if (null != cat) cat.debug("Return code       [" + retCode + "]");
 
       // Check return code
       //if (retCode != 0) {
@@ -181,6 +200,58 @@ public final class ExecuteUtils {
     } catch (IOException ex){
       throw new ExecutionException("I/O Error", ex);
     }
+  }
+
+  /**
+   * Get OS name as string: "win" or "unix"
+   *
+   * @return java.lang.String
+   */
+  public static String getOsName() {
+    if (OS.isFamilyWindows()) {
+      return "win";
+    }
+    return "unix";
+  }
+
+  /**
+   * Get OS-specific executable extension: ".exe" on windows, "" on unix
+   *
+   * @return java.lang.String
+   */
+  public static String getExecutableExtension() {
+    if (OS.isFamilyWindows()) {
+      return ".exe";
+    }
+    return "";
+  }
+
+  /**
+   * Save the specified runner (stored as resource) to the specified target directory
+   *
+   * @param  java.lang.String runner
+   * @param  java.io.File targetDir
+   * @return java.io.File
+   * @throws java.io.IOException when I/O errors occur
+   * @see    net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils.RUNNERS_RESOURCE_PATH
+   */
+  public static File saveRunner(String runner, File targetDir) throws IOException {
+    String osName    = ExecuteUtils.getOsName();
+    String extension = ExecuteUtils.getExecutableExtension();
+
+    // Get resource
+    String resName        = ExecuteUtils.RUNNERS_RESOURCE_PATH + "/" + osName + "/" + runner + extension;
+    InputStream resStream = ExecuteUtils.class.getResourceAsStream(resName);
+
+    // Save to file
+    File retVal= new File(targetDir, runner + extension);
+    if (null == resStream) {
+      throw new IOException("Cannot find [" + runner + "] runner resource [" + resName + "]");
+    }
+    FileUtils.setFileContents(retVal, resStream);
+    retVal.setExecutable(true);
+
+    return retVal;
   }
 
   /**

@@ -13,8 +13,6 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.AbstractRunner;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput;
 
 /**
@@ -27,8 +25,10 @@ public class XarRunner extends AbstractRunner {
   /**
    * Constructor
    *
+   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput input
    */
-  public XarRunner(XarRunnerInput input) {
+  public XarRunner(File executable, XarRunnerInput input) {
+    super(executable);
     this.input= input;
   }
 
@@ -37,15 +37,6 @@ public class XarRunner extends AbstractRunner {
    *
    */
   public void execute() throws RunnerException {
-    Iterator i;
-
-    // Get xar executable
-    File xarExecutable;
-    try {
-      xarExecutable= ExecuteUtils.getExecutable("xar");
-    } catch (FileNotFoundException ex) {
-      throw new RunnerException("Cannot find XP Framework 'xar' runner. Install it from http://xp-framework.net/", ex);
-    }
 
     // Build arguments
     List<String> arguments= new ArrayList<String>();
@@ -74,12 +65,11 @@ public class XarRunner extends AbstractRunner {
     arguments.add(input.outputFile.getAbsolutePath());
 
     // Add sources
-    i= this.input.sources.iterator();
-    while (i.hasNext()) {
-      arguments.add(((File)i.next()).getAbsolutePath());
+    for (File src : this.input.sources) {
+      arguments.add(src.getAbsolutePath());
     }
 
     // Execute command
-    this.executeCommand(xarExecutable, arguments);
+    this.executeCommand(arguments);
   }
 }

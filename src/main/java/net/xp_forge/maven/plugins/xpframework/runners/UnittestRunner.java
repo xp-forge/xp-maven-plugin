@@ -6,16 +6,15 @@
  */
 package net.xp_forge.maven.plugins.xpframework.runners;
 
+import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xpframework.runners.input.UnittestRunnerInput;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.AbstractRunner;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
-import net.xp_forge.maven.plugins.xpframework.runners.input.UnittestRunnerInput;
 
 /**
  * Wrapper over XP-Framework "unittest" runner
@@ -27,8 +26,10 @@ public class UnittestRunner extends AbstractRunner {
   /**
    * Constructor
    *
+   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.UnittestRunnerInput input
    */
-  public UnittestRunner(UnittestRunnerInput input) {
+  public UnittestRunner(File executable, UnittestRunnerInput input) {
+    super(executable);
     this.input= input;
   }
 
@@ -37,15 +38,6 @@ public class UnittestRunner extends AbstractRunner {
    *
    */
   public void execute() throws RunnerException {
-    Iterator i;
-
-    // Get unittest executable
-    File unittestExecutable;
-    try {
-      unittestExecutable= ExecuteUtils.getExecutable("unittest");
-    } catch (FileNotFoundException ex) {
-      throw new RunnerException("Cannot find XP Framework 'unittest' runner. Install it from http://xp-framework.net/", ex);
-    }
 
     // Build arguments
     List<String> arguments= new ArrayList<String>();
@@ -53,22 +45,20 @@ public class UnittestRunner extends AbstractRunner {
     // Add verbose (-v)
     if (this.input.verbose) arguments.add("-v");
 
-    this.addClassPathsTo(arguments, this.input.classpaths);
+    this.addClasspathsTo(arguments, this.input.classpaths);
 
     // Add arguments (-a)
-    i= this.input.arguments.iterator();
-    while (i.hasNext()) {
+    for (String arg : this.input.arguments) {
       arguments.add("-a");
-      arguments.add((String)i.next());
+      arguments.add(arg);
     }
 
     // Add inifiles
-    i= this.input.inifiles.iterator();
-    while (i.hasNext()) {
-      arguments.add(((File)i.next()).getAbsolutePath());
+    for (File ini : this.input.inifiles) {
+      arguments.add(ini.getAbsolutePath());
     }
 
     // Execute command
-    this.executeCommand(unittestExecutable, arguments);
+    this.executeCommand(arguments);
   }
 }

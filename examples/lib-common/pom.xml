@@ -10,13 +10,40 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>net.xp-framework</groupId>
+      <artifactId>core</artifactId>
+      <version>5.8.2</version>
+      <type>xar</type>
+      <optional>false</optional>
+   </dependency>
+   <dependency>
+     <groupId>net.xp-framework</groupId>
+     <artifactId>tools</artifactId>
+     <version>5.8.2</version>
+     <type>xar</type>
+     <optional>false</optional>
+   </dependency>
+   <dependency>
+     <groupId>net.xp-framework</groupId>
+     <artifactId>language</artifactId>
+     <version>5.8.2</version>
+     <type>xar</type>
+     <optional>false</optional>
+   </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <extensions>true</extensions>
+        <configuration>
+          <classifier>patch</classifier>
+        </configuration>
       </plugin>
     </plugins>
   </build>

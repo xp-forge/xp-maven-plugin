@@ -12,101 +12,22 @@ import java.util.Set;
 import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.AbstractXpFrameworkMojo;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.XarRunner;
+import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput;
 
 /**
- * XAR
- * ===
- * This tool can be used for working with XAR archives.
+ * Wrapper around the XP-Framework "xar" runner
  *
- * Usage:
- * ========================================================================
- *   $ xar {options} {xarfile} [{fileset}]
- * ========================================================================
- *
- * Option synopsis
- * ===============
- *  -c        Create archive
- *  -x        Extract archive
- *  -t        List archive contents
- *  -s        See file`s contents
- *  -d        Diff archives
- *  -m        Merge archives
- *
- *
- * Command details
- * ===============
- *
- * Creating a xar file
- * -------------------
- * The following creates a xar file containing all files inside the
- * directories "src" and "lib" as well as the file "etc/config.ini".
- *
- * $ xar cf app.xar src/ lib/ etc/config.ini
- *
- *
- * Extracting a xar file
- * ---------------------
- * The following extracts all files inside the "app.xar" into the
- * current directory. Directories and files are created if necessary,
- * existing files are overwritten.
- *
- * $ xar xf app.xar
- *
- *
- * Viewing an archive's contents
- * -----------------------------
- * To list what's inside a xar file, use the following command:
- *
- * $ xar tf app.xar
- *
- *
- * Viewing the contents of a contained file
- * ----------------------------------------
- * To view a single file from a given archive, use the following command:
- *
- * $ xar sf archive.xar path/to/file/in/archive
- *
- *
- * Merging multiple archives
- * -------------------------
- * To merge archives into a single new one, use the following command:
- *
- * $ xar mf new.xar old-archive-1.xar old-archive-2.xar
- *
- *
- * Comparing two archives
- * ----------------------
- * To compare two archives, use the following command:
- *
- * $ xar df one.xar two.xar
  */
 public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
 
   /**
-   * @component
-   *
-   */
-  protected MavenProjectHelper projectHelper;
-
-  /**
-   * Directory containing the generated XAR
-   *
-   * @parameter expression="${project.build.directory}"
-   * @required
-   */
-  protected File outputDirectory;
-
-  /**
    * Name of the generated XAR
    *
-   * @parameter alias="xarName" expression="${xpframework.xar.finalName}" default-value="${project.build.finalName}"
+   * @parameter default-value="${project.build.finalName}"
    * @required
    */
   protected String finalName;
@@ -142,22 +63,23 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     // Add sources
     input.addSource(classesDirectory);
 
-    // Prepare runner
-    XarRunner runner= new XarRunner(input);
+    // Configure [xar] runner
+    File executable= new File(this.runnersDirectory, "xar");
+    XarRunner runner= new XarRunner(executable, input);
     runner.setTrace(getLog());
 
     // Set runner working directory
     try {
       runner.setWorkingDirectory(classesDirectory);
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set xar runner working directory", ex);
+      throw new MojoExecutionException("Cannot set [xar] runner working directory", ex);
     }
 
     // Execute runner
     try {
       runner.execute();
     } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of xar runner failed", ex);
+      throw new MojoExecutionException("Execution of [xar] runner failed", ex);
     }
 
     // Check XAR file was assembled
@@ -187,13 +109,6 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     // Debug info
     getLog().info("Uber-XAR output file [" + uberXarFile + "]");
 
-    // Check no dependencies
-    Set projectArtifacts= this.project.getArtifacts();
-    if (projectArtifacts.isEmpty()) {
-      getLog().warn("No dependencies found so no Uber-XAR will be assembled");
-      return;
-    }
-
     // Prepare xar input
     XarRunnerInput input= new XarRunnerInput();
     input.operation= XarRunnerInput.operations.MERGE;
@@ -201,14 +116,26 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     input.addSource(xarFile);
 
     // Add dependencies
-    getLog().info("Dependencies:");
-    i= projectArtifacts.iterator();
-    while(i.hasNext()) {
-      Artifact projectArtifact= (Artifact)i.next();
-      getLog().info(" * " + projectArtifact.getType() + " [" + projectArtifact.getFile().getAbsolutePath() + "]");
+    getLog().info("Inspecting dependencies");
+    for (Artifact artifact : (Iterable<Artifact>)this.project.getArtifacts()) {
+      getLog().info(" - " + artifact.getType() + " [" + artifact.getFile().getAbsolutePath() + "]");
 
-      if (!projectArtifact.getType().equalsIgnoreCase("xar")) continue;
-      input.addSource(projectArtifact.getFile());
+      // Ignore non-XAR and XP-Framework artifacts
+      if (
+        artifact.getGroupId().equals("net.xp-framework") &&
+        (
+          artifact.getType().equalsIgnoreCase("xar") ||
+          artifact.getArtifactId().equals("core")  ||
+          artifact.getArtifactId().equals("tools") ||
+          artifact.getArtifactId().equals("language")
+        )
+      ) {
+        getLog().info("   -> won't be merged");
+        continue;
+      }
+
+      // Merge this dependency
+      input.addSource(artifact.getFile());
     }
 
     // Check no XAR dependencies
@@ -217,22 +144,23 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
       return;
     }
 
-    // Prepare runner
-    XarRunner runner= new XarRunner(input);
+    // Configure [xar] runner
+    File executable= new File(this.runnersDirectory, "xar");
+    XarRunner runner= new XarRunner(executable, input);
     runner.setTrace(getLog());
 
     // Set runner working directory
     try {
       runner.setWorkingDirectory(xarFile.getParentFile());
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set xar runner working directory", ex);
+      throw new MojoExecutionException("Cannot set [xar] runner working directory", ex);
     }
 
     // Execute runner
     try {
       runner.execute();
     } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of xar runner failed", ex);
+      throw new MojoExecutionException("Execution of [xar] runner failed", ex);
     }
 
     // Check Uber-XAR file was assembled

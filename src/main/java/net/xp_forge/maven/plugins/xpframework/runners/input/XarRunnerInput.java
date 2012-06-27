@@ -79,11 +79,14 @@ import java.util.ArrayList;
  * $ xar df one.xar two.xar
  */
 public class XarRunnerInput {
-  public enum operations { CREATE, MERGE };
-
   public XarRunnerInput.operations operation;
-  public List<File>                sources;
-  public File                      outputFile;
+  public List<File> sources;
+  public File outputFile;
+
+  public enum operations {
+    CREATE,
+    MERGE
+  }
 
   /**
    * Constructor
@@ -101,15 +104,12 @@ public class XarRunnerInput {
    * @return void
    */
   public void addSource(File source) {
-
-    // Invalid path
     if (!source.exists()) return;
 
     // Check source not added twice
     String sourcePath= source.getAbsolutePath();
-    Iterator i= this.sources.iterator();
-    while (i.hasNext()) {
-      if (((File) i.next()).getAbsolutePath().equals(sourcePath)) return;
+    for (File src : this.sources) {
+      if (src.getAbsolutePath().equals(sourcePath)) return;
     }
 
     // Add to list

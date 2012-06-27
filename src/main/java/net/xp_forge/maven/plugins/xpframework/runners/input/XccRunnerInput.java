@@ -37,7 +37,7 @@ import java.util.ArrayList;
  *     Use compiler profiles (defaults to ["default"]) - xp/compiler/{profile}.xcp.ini
  *
  *   * -o [outputdir]:
- *     Writed compiled files to outputdir (will be created if not existant)
+ *     Write compiled files to outputdir (will be created if not existent)
  *
  *   * -t [level[,level[...]]]:
  *     Set trace level (all, none, info, warn, error, debug)
@@ -60,7 +60,7 @@ import java.util.ArrayList;
  *   * [php  ] PHP 5.3 Syntax (no alternative syntax)
  *   * [xp   ] XP Language Syntax
  */
-public class XccRunnerInput extends AbstractClassPathRunnerInput {
+public class XccRunnerInput extends AbstractClasspathRunnerInput {
   public List<File>   sourcepaths;
   public String       emitter;
   public List<String> profiles;
@@ -84,7 +84,7 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
   /**
    * Setter for sourcepaths
    *
-   * @param java.io.File sourcepath Sourcepath to add
+   * @param  java.io.File sourcepath Sourcepath to add
    * @return void
    */
   public void addSourcepath(File sourcepath) {
@@ -94,9 +94,8 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
 
     // Check path not added twice
     String sourcepathPath= sourcepath.getAbsolutePath();
-    Iterator i= this.sourcepaths.iterator();
-    while (i.hasNext()) {
-      if (((File) i.next()).getAbsolutePath().equals(sourcepathPath)) return;
+    for (File sp : this.sourcepaths) {
+      if (sp.getAbsolutePath().equals(sourcepathPath)) return;
     }
 
     // Add to list
@@ -106,7 +105,7 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
   /**
    * Setter for profiles
    *
-   * @param java.lang.String profile Profile to add
+   * @param  java.lang.String profile Profile to add
    * @return void
    */
   public void addProfile(String profile) {
@@ -114,10 +113,9 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
     // Invalid profile
     if (profile == null || profile.trim().length() == 0) return;
 
-    // Check source not added twice
-    Iterator i= this.profiles.iterator();
-    while (i.hasNext()) {
-      if (((String) i.next()).equals(profile)) return;
+    // Check profile not added twice
+    for (String prof : this.profiles) {
+      if (prof.equals(profile)) return;
     }
 
     // Add to list
@@ -127,7 +125,7 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
   /**
    * Setter for sources
    *
-   * @param java.io.File source Source to add
+   * @param  java.io.File source Source to add
    * @return void
    */
   public void addSource(File source) {
@@ -137,9 +135,8 @@ public class XccRunnerInput extends AbstractClassPathRunnerInput {
 
     // Check source not added twice
     String sourcePath= source.getAbsolutePath();
-    Iterator i= this.sources.iterator();
-    while (i.hasNext()) {
-      if (((File) i.next()).getAbsolutePath().equals(sourcePath)) return;
+    for (File src : this.sources) {
+      if (src.getAbsolutePath().equals(sourcePath)) return;
     }
 
     // Add to list

@@ -13,12 +13,10 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.AbstractRunner;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.input.XccRunnerInput;
 
 /**
- * Wrapper over XP-Framework "unittest" runner
+ * Wrapper over XP-Framework "xcc" runner
  *
  */
 public class XccRunner extends AbstractRunner {
@@ -27,8 +25,10 @@ public class XccRunner extends AbstractRunner {
   /**
    * Constructor
    *
+   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.XccRunnerInput input
    */
-  public XccRunner(XccRunnerInput input) {
+  public XccRunner(File executable, XccRunnerInput input) {
+    super(executable);
     this.input= input;
   }
 
@@ -37,15 +37,6 @@ public class XccRunner extends AbstractRunner {
    *
    */
   public void execute() throws RunnerException {
-    Iterator i;
-
-    // Get xcc executable
-    File xccExecutable;
-    try {
-      xccExecutable= ExecuteUtils.getExecutable("xcc");
-    } catch (FileNotFoundException ex) {
-      throw new RunnerException("Cannot find XP Framework 'xcc' runner. Install it from http://xp-framework.net/", ex);
-    }
 
     // Build arguments
     List<String> arguments= new ArrayList<String>();
@@ -54,17 +45,15 @@ public class XccRunner extends AbstractRunner {
     if (this.input.verbose) arguments.add("-v");
 
     // Add classpaths (-cp)
-    i= this.input.classpaths.iterator();
-    while (i.hasNext()) {
+    for (File cp : this.input.classpaths) {
       arguments.add("-cp");
-      arguments.add(((File)i.next()).getAbsolutePath());
+      arguments.add(cp.getAbsolutePath());
     }
 
     // Add sourcepath (-sp)
-    i= this.input.sourcepaths.iterator();
-    while (i.hasNext()) {
+    for (File sp : this.input.sourcepaths) {
       arguments.add("-sp");
-      arguments.add(((File)i.next()).getAbsolutePath());
+      arguments.add(sp.getAbsolutePath());
     }
 
     // Add emitter (-e)
@@ -76,10 +65,10 @@ public class XccRunner extends AbstractRunner {
     // Add profile (-p)
     if (!this.input.profiles.isEmpty()) {
       String profilesString= "";
-      i= this.input.profiles.iterator();
-      while (i.hasNext()) {
-        profilesString+= (String)i.next();
-        if (i.hasNext()) profilesString+= ",";
+      Iterator it= this.input.profiles.iterator();
+      while (it.hasNext()) {
+        profilesString+= (String)it.next();
+        if (it.hasNext()) profilesString+= ",";
       }
 
       arguments.add("-p");
@@ -94,12 +83,11 @@ public class XccRunner extends AbstractRunner {
     arguments.add(this.input.outputdir.getAbsolutePath());
 
     // Add sources
-    i= this.input.sources.iterator();
-    while (i.hasNext()) {
-      arguments.add(((File)i.next()).getAbsolutePath());
+    for (File src : this.input.sources) {
+      arguments.add(src.getAbsolutePath());
     }
 
     // Execute command
-    this.executeCommand(xccExecutable, arguments);
+    this.executeCommand(arguments);
   }
 }

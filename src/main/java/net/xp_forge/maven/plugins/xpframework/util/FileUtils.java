@@ -7,6 +7,11 @@
 package net.xp_forge.maven.plugins.xpframework.util;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.StringBufferInputStream;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -72,5 +77,59 @@ public final class FileUtils {
     }
 
     return retVal;
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.lang.String text
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, String text) throws IOException {
+    FileUtils.setFileContents(file, new StringBufferInputStream(text));
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.io.InputStream is
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, InputStream is) throws IOException {
+
+    // Sanity check
+    if (null == file) {
+      throw new IllegalArgumentException("File cannot be [null]");
+    }
+
+    if (null == is) {
+      throw new IllegalArgumentException("Input stream cannot be [null]");
+    }
+
+    // Make dirs
+    File parent= file.getParentFile();
+    if (null != parent && !parent.exists()) {
+      parent.mkdirs();
+    }
+
+    // Save InputStream contents to file
+    BufferedOutputStream os= null;
+    try {
+      os= new BufferedOutputStream(new FileOutputStream(file));
+      byte[] buffer= new byte[2048];
+      int bytesRead;
+      while (-1 != (bytesRead = is.read(buffer))) {
+        os.write(buffer, 0, bytesRead);
+      }
+    } catch (Exception ex) {
+      throw new IOException("Failed to set file contents", ex);
+    } finally {
+      is.close();
+      if (os != null) {
+        os.close();
+      }
+    }
   }
 }

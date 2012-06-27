@@ -11,68 +11,22 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.AbstractXpFrameworkMojo;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.XccRunner;
+import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 import net.xp_forge.maven.plugins.xpframework.runners.input.XccRunnerInput;
 import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
 import net.xp_forge.maven.plugins.xpframework.util.MavenResourceUtils;
 
 /**
- * XP Compiler
+ * Wrapper around the XP-Framework "XccRunner;" runner
  *
- * Usage:
- * ========================================================================
- * $ xcc [options] [path [path [... ]]]
- * ========================================================================
- *
- * Options is one of:
- *
- *   * -v:
- *     Display verbose diagnostics
- *
- *   * -cp [path]:
- *     Add path to classpath
- *
- *   * -sp [path]:
- *     Adds path to source path (source path will equal classpath initially)
- *
- *   * -e [emitter]:
- *     Use emitter, defaults to "source"
- *
- *   * -p [profile[,profile[,...]]]:
- *     Use compiler profiles (defaults to ["default"]) - xp/compiler/{profile}.xcp.ini
- *
- *   * -o [outputdir]:
- *     Writed compiled files to outputdir (will be created if not existant)
- *
- *   * -t [level[,level[...]]]:
- *     Set trace level (all, none, info, warn, error, debug)
- *
- *
- * Path may be:
- *
- *   * [file.ext]:
- *     This file will be compiled
- *
- *   * [folder]:
- *     All files in this folder with all supported syntaxes will be compiled
- *
- *   * -N [folder]:
- *     Same as above, but not performed recursively
- *
- *
- * ========================================================================
- * Syntax support:
- *   * [php  ] PHP 5.3 Syntax (no alternative syntax)
- *   * [xp   ] XP Language Syntax
  */
 public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
 
@@ -171,22 +125,6 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
       }
     }
 
-    // Add xar dependencies to classpath
-    Set projectArtifacts= this.project.getArtifacts();
-    if (projectArtifacts.isEmpty()) {
-      getLog().debug("No dependencies found");
-    } else {
-      getLog().info("Dependencies:");
-      for (i= projectArtifacts.iterator(); i.hasNext(); ) {
-        Artifact projectArtifact= (Artifact) i.next();
-        getLog().info(" * " + projectArtifact.getType() + " [" + projectArtifact.getFile().getAbsolutePath() + "]");
-
-        // Add xar file to classpath
-        if (!projectArtifact.getType().equalsIgnoreCase("xar")) continue;
-        input.addClasspath(projectArtifact.getFile());
-      }
-    }
-
     // Add sourcepaths
     if (null != this.sourcepaths) {
       i= this.sourcepaths.iterator();
@@ -212,22 +150,22 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
     // Add source
     input.addSource(new File(sourceDirectory));
 
-    // Prepare runner
-    XccRunner runner= new XccRunner(input);
+    // Configure [xcc] runner
+    File executable= new File(this.runnersDirectory, "xcc");
+    XccRunner runner= new XccRunner(executable, input);
     runner.setTrace(getLog());
-
     // Set runner working directory
     try {
       runner.setWorkingDirectory(this.basedir);
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set xcc runner working directory", ex);
+      throw new MojoExecutionException("Cannot set [xcc] runner working directory", ex);
     }
 
     // Execute runner
     try {
       runner.execute();
     } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of xcc runner failed", ex);
+      throw new MojoExecutionException("Execution of [xcc] runner failed", ex);
     }
   }
 

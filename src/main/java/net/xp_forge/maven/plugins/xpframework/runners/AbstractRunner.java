@@ -8,8 +8,9 @@ package net.xp_forge.maven.plugins.xpframework.runners;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.maven.plugin.logging.Log;
@@ -23,7 +24,18 @@ import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
  */
 public abstract class AbstractRunner {
   private Log cat;
+  private File executable;
   private File workingDirectory;
+  private Map<String, String> environmentVariables= new HashMap<String, String>();
+
+  /**
+   * Constructor
+   *
+   * @param  java.io.File executable
+   */
+  public AbstractRunner(File executable) {
+    this.executable= executable;
+  }
 
   /**
    * Execute this runner
@@ -77,6 +89,15 @@ public abstract class AbstractRunner {
   }
 
   /**
+   * Get executable
+   *
+   * @return java.io.File
+   */
+  public File getExecutable() {
+    return this.executable;
+  }
+
+  /**
    * Set runner working directory
    *
    * @param  java.io.File workingDirectory
@@ -95,6 +116,36 @@ public abstract class AbstractRunner {
   }
 
   /**
+   * Set runner environment variable
+   *
+   * @param  java.lang.String name
+   * @param  java.lang.String value
+   * @return void
+   */
+  public void setEnvironmentVariable(String name, String value) {
+    this.environmentVariables.put(name, value);
+  }
+
+  /**
+   * Get runner environment variable
+   *
+   * @param  java.lang.String name
+   * @return java.lang.String
+   */
+  public String getEnvironmentVariable(String name) {
+    return this.environmentVariables.get(name);
+  }
+
+  /**
+   * Get all runner environment variables
+   *
+   * @return java.util.Map<java.lang.String>
+   */
+  public Map<String, String> getEnvironmentVariables() {
+    return this.environmentVariables;
+  }
+
+  /**
    * Get working directory; default to current directory
    *
    * @return java.io.File
@@ -107,31 +158,37 @@ public abstract class AbstractRunner {
   }
 
   /**
-   * Execute the specified executable with the specified arguments
+   * Execute command using the specified arguments
    *
-   * @param  java.io.File Executable to run
    * @param  java.util.List<String> arguments Executable arguments
    * @return void
    * @throws RunnerException When execution failed
    */
-  protected void executeCommand(File executable, List<String> arguments) throws RunnerException {
+  protected void executeCommand(List<String> arguments) throws RunnerException {
     try {
-
-      // Execute command
-      ExecuteUtils.executeCommand(executable, arguments, this.getWorkingDirectory(), this.cat);
-
+      ExecuteUtils.executeCommand(
+        this.getExecutable(),
+        arguments,
+        this.getWorkingDirectory(),
+        this.getEnvironmentVariables(),
+        this.cat
+      );
     } catch (ExecutionException ex) {
       throw new RunnerException("Execution failed", ex);
     }
   }
 
-    protected void addClassPathsTo(List<String> arguments, List<java.io.File> classpaths) {
-        Iterator i;
-        // Add classpaths (-cp)
-        i = classpaths.iterator();
-        while (i.hasNext()) {
-            arguments.add("-cp");
-            arguments.add(((File) i.next()).getAbsolutePath());
-        }
+  /**
+   * Add classpaths to arguments
+   *
+   * @param  java.util.List<java.lang.String> arguments
+   * @param  java.util.List<java.io.File> classpaths
+   * @return void
+   */
+  protected void addClasspathsTo(List<String> arguments, List<File> classpaths) {
+    for (File cp : classpaths) {
+      arguments.add("-cp");
+      arguments.add(cp.getAbsolutePath());
     }
+  }
 }

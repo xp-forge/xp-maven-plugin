@@ -35,6 +35,12 @@ public final class MavenResourceUtils {
   /**
    * Wrapper over MavenResourcesExecution: single resource
    *
+   * @param  org.apache.maven.model.Resource resource
+   * @param  java.io.File targetDirectory
+   * @param  org.apache.maven.project.MavenProject project
+   * @param  org.apache.maven.execution.MavenSession session
+   * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void copyResource(Resource resource, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering) throws IOException {
     List<Resource> resources= new ArrayList<Resource>();
@@ -45,6 +51,12 @@ public final class MavenResourceUtils {
   /**
    * Wrapper over MavenResourcesExecution: multiple resources
    *
+   * @param  java.util.List<org.apache.maven.model.Resource> resources
+   * @param  java.io.File targetDirectory
+   * @param  org.apache.maven.project.MavenProject project
+   * @param  org.apache.maven.execution.MavenSession session
+   * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void copyResources(List<Resource> resources, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering) throws IOException {
 

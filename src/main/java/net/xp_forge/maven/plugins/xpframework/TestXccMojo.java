@@ -11,12 +11,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.maven.plugin.MojoExecutionException;
-
-import net.xp_forge.maven.plugins.xpframework.AbstractXccMojo;
 import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
 
 /**
- * Run XP Framework XCC compiler
+ * Run XP Framework XCC compiler (compile test .xp sources)
  *
  * @goal test-compile
  * @requiresDependencyResolution
@@ -33,7 +31,7 @@ public class TestXccMojo extends AbstractXccMojo {
 
   /**
    * The source directories containing the raw PHP sources to be copied
-   * Default value: ["src/test/php"]
+   * Default value: [src/test/php]
    *
    * @parameter
    */
@@ -49,28 +47,8 @@ public class TestXccMojo extends AbstractXccMojo {
   private List<String> testCompileSourceRoots;
 
   /**
-   * The directory for compiled test classes
+   * {@inheritDoc}
    *
-   * @parameter default-value="${project.build.testOutputDirectory}"
-   * @required
-   * @readonly
-   */
-  private File testClassesDirectory;
-
-  /**
-   * The directory for compiled classes
-   *
-   * @parameter default-value="${project.build.outputDirectory}"
-   * @required
-   * @readonly
-   */
-  private File classesDirectory;
-
-  /**
-   * Compile test sources
-   *
-   * @return void
-   * @throws org.apache.maven.plugin.MojoExecutionException When xcc runner execution failed
    */
   public void execute() throws MojoExecutionException {
 
@@ -102,7 +80,7 @@ public class TestXccMojo extends AbstractXccMojo {
       return;
     }
 
-    // Let xcc know where to get sources from
+    // Let [xcc] know where to get sources from
     for (String testCompileSourceRoot : this.testCompileSourceRoots) {
       this.addSourcepath(testCompileSourceRoot);
     }
@@ -112,10 +90,10 @@ public class TestXccMojo extends AbstractXccMojo {
       this.addClasspath(testPhpSourceRoot);
     }
 
-    // Add "/target/classes" with already compiled sources to classpath
+    // Add [/target/classes] with already compiled sources to classpath
     this.addClasspath(this.classesDirectory.getAbsolutePath());
 
-    // Execute xcc
+    // Execute [xcc]
     this.executeXcc(this.testCompileSourceRoots, this.testClassesDirectory);
     getLog().info(LINE_SEPARATOR);
   }

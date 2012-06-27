@@ -7,7 +7,7 @@
 package net.xp_forge.maven.plugins.xpframework.runners;
 
 /**
- * Runner exeception
+ * Runner exception
  *
  */
 public class RunnerException extends java.lang.Exception {
@@ -15,16 +15,19 @@ public class RunnerException extends java.lang.Exception {
   /**
    * Constructor
    *
+   * @param  java.lang.String message
    */
-  public RunnerException(java.lang.String message) {
+  public RunnerException(String message) {
     super(message);
   }
 
   /**
    * Constructor
    *
+   * @param  java.lang.String message
+   * @param  java.lang.Throwable cause
    */
-  public RunnerException(java.lang.String message, java.lang.Throwable cause) {
+  public RunnerException(String message, Throwable cause) {
     super(message, cause);
   }
 }

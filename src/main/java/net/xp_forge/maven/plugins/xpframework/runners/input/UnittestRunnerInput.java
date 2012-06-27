@@ -42,18 +42,18 @@ import net.xp_forge.maven.plugins.xpframework.runners.filter.InifileFilter;
  *   * {test.class.Name}::{testName}: A fully qualified class name and a test name
  *   * -e {test method sourcecode}: Evaluate source
  */
-public class UnittestRunnerInput extends AbstractClassPathRunnerInput {
+public class UnittestRunnerInput extends AbstractClasspathRunnerInput {
   public List<String> arguments;
-  public List<File>   inifiles;
+  public List<File> inifiles;
 
   /**
    * Constructor
    *
    */
   public UnittestRunnerInput() {
-      super();
-    this.arguments  = new ArrayList<String>();
-    this.inifiles   = new ArrayList<File>();
+    super();
+    this.arguments = new ArrayList<String>();
+    this.inifiles  = new ArrayList<File>();
   }
 
   /**
@@ -68,9 +68,8 @@ public class UnittestRunnerInput extends AbstractClassPathRunnerInput {
     if (null == argument || 0 == argument.trim().length()) return;
 
     // Check argument not added twice
-    Iterator i= this.arguments.iterator();
-    while (i.hasNext()) {
-      if (((String) i.next()).equals(argument)) return;
+    for (String arg : this.arguments) {
+      if (arg.equals(argument)) return;
     }
 
     // Add to list
@@ -90,9 +89,8 @@ public class UnittestRunnerInput extends AbstractClassPathRunnerInput {
 
     // Check inifile not added twice
     String inifilePath= inifile.getAbsolutePath();
-    Iterator i= this.inifiles.iterator();
-    while (i.hasNext()) {
-      if (((File) i.next()).getAbsolutePath().equals(inifilePath)) return;
+    for (File ini : this.inifiles) {
+      if (ini.getAbsolutePath().equals(inifilePath)) return;
     }
 
     // Add to list
@@ -111,9 +109,8 @@ public class UnittestRunnerInput extends AbstractClassPathRunnerInput {
     if (!inifileDirectory.exists() || !inifileDirectory.isDirectory()) return;
 
     // Get inifiles
-    Iterator i= Arrays.asList(inifileDirectory.listFiles(new InifileFilter())).iterator();
-    while (i.hasNext()) {
-      this.addInifile((File) i.next());
+    for (File ini : Arrays.asList(inifileDirectory.listFiles(new InifileFilter()))) {
+      this.addInifile(ini);
     }
   }
 }

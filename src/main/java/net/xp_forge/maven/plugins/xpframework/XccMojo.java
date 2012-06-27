@@ -9,6 +9,7 @@ package net.xp_forge.maven.plugins.xpframework;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -16,16 +17,16 @@ import net.xp_forge.maven.plugins.xpframework.AbstractXccMojo;
 import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
 
 /**
- * Run XP-Framework XCC compiler
+ * Run XP Framework XCC compiler (compile .xp sources)
  *
  * @goal compile
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  */
 public class XccMojo extends AbstractXccMojo {
 
   /**
    * The source directories containing the raw PHP sources to be copied
-   * Default value: ["src/main/php"]
+   * Default value: [src/main/php]
    *
    * @parameter
    */
@@ -41,19 +42,8 @@ public class XccMojo extends AbstractXccMojo {
   private List<String> compileSourceRoots;
 
   /**
-   * The directory for compiled classes
+   * {@inheritDoc}
    *
-   * @parameter default-value="${project.build.outputDirectory}"
-   * @required
-   * @readonly
-   */
-  private File classesDirectory;
-
-  /**
-   * Assemble XAR archive
-   *
-   * @return void
-   * @throws org.apache.maven.plugin.MojoExecutionException When xar runner execution failed
    */
   public void execute() throws MojoExecutionException {
     getLog().info(LINE_SEPARATOR);
@@ -65,7 +55,7 @@ public class XccMojo extends AbstractXccMojo {
       this.phpSourceRoots= new ArrayList<String>();
       this.phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
     }
-    copyPhpSources(this.phpSourceRoots, this.classesDirectory);
+    this.copyPhpSources(this.phpSourceRoots, this.classesDirectory);
 
     getLog().info(LINE_SEPARATOR);
     getLog().info("COMPILE XP SOURCES");
@@ -78,7 +68,7 @@ public class XccMojo extends AbstractXccMojo {
       return;
     }
 
-    // Let xcc know where to get sources from
+    // Let [xcc] know where to get sources from
     for (String compileSourceRoot : this.compileSourceRoots) {
       this.addSourcepath(compileSourceRoot);
     }
@@ -88,7 +78,7 @@ public class XccMojo extends AbstractXccMojo {
       this.addClasspath(phpSourceRoot);
     }
 
-    // Execute xcc
+    // Execute [xcc]
     this.executeXcc(this.compileSourceRoots, this.classesDirectory);
     getLog().info(LINE_SEPARATOR);
   }

@@ -9,13 +9,11 @@ package net.xp_forge.maven.plugins.xpframework;
 import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.AbstractXarMojo;
-
 /**
  * Package test classes and resources into a XAR package
  *
  * @goal test-package
- * @requiresDependencyResolution
+ * @requiresDependencyResolution runtime
  */
 public class TestXarMojo extends AbstractXarMojo {
 
@@ -28,26 +26,16 @@ public class TestXarMojo extends AbstractXarMojo {
   private boolean skip;
 
   /**
-   * Directory containing the classes and resource files that should be packaged into the XAR
-   *
-   * @parameter expression="${project.build.testOutputDirectory}"
-   * @required
-   */
-  private File testClassesDirectory;
-
-  /**
    * Include XAR dependencies into the final uber-XAR
    *
-   * @parameter expression="${xpframework.xar.mergeDependencies}" default-value="false"
+   * @parameter expression="${xp.xar.mergeDependencies}" default-value="false"
    * @required
    */
   protected boolean mergeDependencies;
 
   /**
-   * Assemble test XAR archive
+   * {@inheritDoc}
    *
-   * @return void
-   * @throws org.apache.maven.plugin.MojoExecutionException When xar runner execution failed
    */
   public void execute() throws MojoExecutionException {
     getLog().info(LINE_SEPARATOR);
@@ -61,7 +49,7 @@ public class TestXarMojo extends AbstractXarMojo {
     }
 
     // Assemble test XAR archive
-    File testXarFile= this.getXarFile(this.outputDirectory, this.finalName + "-test", this.classifier);
+    File testXarFile= AbstractXarMojo.getXarFile(this.outputDirectory, this.finalName + "-test", this.classifier);
     this.executeXar(this.testClassesDirectory, testXarFile);
     getLog().info(LINE_SEPARATOR);
 
@@ -72,7 +60,7 @@ public class TestXarMojo extends AbstractXarMojo {
     getLog().info(LINE_SEPARATOR);
 
     // Assemble uber-XAR archive
-    File testUberXarFile= this.getUberXarFile(this.outputDirectory, this.finalName + "-test", this.classifier);
+    File testUberXarFile= AbstractXarMojo.getUberXarFile(this.outputDirectory, this.finalName + "-test", this.classifier);
     this.executeUberXar(testXarFile, testUberXarFile);
 
     getLog().info(LINE_SEPARATOR);

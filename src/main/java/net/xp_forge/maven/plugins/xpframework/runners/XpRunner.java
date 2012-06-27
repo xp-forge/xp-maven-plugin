@@ -11,12 +11,11 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xpframework.runners.input.AbstractClassPathRunnerInput;
 import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xpframework.runners.input.XpRunnerInput;
 
 /**
- * Wrapper over XP-Framework "xar" runner
+ * Wrapper over XP-Framework "xp" runner
  *
  */
 public class XpRunner extends AbstractRunner {
@@ -25,8 +24,10 @@ public class XpRunner extends AbstractRunner {
   /**
    * Constructor
    *
+   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.XpRunnerInput input
    */
-  public XpRunner(XpRunnerInput input) {
+  public XpRunner(File executable, XpRunnerInput input) {
+    super(executable);
     this.input= input;
   }
 
@@ -36,19 +37,11 @@ public class XpRunner extends AbstractRunner {
    */
   public void execute() throws RunnerException {
 
-    // Get xar executable
-    File xpExecutable;
-    try {
-      xpExecutable= ExecuteUtils.getExecutable("xp");
-    } catch (FileNotFoundException ex) {
-      throw new RunnerException("Cannot find XP Framework 'xp' runner. Install it from http://xp-framework.net/", ex);
-    }
-
     // Build arguments
     List<String> arguments= new ArrayList<String>();
 
     // Configure classpath
-    this.addClassPathsTo(arguments, this.input.classpaths);
+    this.addClasspathsTo(arguments, this.input.classpaths);
 
     // Check what to execute...
     if (null != this.input.className) {
@@ -57,10 +50,10 @@ public class XpRunner extends AbstractRunner {
         arguments.add("-e");
         arguments.add(" " + this.input.code);
     } else {
-        throw new RunnerException("Neither className or code given.");
+        throw new RunnerException("Neither className nor code given");
     }
 
     // Execute command
-    this.executeCommand(xpExecutable, arguments);
+    this.executeCommand(arguments);
   }
 }
