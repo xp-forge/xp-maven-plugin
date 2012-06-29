@@ -122,7 +122,7 @@ This will:
 7. Run tests (if any)
 8. Assemble the XAR package with the compiled sources into "target/my-project-1.0.xar"
 9. Assemble the uber-XAR package with the compiled sources and all dependencies into
-   "target/my-project-1.0-uber.xar" (only if run with -Dxpframework.xar.mergeDependencies)
+   "target/my-project-1.0-uber.xar" (only if run with -Dxp.xar.merge)
 
 
 Dependencies
@@ -158,7 +158,7 @@ If you want to distribute "app-hello" with all dependencies bundled,
 just execute:
 
 ```sh
-~/app-hello $ mvn -Dxpframework.xar.mergeDependencies package
+~/app-hello $ mvn -Dxp.xar.merge package
 ```
 
 This will create an "uber-XAR" archive containing all sources and

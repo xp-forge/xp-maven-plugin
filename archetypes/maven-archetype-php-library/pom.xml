@@ -12,7 +12,7 @@
   <!-- More project information -->
   <name>Maven archetype for XP-Framework library written in PHP</name>
   <description>Maven archetype to generate a template XP-Framework library written in PHP</description>
-  <url>https://github.com/xp-forge/maven-xpframework-plugin</url>
+  <url>https://github.com/xp-forge/xp-maven-plugin</url>
   <inceptionYear>2012</inceptionYear>
   <organization>
     <name>XP-Framework Team</name>
