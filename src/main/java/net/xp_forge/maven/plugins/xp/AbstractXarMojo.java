@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework;
+package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,9 +14,9 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.runners.XarRunner;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
-import net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput;
+import net.xp_forge.maven.plugins.xp.runners.XarRunner;
+import net.xp_forge.maven.plugins.xp.runners.RunnerException;
+import net.xp_forge.maven.plugins.xp.runners.input.XarRunnerInput;
 
 /**
  * Wrapper around the XP-Framework "xar" runner

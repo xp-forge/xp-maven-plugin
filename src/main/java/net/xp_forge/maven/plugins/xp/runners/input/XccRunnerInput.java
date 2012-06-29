@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework.runners.input;
+package net.xp_forge.maven.plugins.xp.runners.input;
 
 import java.io.File;
 import java.util.List;

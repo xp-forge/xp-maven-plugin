@@ -4,15 +4,15 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework.runners;
+package net.xp_forge.maven.plugins.xp.runners;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.input.XpRunnerInput;
+import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput;
 
 /**
  * Wrapper over XP-Framework "xp" runner
@@ -24,7 +24,7 @@ public class XpRunner extends AbstractRunner {
   /**
    * Constructor
    *
-   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.XpRunnerInput input
+   * @param  net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput input
    */
   public XpRunner(File executable, XpRunnerInput input) {
     super(executable);

@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework.runners;
+package net.xp_forge.maven.plugins.xp.runners;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput;
+import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.runners.input.XarRunnerInput;
 
 /**
  * Wrapper over XP-Framework "xar" runner
@@ -25,7 +25,7 @@ public class XarRunner extends AbstractRunner {
   /**
    * Constructor
    *
-   * @param  net.xp_forge.maven.plugins.xpframework.runners.input.XarRunnerInput input
+   * @param  net.xp_forge.maven.plugins.xp.runners.input.XarRunnerInput input
    */
   public XarRunner(File executable, XarRunnerInput input) {
     super(executable);

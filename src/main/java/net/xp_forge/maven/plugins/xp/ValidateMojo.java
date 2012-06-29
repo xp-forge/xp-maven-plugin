@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework;
+package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,9 +21,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.util.IniProperties;
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.util.IniProperties;
 
 import net.xp_forge.xar.XarArchive;
 

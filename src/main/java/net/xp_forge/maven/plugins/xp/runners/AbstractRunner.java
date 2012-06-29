@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework.runners;
+package net.xp_forge.maven.plugins.xp.runners;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +17,9 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 
-import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.runners.RunnerException;
 
 /**
  * Base class for all XP-Framework runners
@@ -43,7 +43,7 @@ public abstract class AbstractRunner {
   /**
    * Execute this runner
    *
-   * @throws net.xp_forge.maven.plugins.xpframework.runners.RunnerException When runner execution failed
+   * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When runner execution failed
    */
   public abstract void execute() throws RunnerException;
 
@@ -165,7 +165,7 @@ public abstract class AbstractRunner {
    *
    * @param  java.util.List<String> arguments Executable arguments
    * @return void
-   * @throws net.xp_forge.maven.plugins.xpframework.runners.RunnerException When execution failed
+   * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When execution failed
    */
   protected void executeCommand(List<String> arguments) throws RunnerException {
     try {
@@ -201,7 +201,7 @@ public abstract class AbstractRunner {
    * @param  java.util.List<java.lang.String> classpaths
    * @param  java.io.File pthFile
    * @return void
-   * @throws net.xp_forge.maven.plugins.xpframework.runners.RunnerException When cannot create project.pth file
+   * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When cannot create project.pth file
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
     try {

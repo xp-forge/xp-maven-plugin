@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework;
+package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.AbstractXccMojo;
-import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.AbstractXccMojo;
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
 
 /**
  * Run XP Framework XCC compiler (compile .xp sources)

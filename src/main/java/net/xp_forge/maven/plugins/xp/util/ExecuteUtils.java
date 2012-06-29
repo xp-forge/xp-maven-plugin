@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework.util;
+package net.xp_forge.maven.plugins.xp.util;
 
 import java.io.File;
 import java.io.InputStream;
@@ -233,7 +233,7 @@ public final class ExecuteUtils {
    * @param  java.io.File targetDir
    * @return java.io.File
    * @throws java.io.IOException when I/O errors occur
-   * @see    net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils.RUNNERS_RESOURCE_PATH
+   * @see    net.xp_forge.maven.plugins.xp.util.ExecuteUtils.RUNNERS_RESOURCE_PATH
    */
   public static File saveRunner(String runner, File targetDir) throws IOException {
     String osName    = ExecuteUtils.getOsName();

@@ -4,7 +4,7 @@
  * Maven plugin for XP-Framework
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xpframework;
+package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +18,11 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xpframework.runners.XccRunner;
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
-import net.xp_forge.maven.plugins.xpframework.runners.input.XccRunnerInput;
-import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
-import net.xp_forge.maven.plugins.xpframework.util.MavenResourceUtils;
+import net.xp_forge.maven.plugins.xp.runners.XccRunner;
+import net.xp_forge.maven.plugins.xp.runners.RunnerException;
+import net.xp_forge.maven.plugins.xp.runners.input.XccRunnerInput;
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.util.MavenResourceUtils;
 
 /**
  * Wrapper around the XP-Framework "XccRunner;" runner
