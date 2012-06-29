@@ -6,15 +6,14 @@
  */
 package net.xp_forge.maven.plugins.xpframework.runners;
 
-import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xpframework.runners.input.UnittestRunnerInput;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
+import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xpframework.runners.input.UnittestRunnerInput;
 
 /**
  * Wrapper over XP-Framework "unittest" runner
@@ -42,10 +41,12 @@ public class UnittestRunner extends AbstractRunner {
     // Build arguments
     List<String> arguments= new ArrayList<String>();
 
+    // Configure classpath (via project.pth)
+    File pthFile= new File(this.getWorkingDirectory(), "project.pth");
+    this.setClasspath(this.input.classpaths, pthFile);
+
     // Add verbose (-v)
     if (this.input.verbose) arguments.add("-v");
-
-    this.addClasspathsTo(arguments, this.input.classpaths);
 
     // Add arguments (-a)
     for (String arg : this.input.arguments) {

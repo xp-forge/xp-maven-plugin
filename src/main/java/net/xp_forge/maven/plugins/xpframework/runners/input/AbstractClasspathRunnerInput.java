@@ -19,7 +19,7 @@ import org.apache.maven.artifact.Artifact;
  *
  */
 public class AbstractClasspathRunnerInput {
-  public List<File> classpaths;
+  public List<String> classpaths;
   public boolean verbose;
 
 
@@ -28,7 +28,7 @@ public class AbstractClasspathRunnerInput {
    *
    */
   public AbstractClasspathRunnerInput() {
-    this.classpaths = new ArrayList<File>();
+    this.classpaths = new ArrayList<String>();
     this.verbose    = false;
   }
 
@@ -44,7 +44,7 @@ public class AbstractClasspathRunnerInput {
       // Ignore non-XAR artifacts
       if (!artifact.getType().equalsIgnoreCase("xar")) continue;
 
-      // Ignore "net.xp_framework:core" and "net.xp_framework:tools"
+      // Ignore XP-Framework artifacts (loaded via bootstrap)
       if (
         artifact.getGroupId().equals("net.xp-framework") &&
         (
@@ -57,8 +57,45 @@ public class AbstractClasspathRunnerInput {
       }
 
       // Add to classpath
-      this.addClasspath(artifact.getFile());
+      if (artifact.getClassifier().equals("patch")) {
+        this.addClasspath("!" + artifact.getFile().getAbsolutePath());
+      } else {
+        this.addClasspath(artifact.getFile().getAbsolutePath());
+      }
     }
+  }
+
+  /**
+   * Setter for classpaths
+   *
+   * @param  java.util.List<java.lang.String> classpaths
+   * @return void
+   */
+  public void addClasspath(List<String> classpaths) {
+    if (null == classpaths) return;
+
+    for (String classpath : classpaths) {
+      this.addClasspath(classpath);
+    }
+  }
+
+  /**
+   * Setter for classpaths
+   *
+   * @param  java.lang.String classpath
+   * @return void
+   */
+  public void addClasspath(String classpath) {
+
+    // Check classpath not added twice
+    for (String cp : this.classpaths) {
+      if (cp.equals(classpath)) {
+        return;
+      }
+    }
+
+    // Add to list
+    this.classpaths.add(classpath);
   }
 
   /**
@@ -74,15 +111,7 @@ public class AbstractClasspathRunnerInput {
       return;
     }
 
-    // Check classpath not added twice
-    String filepath= file.getAbsolutePath();
-    for (File classpath : this.classpaths) {
-      if (classpath.getAbsolutePath().equals(filepath)) {
-        return;
-      }
-    }
-
     // Add to list
-    this.classpaths.add(file);
+    this.addClasspath(file.getAbsolutePath());
   }
 }

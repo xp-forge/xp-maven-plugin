@@ -32,7 +32,7 @@ public class XpMojo extends AbstractXpFrameworkMojo {
    *
    * The -v argument for the xp runner
    *
-   * @parameter expression="${xpframework.xp.verbose}" default-value="false"
+   * @parameter expression="${xp.xp.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -41,21 +41,21 @@ public class XpMojo extends AbstractXpFrameworkMojo {
    *
    * The -cp argument for the xp runner
    *
-   * @parameter expression="${xpframework.xp.classpaths}"
+   * @parameter expression="${xp.xp.classpaths}"
    */
   protected ArrayList<String> classpaths;
 
   /**
    * Define name of class to run
    *
-   * @parameter expression="${xpframework.xp.classname}"
+   * @parameter expression="${xp.xp.classname}"
    */
   protected String className;
 
   /**
    * Define inline code to run
    *
-   * @parameter expression="${xpframework.xp.code}"
+   * @parameter expression="${xp.xp.code}"
    */
   protected String code;
 
@@ -82,15 +82,15 @@ public class XpMojo extends AbstractXpFrameworkMojo {
     XpRunnerInput input= new XpRunnerInput();
     input.verbose= this.verbose;
 
-    // Add testClassesDirectory and classesDirectory to classpaths
-    input.addClasspath(this.classesDirectory);
+    // Add dependency classpaths
+    input.addClasspath(project.getArtifacts());
 
-    // Add pom-defined classpaths
-    if (null != this.classpaths) {
-      for (String classpath : this.classpaths) {
-        input.addClasspath(new File(classpath));
-      }
-    }
+    // Add custom classpaths
+    input.addClasspath(this.classpaths);
+
+    // Add classesDirectory and testClassesDirectory to classpaths
+    input.addClasspath(this.classesDirectory);
+    input.addClasspath(this.testClassesDirectory);
 
     input.className= this.className;
     input.code= this.code;
@@ -100,9 +100,9 @@ public class XpMojo extends AbstractXpFrameworkMojo {
     XpRunner runner= new XpRunner(executable, input);
     runner.setTrace(getLog());
 
-    // Set runner working directory
+    // Set runner working directory to [/target]
     try {
-      runner.setWorkingDirectory(this.basedir);
+      runner.setWorkingDirectory(this.outputDirectory);
     } catch (FileNotFoundException ex) {
       throw new MojoExecutionException("Cannot set [xp] runner working directory", ex);
     }

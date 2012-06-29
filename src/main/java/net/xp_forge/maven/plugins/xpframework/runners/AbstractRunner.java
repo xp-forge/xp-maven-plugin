@@ -7,16 +7,19 @@
 package net.xp_forge.maven.plugins.xpframework.runners;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 
-import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
+import net.xp_forge.maven.plugins.xpframework.util.FileUtils;
 import net.xp_forge.maven.plugins.xpframework.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xpframework.runners.RunnerException;
 
 /**
  * Base class for all XP-Framework runners
@@ -116,6 +119,18 @@ public abstract class AbstractRunner {
   }
 
   /**
+   * Get working directory; default to current directory
+   *
+   * @return java.io.File
+   */
+  public File getWorkingDirectory() {
+    if (null == this.workingDirectory || !this.workingDirectory.exists()) {
+      this.workingDirectory= new File(System.getProperty("user.dir"));
+    }
+    return this.workingDirectory;
+  }
+
+  /**
    * Set runner environment variable
    *
    * @param  java.lang.String name
@@ -146,23 +161,11 @@ public abstract class AbstractRunner {
   }
 
   /**
-   * Get working directory; default to current directory
-   *
-   * @return java.io.File
-   */
-  public File getWorkingDirectory() {
-    if (null == this.workingDirectory || !this.workingDirectory.exists()) {
-      this.workingDirectory= new File(System.getProperty("user.dir"));
-    }
-    return this.workingDirectory;
-  }
-
-  /**
    * Execute command using the specified arguments
    *
    * @param  java.util.List<String> arguments Executable arguments
    * @return void
-   * @throws RunnerException When execution failed
+   * @throws net.xp_forge.maven.plugins.xpframework.runners.RunnerException When execution failed
    */
   protected void executeCommand(List<String> arguments) throws RunnerException {
     try {
@@ -179,16 +182,32 @@ public abstract class AbstractRunner {
   }
 
   /**
-   * Add classpaths to arguments
+   * Set classpath via command line arguments
    *
+   * @param  java.util.List<java.lang.String> classpaths
    * @param  java.util.List<java.lang.String> arguments
-   * @param  java.util.List<java.io.File> classpaths
    * @return void
    */
-  protected void addClasspathsTo(List<String> arguments, List<File> classpaths) {
-    for (File cp : classpaths) {
+  public void setClasspath(List<String> classpaths, List<String> arguments) {
+    for (String classpath : classpaths) {
       arguments.add("-cp");
-      arguments.add(cp.getAbsolutePath());
+      arguments.add(classpath);
+    }
+  }
+
+  /**
+   * Set classpath via [project.pth] file
+   *
+   * @param  java.util.List<java.lang.String> classpaths
+   * @param  java.io.File pthFile
+   * @return void
+   * @throws net.xp_forge.maven.plugins.xpframework.runners.RunnerException When cannot create project.pth file
+   */
+  public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
+    try {
+      FileUtils.setFileContents(pthFile, StringUtils.join(classpaths, "\n"));
+    } catch (IOException ex) {
+      throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }
   }
 }

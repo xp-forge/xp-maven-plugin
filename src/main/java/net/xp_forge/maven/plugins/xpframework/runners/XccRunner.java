@@ -41,14 +41,12 @@ public class XccRunner extends AbstractRunner {
     // Build arguments
     List<String> arguments= new ArrayList<String>();
 
+    // Configure classpath (via project.pth)
+    File pthFile= new File(this.getWorkingDirectory(), "project.pth");
+    this.setClasspath(this.input.classpaths, pthFile);
+
     // Add verbose (-v)
     if (this.input.verbose) arguments.add("-v");
-
-    // Add classpaths (-cp)
-    for (File cp : this.input.classpaths) {
-      arguments.add("-cp");
-      arguments.add(cp.getAbsolutePath());
-    }
 
     // Add sourcepath (-sp)
     for (File sp : this.input.sourcepaths) {

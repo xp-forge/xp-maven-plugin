@@ -40,10 +40,11 @@ public class XpRunner extends AbstractRunner {
     // Build arguments
     List<String> arguments= new ArrayList<String>();
 
-    // Configure classpath
-    this.addClasspathsTo(arguments, this.input.classpaths);
+    // Configure classpath (via project.pth)
+    File pthFile= new File(this.getWorkingDirectory(), "project.pth");
+    this.setClasspath(this.input.classpaths, pthFile);
 
-    // Check what to execute...
+    // Check what to execute
     if (null != this.input.className) {
         arguments.add(this.input.className);
     } else if (null != this.input.code) {

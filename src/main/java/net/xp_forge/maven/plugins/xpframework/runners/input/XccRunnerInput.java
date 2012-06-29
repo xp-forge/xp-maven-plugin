@@ -72,8 +72,7 @@ public class XccRunnerInput extends AbstractClasspathRunnerInput {
    *
    */
   public XccRunnerInput() {
-    this.verbose     = false;
-    this.classpaths  = new ArrayList<File>();
+    super();
     this.sourcepaths = new ArrayList<File>();
     this.emitter     = null;
     this.profiles    = new ArrayList<String>();

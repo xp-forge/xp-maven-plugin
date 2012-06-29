@@ -20,10 +20,10 @@ public class XarMojo extends AbstractXarMojo {
   /**
    * Include XAR dependencies into the final uber-XAR
    *
-   * @parameter expression="${xp.xar.mergeDependencies}" default-value="false"
+   * @parameter expression="${xp.xar.merge}" default-value="false"
    * @required
    */
-  protected boolean mergeDependencies;
+  protected boolean merge;
 
   /**
    * {@inheritDoc}
@@ -40,7 +40,7 @@ public class XarMojo extends AbstractXarMojo {
     getLog().info(LINE_SEPARATOR);
 
     // Merge dependencies into an uber-XAR?
-    if (!this.mergeDependencies) return;
+    if (!this.merge) return;
 
     getLog().info("BUILD UBER-XAR PACKAGE");
     getLog().info(LINE_SEPARATOR);

@@ -68,7 +68,7 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     XarRunner runner= new XarRunner(executable, input);
     runner.setTrace(getLog());
 
-    // Set runner working directory
+    // Set runner working directory to [/target/classes]
     try {
       runner.setWorkingDirectory(classesDirectory);
     } catch (FileNotFoundException ex) {

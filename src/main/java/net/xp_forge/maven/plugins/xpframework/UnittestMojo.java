@@ -40,7 +40,7 @@ public class UnittestMojo extends AbstractXpFrameworkMojo {
    *
    * The -v argument for the unittest runner
    *
-   * @parameter expression="${xpframework.unittest.verbose}" default-value="false"
+   * @parameter expression="${xp.unittest.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -49,7 +49,7 @@ public class UnittestMojo extends AbstractXpFrameworkMojo {
    *
    * The -cp argument for the unittest runner
    *
-   * @parameter expression="${xpframework.unittest.classpaths}"
+   * @parameter expression="${xp.unittest.classpaths}"
    */
   protected ArrayList<String> classpaths;
 
@@ -58,14 +58,14 @@ public class UnittestMojo extends AbstractXpFrameworkMojo {
    *
    * The -a argument for the unittest runner
    *
-   * @parameter expression="${xpframework.unittest.testArguments}"
+   * @parameter expression="${xp.unittest.testArguments}"
    */
   protected ArrayList<String> testArguments;
 
   /**
    * Directory to scan for *.ini files
    *
-   * @parameter expression="${xpframework.unittest.iniDirectory}" default-value="${project.build.testOutputDirectory}/etc/unittest"
+   * @parameter expression="${xp.unittest.iniDirectory}" default-value="${project.build.testOutputDirectory}/etc/unittest"
    */
   protected File iniDirectory;
 
@@ -106,12 +106,15 @@ public class UnittestMojo extends AbstractXpFrameworkMojo {
     UnittestRunnerInput input= new UnittestRunnerInput();
     input.verbose= this.verbose;
 
-    // Add pom-defined classpaths
-    if (null != this.classpaths) {
-      for (String classpath : this.classpaths) {
-        input.addClasspath(new File(classpath));
-      }
-    }
+    // Add dependency classpaths
+    input.addClasspath(project.getArtifacts());
+
+    // Add custom classpaths
+    input.addClasspath(this.classpaths);
+
+    // Add classesDirectory and testClassesDirectory to classpath
+    input.addClasspath(this.classesDirectory);
+    input.addClasspath(this.testClassesDirectory);
 
     // Add arguments
     if (null != this.testArguments) {
@@ -140,9 +143,9 @@ public class UnittestMojo extends AbstractXpFrameworkMojo {
     UnittestRunner runner= new UnittestRunner(executable, input);
     runner.setTrace(getLog());
 
-    // Set runner working directory
+    // Set runner working directory to [/target]
     try {
-      runner.setWorkingDirectory(this.basedir);
+      runner.setWorkingDirectory(this.outputDirectory);
     } catch (FileNotFoundException ex) {
       throw new MojoExecutionException("Cannot set [unittest] runner working directory", ex);
     }

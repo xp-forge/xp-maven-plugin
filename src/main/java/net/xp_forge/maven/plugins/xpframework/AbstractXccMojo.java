@@ -30,16 +30,12 @@ import net.xp_forge.maven.plugins.xpframework.util.MavenResourceUtils;
  */
 public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
 
-  // ----------------------------------------------------------------------
-  // Configurables
-  // ----------------------------------------------------------------------
-
   /**
    * Display verbose diagnostics
    *
    * The -v argument for the xcc compiler
    *
-   * @parameter expression="${xpframework.xcc.verbose}" default-value="false"
+   * @parameter expression="${xp.xcc.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -48,7 +44,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -cp argument for the xcc compiler
    *
-   * @parameter expression="${xpframework.xcc.classpaths}"
+   * @parameter expression="${xp.xcc.classpaths}"
    */
   protected ArrayList<String> classpaths;
 
@@ -57,7 +53,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -sp argument for the xcc compiler
    *
-   * @parameter expression="${xpframework.xcc.sourcepaths}"
+   * @parameter expression="${xp.xcc.sourcepaths}"
    */
   protected ArrayList<String> sourcepaths;
 
@@ -66,7 +62,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -e argument for the xcc compiler
    *
-   * @parameter expression="${xpframework.xcc.emitter}"
+   * @parameter expression="${xp.xcc.emitter}"
    */
   protected String emitter;
 
@@ -75,7 +71,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -p argument for the xcc compiler
    *
-   * @parameter expression="${xpframework.xcc.profiles}"
+   * @parameter expression="${xp.xcc.profiles}"
    */
   protected ArrayList<String> profiles;
 
@@ -117,13 +113,11 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
     XccRunnerInput input= new XccRunnerInput();
     input.verbose= this.verbose;
 
-    // Add classpaths
-    if (null != this.classpaths) {
-      i= this.classpaths.iterator();
-      while (i.hasNext()) {
-        input.addClasspath(new File((String)i.next()));
-      }
-    }
+    // Add dependency classpaths
+    input.addClasspath(project.getArtifacts());
+
+    // Add custom classpaths
+    input.addClasspath(this.classpaths);
 
     // Add sourcepaths
     if (null != this.sourcepaths) {
@@ -154,9 +148,10 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
     File executable= new File(this.runnersDirectory, "xcc");
     XccRunner runner= new XccRunner(executable, input);
     runner.setTrace(getLog());
-    // Set runner working directory
+
+    // Set runner working directory to [/target]
     try {
-      runner.setWorkingDirectory(this.basedir);
+      runner.setWorkingDirectory(this.outputDirectory);
     } catch (FileNotFoundException ex) {
       throw new MojoExecutionException("Cannot set [xcc] runner working directory", ex);
     }
