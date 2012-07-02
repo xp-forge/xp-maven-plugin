@@ -12,7 +12,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * Package classes and resources into a XAR package
  *
- * @goal package
+ * @goal package-xar
  * @requiresDependencyResolution runtime
  */
 public class XarMojo extends AbstractXarMojo {
