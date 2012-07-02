@@ -7,6 +7,7 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.Iterator;
@@ -14,12 +15,11 @@ import java.util.Iterator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.runners.XarRunner;
-import net.xp_forge.maven.plugins.xp.runners.RunnerException;
-import net.xp_forge.maven.plugins.xp.runners.input.XarRunnerInput;
+import net.xp_forge.xar.XarArchive;
+import net.xp_forge.maven.plugins.xp.util.XarUtils;
 
 /**
- * Wrapper around the XP-Framework "xar" runner
+ * Build XAR files using java-xarlib
  *
  */
 public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
@@ -53,38 +53,17 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     getLog().debug("Classes directory [" + classesDirectory + "]");
     getLog().info("XAR output file [" + xarFile + "]");
 
-    // Prepare xar input
-    XarRunnerInput input= new XarRunnerInput();
-    input.operation= XarRunnerInput.operations.CREATE;
+    // Create empty archive
+    XarArchive archive= new XarArchive();
 
-    // Set ouput file
-    input.outputFile= xarFile;
+    // Add all files in classesDirectory to archive root
+    XarUtils.addDirectory(archive, classesDirectory, null);
 
-    // Add sources
-    input.addSource(classesDirectory);
-
-    // Configure [xar] runner
-    File executable= new File(this.runnersDirectory, "xar");
-    XarRunner runner= new XarRunner(executable, input);
-    runner.setTrace(getLog());
-
-    // Set runner working directory to [/target/classes]
+    // Save archive to output file
     try {
-      runner.setWorkingDirectory(classesDirectory);
-    } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set [xar] runner working directory", ex);
-    }
-
-    // Execute runner
-    try {
-      runner.execute();
-    } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of [xar] runner failed", ex);
-    }
-
-    // Check XAR file was assembled
-    if (!xarFile.exists()) {
-      throw new MojoExecutionException("Cannot find assembled XAR file [" + xarFile.getAbsolutePath() + "]");
+      archive.save(xarFile);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot save XAR archive to [" + xarFile + "]", ex);
     }
 
     // Attach/set generated xar as project artifact
@@ -98,7 +77,7 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
   /**
    * Assemble Uber-XAR archive
    *
-   * @param  java.io.File xarFile Original XAR file withour dependencies
+   * @param  java.io.File xarFile Original XAR file without dependencies
    * @param  java.io.File uberXarFile Output Uber-XAR file location
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException When execution of the xar runner failed
@@ -109,11 +88,15 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
     // Debug info
     getLog().info("Uber-XAR output file [" + uberXarFile + "]");
 
-    // Prepare xar input
-    XarRunnerInput input= new XarRunnerInput();
-    input.operation= XarRunnerInput.operations.MERGE;
-    input.outputFile= uberXarFile;
-    input.addSource(xarFile);
+    // Create empty archive
+    XarArchive archive= new XarArchive();
+
+    // Add contents of xarFile
+    try {
+      XarUtils.addArchive(archive, new XarArchive(xarFile), null);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot find archive [" + xarFile + "]", ex);
+    }
 
     // Add dependencies
     getLog().info("Inspecting dependencies");
@@ -135,32 +118,18 @@ public abstract class AbstractXarMojo extends AbstractXpFrameworkMojo {
       }
 
       // Merge this dependency
-      input.addSource(artifact.getFile());
+      try {
+        XarUtils.addArchive(archive, new XarArchive(artifact.getFile()), null);
+      } catch (IOException ex) {
+        throw new MojoExecutionException("Cannot find archive [" + artifact.getFile() + "]", ex);
+      }
     }
 
-    // Check no XAR dependencies
-    if (1 == input.sources.size()) {
-      getLog().warn("No dependencies found so no Uber-XAR will be assembled");
-      return;
-    }
-
-    // Configure [xar] runner
-    File executable= new File(this.runnersDirectory, "xar");
-    XarRunner runner= new XarRunner(executable, input);
-    runner.setTrace(getLog());
-
-    // Set runner working directory
+    // Save archive to output file
     try {
-      runner.setWorkingDirectory(xarFile.getParentFile());
-    } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set [xar] runner working directory", ex);
-    }
-
-    // Execute runner
-    try {
-      runner.execute();
-    } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of [xar] runner failed", ex);
+      archive.save(uberXarFile);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot save XAR archive to [" + uberXarFile + "]", ex);
     }
 
     // Check Uber-XAR file was assembled

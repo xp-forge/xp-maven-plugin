@@ -21,11 +21,11 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import net.xp_forge.xar.XarArchive;
+
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.IniProperties;
-
-import net.xp_forge.xar.XarArchive;
 
 /**
  * Check for the presence of XP-Framework runners
@@ -181,7 +181,7 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
 
     IniProperties ini= new IniProperties();
     ini.setProperty("use", StringUtils.join(use.toArray(), File.pathSeparator));
-    
+
     // Set PHP executable and timezone
     this.setupPhp();
     ini.setProperty("runtime", "default", this.php.getAbsolutePath());
