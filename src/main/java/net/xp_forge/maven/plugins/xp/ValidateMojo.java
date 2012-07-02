@@ -50,7 +50,7 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
     } else {
       this.setupLocalBootstrap();
     }
-    getLog().debug(" - Using runners from [" + this.runnersDirectory.getAbsolutePath() + "]");
+    getLog().info("Using runners from [" + this.runnersDirectory.getAbsolutePath() + "]");
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
 
     // Alter default Maven settings
@@ -83,12 +83,12 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
    */
   private void setupLocalBootstrap() throws MojoExecutionException {
     getLog().debug("Preparing XP-Framework bootstrap");
-    File bootstrapDirectory= new File(this.outputDirectory, "bootstrap");
-    this.runnersDirectory= new File(bootstrapDirectory, "runners");
+    File bootstrapDirectory= new File(this.outputDirectory, "_bootstrap");
+    this.runnersDirectory= new File(this.outputDirectory, "_runners");
 
-    // Init USE_XP
-    List<File> use= new ArrayList<File>();
-
+    // Init boot.pth entries
+    List<String> bootEntries= new ArrayList<String>();
+    bootEntries.add(bootstrapDirectory.getAbsolutePath());
 
     // ===== Get dependencies for [net.xp-framework:core]
     Artifact coreArtifact= this.findArtifact("net.xp-framework", "core");
@@ -97,23 +97,9 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
     }
 
     // Extract [lang.base.php] from [net.xp-framework:core]
-    // Target: [/target/bootstrap/core]
-    File coreDirectory= new File(bootstrapDirectory, "core");
-    use.add(coreDirectory);
-
-    File langFile= new File(coreDirectory, "lang.base.php");
-    this.extract("lang.base.php", coreArtifact, langFile);
-
-    // Create [/target/bootstrap/core/boot.pth]
-    try {
-      FileUtils.setFileContents(
-        new File(coreDirectory, "boot.pth"),
-        ".\n" + coreArtifact.getFile().getAbsolutePath()
-      );
-    } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot save [/target/bootstrap/core/boot.pth] file");
-    }
-
+    // Target: [/target/bootstrap]
+    this.extract("lang.base.php", coreArtifact, new File(bootstrapDirectory, "lang.base.php"));
+    bootEntries.add(coreArtifact.getFile().getAbsolutePath());
 
     // ===== Get dependencies for [net.xp-framework:core]
     Artifact toolsArtifact = this.findArtifact("net.xp-framework", "tools");
@@ -122,45 +108,28 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
     }
 
     // Extract [tools/class.php], [tools/web.php] and [tools/xar.php] from [net.xp-framework:tools]
-    // Target: [/target/bootstrap/tools/tools]
+    // Target: [/target/bootstrap/tools]
     File toolsDirectory= new File(bootstrapDirectory, "tools");
-    use.add(toolsDirectory);
-
-    File classFile= new File(new File(toolsDirectory, "tools"), "class.php");
-    this.extract("tools/class.php", toolsArtifact, classFile);
-
-    File webFile= new File(new File(toolsDirectory, "tools"), "web.php");
-    this.extract("tools/web.php", toolsArtifact, webFile);
-
-    File xarFile= new File(new File(toolsDirectory, "tools"), "xar.php");
-    this.extract("tools/xar.php", toolsArtifact, xarFile);
-
-    // Create [/target/bootstrap/tools/boot.pth]
-    try {
-      FileUtils.setFileContents(
-        new File(toolsDirectory, "boot.pth"),
-        toolsArtifact.getFile().getAbsolutePath()
-      );
-    } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot save [/target/bootstrap/tools/boot.pth] file");
-    }
-
+    this.extract("tools/class.php", toolsArtifact, new File(toolsDirectory, "class.php"));
+    this.extract("tools/web.php", toolsArtifact, new File(toolsDirectory, "web.php"));
+    this.extract("tools/xar.php", toolsArtifact, new File(toolsDirectory, "xar.php"));
+    bootEntries.add(toolsArtifact.getFile().getAbsolutePath());
 
     // ===== Get dependencies for [net.xp-framework:language] - NOT required
     Artifact languageArtifact= this.findArtifact("net.xp-framework", "language");
     if (null != languageArtifact) {
-      File languageDirectory= new File(bootstrapDirectory, "language");
-      use.add(languageDirectory);
+      bootEntries.add(languageArtifact.getFile().getAbsolutePath());
+    }
 
-      // Create [/target/bootstrap/language/boot.pth]
-      try {
-        FileUtils.setFileContents(
-          new File(languageDirectory, "boot.pth"),
-          languageArtifact.getFile().getAbsolutePath()
-        );
-      } catch (IOException ex) {
-        throw new MojoExecutionException("Cannot save [/target/bootstrap/language/boot.pth] file");
-      }
+
+    // Create [/target/bootstrap/boot.pth]
+    try {
+      FileUtils.setFileContents(
+        new File(bootstrapDirectory, "boot.pth"),
+        StringUtils.join(bootEntries.toArray(), "\n")
+      );
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot save [/target/bootstrap/boot.pth] file");
     }
 
 
@@ -176,11 +145,12 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
       ExecuteUtils.saveRunner("unittest", this.runnersDirectory);
 
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot extract runners", ex);
+      throw new MojoExecutionException("Cannot extract XP runners", ex);
     }
 
+    // Set USE_XP
     IniProperties ini= new IniProperties();
-    ini.setProperty("use", StringUtils.join(use.toArray(), File.pathSeparator));
+    ini.setProperty("use", bootstrapDirectory.getAbsolutePath());
 
     // Set PHP executable and timezone
     this.setupPhp();
