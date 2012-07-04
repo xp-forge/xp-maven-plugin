@@ -187,13 +187,9 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     }
   }
 
-
   /**
-   * Returns the output file, based on an optional classifier
+   * Returns the output file, based on finalName, classifier and format
    *
-   * @param java.io.File basedir Project target directory
-   * @param java.io.File finalName The name of the XAR file
-   * @param java.lang.String classifier An optional classifier
    * @return java.io.File Location where to generate the output XAR file
    */
   protected File getOutputFile() {
