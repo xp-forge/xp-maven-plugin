@@ -12,8 +12,8 @@
           <compile>net.xp-forge.maven.plugins:xp-maven-plugin:compile</compile>
           <test-compile>net.xp-forge.maven.plugins:xp-maven-plugin:test-compile</test-compile>
           <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
-          <package>net.xp-forge.maven.plugins:xp-maven-plugin:package-xar</package>
-          <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package-xar</test-package>
+          <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
+          <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
         </phases>

@@ -28,14 +28,14 @@ import net.xp_forge.maven.plugins.xp.util.MavenResourceUtils;
  * Wrapper around the XP-Framework "XccRunner;" runner
  *
  */
-public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
+public abstract class AbstractCompileMojo extends AbstractXpFrameworkMojo {
 
   /**
    * Display verbose diagnostics
    *
    * The -v argument for the xcc compiler
    *
-   * @parameter expression="${xp.xcc.verbose}" default-value="false"
+   * @parameter expression="${xp.compile.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -44,7 +44,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -cp argument for the xcc compiler
    *
-   * @parameter expression="${xp.xcc.classpaths}"
+   * @parameter expression="${xp.compile.classpaths}"
    */
   protected ArrayList<String> classpaths;
 
@@ -53,7 +53,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -sp argument for the xcc compiler
    *
-   * @parameter expression="${xp.xcc.sourcepaths}"
+   * @parameter expression="${xp.compile.sourcepaths}"
    */
   protected ArrayList<String> sourcepaths;
 
@@ -62,7 +62,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -e argument for the xcc compiler
    *
-   * @parameter expression="${xp.xcc.emitter}"
+   * @parameter expression="${xp.compile.emitter}"
    */
   protected String emitter;
 
@@ -71,7 +71,7 @@ public abstract class AbstractXccMojo extends AbstractXpFrameworkMojo {
    *
    * The -p argument for the xcc compiler
    *
-   * @parameter expression="${xp.xcc.profiles}"
+   * @parameter expression="${xp.compile.profiles}"
    */
   protected ArrayList<String> profiles;
 

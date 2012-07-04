@@ -25,7 +25,7 @@ import net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput;
  * @goal test
  * @requiresDependencyResolution test
  */
-public class UnittestMojo extends AbstractXpFrameworkMojo {
+public class TestMojo extends AbstractXpFrameworkMojo {
 
   /**
    *

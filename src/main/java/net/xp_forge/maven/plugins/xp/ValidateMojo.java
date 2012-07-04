@@ -121,7 +121,6 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
       bootEntries.add(languageArtifact.getFile().getAbsolutePath());
     }
 
-
     // Create [/target/bootstrap/boot.pth]
     try {
       FileUtils.setFileContents(
@@ -131,7 +130,6 @@ public class ValidateMojo extends AbstractXpFrameworkMojo {
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot save [/target/bootstrap/boot.pth] file");
     }
-
 
     // ===== Extract runners
     try {

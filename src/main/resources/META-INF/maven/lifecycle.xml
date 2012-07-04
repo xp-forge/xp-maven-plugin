@@ -47,7 +47,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>package-xar</goal>
+              <goal>package</goal>
             </goals>
           </execution>
         </executions>
@@ -57,7 +57,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>test-package-xar</goal>
+              <goal>test-package</goal>
             </goals>
           </execution>
         </executions>

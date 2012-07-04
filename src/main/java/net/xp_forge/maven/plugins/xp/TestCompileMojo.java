@@ -19,7 +19,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
  * @goal test-compile
  * @requiresDependencyResolution
  */
-public class TestXccMojo extends AbstractXccMojo {
+public class TestCompileMojo extends AbstractCompileMojo {
 
   /**
    * Set this to 'true' to bypass unit tests entirely

@@ -13,8 +13,8 @@ import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.AbstractXccMojo;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.AbstractCompileMojo;
 
 /**
  * Run XP Framework XCC compiler (compile .xp sources)
@@ -22,7 +22,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
  * @goal compile
  * @requiresDependencyResolution compile
  */
-public class XccMojo extends AbstractXccMojo {
+public class CompileMojo extends AbstractCompileMojo {
 
   /**
    * The source directories containing the raw PHP sources to be copied
