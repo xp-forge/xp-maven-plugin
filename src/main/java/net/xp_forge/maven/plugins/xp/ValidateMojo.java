@@ -33,7 +33,7 @@ import net.xp_forge.maven.plugins.xp.util.IniProperties;
  * @goal validate
  * @requiresDependencyResolution compile
  */
-public class ValidateMojo extends AbstractXpFrameworkMojo {
+public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
   /**
    * {@inheritDoc}

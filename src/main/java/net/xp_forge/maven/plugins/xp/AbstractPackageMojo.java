@@ -27,7 +27,7 @@ import net.xp_forge.maven.plugins.xp.util.XarArchiver;
  * Build project package artifact
  *
  */
-public abstract class AbstractPackageMojo extends AbstractXpFrameworkMojo {
+public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   protected Archiver archiver;
 
   /**

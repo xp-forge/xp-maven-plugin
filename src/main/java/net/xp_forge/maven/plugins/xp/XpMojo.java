@@ -25,7 +25,7 @@ import net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput;
  * @goal xp
  * @requiresDependencyResolution runtime
  */
-public class XpMojo extends AbstractXpFrameworkMojo {
+public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
   /**
    * Display verbose diagnostics

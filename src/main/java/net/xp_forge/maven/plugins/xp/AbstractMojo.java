@@ -10,7 +10,6 @@ import java.io.File;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.execution.MavenSession;
@@ -20,7 +19,7 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
  * Base class for all MOJO's
  *
  */
-public abstract class AbstractXpFrameworkMojo extends AbstractMojo {
+public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
   public static final String LINE_SEPARATOR= "------------------------------------------------------------------------";
 
   /**

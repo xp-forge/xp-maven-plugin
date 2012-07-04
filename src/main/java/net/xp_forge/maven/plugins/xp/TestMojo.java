@@ -25,7 +25,7 @@ import net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput;
  * @goal test
  * @requiresDependencyResolution test
  */
-public class TestMojo extends AbstractXpFrameworkMojo {
+public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
   /**
    *
@@ -40,7 +40,7 @@ public class TestMojo extends AbstractXpFrameworkMojo {
    *
    * The -v argument for the unittest runner
    *
-   * @parameter expression="${xp.unittest.verbose}" default-value="false"
+   * @parameter expression="${xp.test.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -49,7 +49,7 @@ public class TestMojo extends AbstractXpFrameworkMojo {
    *
    * The -cp argument for the unittest runner
    *
-   * @parameter expression="${xp.unittest.classpaths}"
+   * @parameter expression="${xp.test.classpaths}"
    */
   protected ArrayList<String> classpaths;
 
@@ -58,14 +58,14 @@ public class TestMojo extends AbstractXpFrameworkMojo {
    *
    * The -a argument for the unittest runner
    *
-   * @parameter expression="${xp.unittest.testArguments}"
+   * @parameter expression="${xp.test.testArguments}"
    */
   protected ArrayList<String> testArguments;
 
   /**
    * Directory to scan for *.ini files
    *
-   * @parameter expression="${xp.unittest.iniDirectory}" default-value="${project.build.testOutputDirectory}/etc/unittest"
+   * @parameter expression="${xp.test.iniDirectory}" default-value="${project.build.testOutputDirectory}/etc/unittest"
    */
   protected File iniDirectory;
 
