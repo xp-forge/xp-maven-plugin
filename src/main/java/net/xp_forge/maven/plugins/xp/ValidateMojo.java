@@ -40,9 +40,6 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    */
   public void execute() throws MojoExecutionException {
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("VALIDATE XP-FRAMEWORK INSTALL");
-    getLog().info(LINE_SEPARATOR);
 
     // Prepare XP-Framework bootstrap
     if (this.local) {
@@ -55,7 +52,6 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
     // Alter default Maven settings
     this.alterSourceDirectories();
-    getLog().info(LINE_SEPARATOR);
   }
 
   /**

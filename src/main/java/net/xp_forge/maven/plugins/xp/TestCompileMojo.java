@@ -50,51 +50,31 @@ public class TestCompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
-  public void execute() throws MojoExecutionException {
+  protected List<String> getPhpSourceRoots() {
+    return this.testPhpSourceRoots;
+  }
 
-    // Skip tests alltogether?
-    if (this.skip) {
-      getLog().info("Not compiling test sources (maven.test.skip)");
-      return;
-    }
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected List<String> getCompileSourceRoots() {
+    return this.testCompileSourceRoots;
+  }
 
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("COPY TEST PHP SOURCES");
-    getLog().info(LINE_SEPARATOR);
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected String getAdditionalClasspath() {
+    return this.classesDirectory.getAbsolutePath();
+  }
 
-    // Copy hard-coded-path raw PHP files
-    if (null == this.testPhpSourceRoots || this.testPhpSourceRoots.isEmpty()) {
-      this.testPhpSourceRoots= new ArrayList<String>();
-      this.testPhpSourceRoots.add("src" + File.separator + "test" + File.separator + "php");
-    }
-    copyPhpSources(this.testPhpSourceRoots, this.testClassesDirectory);
-
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("COMPILE TEST XP SOURCES");
-    getLog().info(LINE_SEPARATOR);
-
-    // Cleanup test source roots
-    this.testCompileSourceRoots= FileUtils.filterEmptyDirectories(this.testCompileSourceRoots);
-    if (this.testCompileSourceRoots.isEmpty()) {
-      getLog().info("There are no test sources to compile");
-      return;
-    }
-
-    // Let [xcc] know where to get sources from
-    for (String testCompileSourceRoot : this.testCompileSourceRoots) {
-      this.addSourcepath(testCompileSourceRoot);
-    }
-
-    // Also add the PHP sources to classpath
-    for (String testPhpSourceRoot : this.testPhpSourceRoots) {
-      this.addClasspath(testPhpSourceRoot);
-    }
-
-    // Add [/target/classes] with already compiled sources to classpath
-    this.addClasspath(this.classesDirectory.getAbsolutePath());
-
-    // Execute [xcc]
-    this.executeXcc(this.testCompileSourceRoots, this.testClassesDirectory);
-    getLog().info(LINE_SEPARATOR);
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected boolean isSkip() {
+    return this.skip;
   }
 }

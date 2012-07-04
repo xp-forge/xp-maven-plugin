@@ -83,11 +83,6 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
 
-    // Run tests
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("UNITTEST");
-    getLog().info(LINE_SEPARATOR);
-
     // Skip tests alltogether?
     if (this.skip) {
       getLog().info("Not running tests (maven.test.skip)");
@@ -95,7 +90,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     }
 
     // Debug info
-    getLog().info("Ini files directory [" + this.iniDirectory + "]");
+    getLog().info("Running tests from [" + this.iniDirectory + "]");
     getLog().debug("Additional directories [" + (null == this.iniDirectories ? "NULL" : this.iniDirectories.toString()) + "]");
     getLog().debug("Classes directory      [" + this.classesDirectory + "]");
     getLog().debug("Test classes directory [" + this.testClassesDirectory + "]");
@@ -156,7 +151,5 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     } catch (RunnerException ex) {
       throw new MojoExecutionException("Execution of [unittest] runner failed", ex);
     }
-
-    getLog().info(LINE_SEPARATOR);
   }
 }

@@ -87,9 +87,6 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
    *
    */
   public void execute() throws MojoExecutionException {
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("BUILD PACKAGE");
-    getLog().info(LINE_SEPARATOR);
 
     // Init project.pth entries
     List<String> pthEntries= new ArrayList<String>();
@@ -188,8 +185,6 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     } catch (Exception ex) {
       throw new MojoExecutionException("Cannot create [" + this.format + "] archive to [" + outputFile + "]", ex);
     }
-
-    getLog().info(LINE_SEPARATOR);
   }
 
 

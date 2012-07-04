@@ -45,41 +45,31 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
-  public void execute() throws MojoExecutionException {
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("COPY PHP SOURCES");
-    getLog().info(LINE_SEPARATOR);
+  protected List<String> getPhpSourceRoots() {
+    return this.phpSourceRoots;
+  }
 
-    // Copy hard-coded-path raw PHP files
-    if (null == this.phpSourceRoots || this.phpSourceRoots.isEmpty()) {
-      this.phpSourceRoots= new ArrayList<String>();
-      this.phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
-    }
-    this.copyPhpSources(this.phpSourceRoots, this.classesDirectory);
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected List<String> getCompileSourceRoots() {
+    return this.compileSourceRoots;
+  }
 
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("COMPILE XP SOURCES");
-    getLog().info(LINE_SEPARATOR);
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected String getAdditionalClasspath() {
+    return null;
+  }
 
-    // Cleanup source roots
-    this.compileSourceRoots= FileUtils.filterEmptyDirectories(this.compileSourceRoots);
-    if (this.compileSourceRoots.isEmpty()) {
-      getLog().info("There are no sources to compile");
-      return;
-    }
-
-    // Let [xcc] know where to get sources from
-    for (String compileSourceRoot : this.compileSourceRoots) {
-      this.addSourcepath(compileSourceRoot);
-    }
-
-    // Also add the PHP sources to classpath
-    for (String phpSourceRoot : this.phpSourceRoots) {
-      this.addClasspath(phpSourceRoot);
-    }
-
-    // Execute [xcc]
-    this.executeXcc(this.compileSourceRoots, this.classesDirectory);
-    getLog().info(LINE_SEPARATOR);
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected boolean isSkip() {
+    return false;
   }
 }

@@ -76,6 +76,74 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
   protected ArrayList<String> profiles;
 
   /**
+   * Get PHP sources
+   *
+   */
+  protected abstract List<String> getPhpSourceRoots();
+
+  /**
+   * Get XP sources
+   *
+   */
+  protected abstract List<String> getCompileSourceRoots();
+
+  /**
+   * Get additional classpath
+   *
+   */
+  protected abstract String getAdditionalClasspath();
+
+  /**
+   * If true, skip compiling
+   *
+   */
+  protected abstract boolean isSkip();
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public void execute() throws MojoExecutionException {
+
+    // Skip tests alltogether?
+    if (this.isSkip()) {
+      getLog().info("Not compiling sources (maven.test.skip)");
+      return;
+    }
+
+    // Copy hard-coded-path raw PHP files
+    List<String> phpSourceRoots= this.getPhpSourceRoots();
+    if (null == phpSourceRoots || phpSourceRoots.isEmpty()) {
+      phpSourceRoots= new ArrayList<String>();
+      phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
+    }
+    this.copyPhpSources(phpSourceRoots, this.classesDirectory);
+
+    // Cleanup source roots
+    List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
+    if (compileSourceRoots.isEmpty()) {
+      getLog().info("There are no sources to compile");
+      return;
+    }
+
+    // Let [xcc] know where to get sources from
+    for (String compileSourceRoot : compileSourceRoots) {
+      this.addSourcepath(compileSourceRoot);
+    }
+
+    // Also add the PHP sources to classpath
+    for (String phpSourceRoot : phpSourceRoots) {
+      this.addClasspath(phpSourceRoot);
+    }
+
+    // Add additional classpath
+    this.addClasspath(this.getAdditionalClasspath());
+
+    // Execute [xcc]
+    this.executeXcc(compileSourceRoots, this.classesDirectory);
+  }
+
+  /**
    * Execute XP-Framework XCC compiler
    *
    * @param  java.util.List<String> sourceDirectories Source where .xp file are
@@ -188,6 +256,9 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
    * @return void
    */
   protected void addClasspath(String classpath) {
+    if (null == classpath) return;
+
+    // Init classpaths
     if (null == this.classpaths) this.classpaths= new ArrayList<String>();
 
     // Make classpath absolute

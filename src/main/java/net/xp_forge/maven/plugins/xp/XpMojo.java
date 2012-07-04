@@ -67,11 +67,6 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   public void execute() throws MojoExecutionException {
     Iterator i;
 
-    // Run tests
-    getLog().info(LINE_SEPARATOR);
-    getLog().info("RUN - XP CLASS");
-    getLog().info(LINE_SEPARATOR);
-
     // Debug info
     getLog().debug("Classes directory      [" + this.classesDirectory + "]");
     getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths.toString()) + "]");
@@ -113,7 +108,5 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     } catch (RunnerException ex) {
       throw new MojoExecutionException("Execution of [xp] runner failed", ex);
     }
-
-    getLog().info(LINE_SEPARATOR);
   }
 }
