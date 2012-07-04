@@ -9,9 +9,6 @@ package net.xp_forge.maven.plugins.xp.archiver.xar;
 import java.io.File;
 import java.io.IOException;
 
-import net.xp_forge.xar.XarEntry;
-import net.xp_forge.xar.XarArchive;
-
 import org.codehaus.plexus.archiver.AbstractArchiver;
 import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -19,6 +16,9 @@ import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils;
 import org.codehaus.plexus.archiver.util.ResourceUtils;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+
+import net.xp_forge.xar.XarEntry;
+import net.xp_forge.xar.XarArchive;
 
 /**
  * A plexus archiver implementation for XAR file format
@@ -31,6 +31,7 @@ public class XarArchiver extends AbstractArchiver {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws ArchiverException, IOException {
 
     // Get resources
@@ -75,6 +76,7 @@ public class XarArchiver extends AbstractArchiver {
    * {@inheritDoc}
    *
    */
+  @Override
   protected void close() throws IOException {
     getLogger().debug("XAR: Close archive [" + this.getDestFile() + "]");
     this.archive.save(this.getDestFile());
@@ -84,6 +86,7 @@ public class XarArchiver extends AbstractArchiver {
    * {@inheritDoc}
    *
    */
+  @Override
   protected String getArchiveType() {
     return "xar";
   }

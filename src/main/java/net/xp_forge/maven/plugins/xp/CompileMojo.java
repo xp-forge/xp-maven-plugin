@@ -45,6 +45,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected List<String> getPhpSourceRoots() {
     return this.phpSourceRoots;
   }
@@ -53,6 +54,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected List<String> getCompileSourceRoots() {
     return this.compileSourceRoots;
   }
@@ -61,6 +63,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected String getAdditionalClasspath() {
     return null;
   }
@@ -69,6 +72,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected boolean isSkip() {
     return false;
   }
