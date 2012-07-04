@@ -21,7 +21,7 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
-import net.xp_forge.maven.plugins.xp.util.XarArchiver;
+import net.xp_forge.maven.plugins.xp.archiver.xar.XarArchiver;
 
 /**
  * Build project package artifact
