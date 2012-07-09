@@ -22,7 +22,7 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected File getSrcDirectory() {
+  protected File getSourcesDirectory() {
     return this.testClassesDirectory;
   }
 }

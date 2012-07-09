@@ -22,7 +22,7 @@ public class PackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected File getSrcDirectory() {
+  protected File getSourcesDirectory() {
     return this.classesDirectory;
   }
 }

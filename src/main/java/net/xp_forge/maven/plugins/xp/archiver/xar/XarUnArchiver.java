@@ -47,7 +47,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
   protected void execute() throws ArchiverException {
     File srcFile       = this.getSourceFile();
     File destDirectory = this.getDestDirectory();
-    getLogger().debug("Expanding [" + srcFile + "] into [" + destDirectory + "]");
+    //getLogger().debug("Expanding [" + srcFile + "] into [" + destDirectory + "]");
 
     // Load archive
     try {
@@ -65,7 +65,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
     for (XarEntry entry : archive.getEntries()) {
       File outFile= new File(destDirectory, entry.getName().replace('/', File.separatorChar));
       try {
-        getLogger().debug("Expanding [" + entry.getName() + "] into [" + outFile + "]");
+        //getLogger().debug("Expanding [" + entry.getName() + "] into [" + outFile + "]");
         FileUtils.setFileContents(outFile, entry.getInputStream());
       } catch (IOException ex) {
         throw new ArchiverException("Error while expanding [" + entry.getName() + "]", ex);
@@ -83,7 +83,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
   @Override
   protected void execute(String path, File outputDirectory) throws ArchiverException {
     File srcFile= this.getSourceFile();
-    getLogger().debug("Expanding [" + srcFile + "#" + path + "] into [" + outputDirectory + "]");
+    //getLogger().debug("Expanding [" + srcFile + "#" + path + "] into [" + outputDirectory + "]");
 
     // Remove starting slash from path; if the case
     if (path.startsWith("/")) {
@@ -131,7 +131,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
       }
 
       try {
-        getLogger().debug("Expanding [" + entry.getName() + "] into [" + outputDirectory + "]");
+        //getLogger().debug("Expanding [" + entry.getName() + "] into [" + outputDirectory + "]");
         FileUtils.setFileContents(outFile, entry.getInputStream());
       } catch (IOException ex) {
         throw new ArchiverException("Error while expanding [" + entry.getName() + "]", ex);
