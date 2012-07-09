@@ -18,7 +18,7 @@ import net.xp_forge.xar.XarArchive;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 
 /**
- * A plexus archiver implementation for XAR file format
+ * A plexus unarchiver implementation for XAR file format
  *
  */
 public class XarUnArchiver extends AbstractUnArchiver {
