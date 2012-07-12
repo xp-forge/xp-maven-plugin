@@ -62,13 +62,14 @@ public class XarArchiver extends AbstractArchiver {
     while (it.hasNext()) {
       ArchiveEntry entry= it.next();
       PlexusIoResource entryRes= entry.getResource();
+      String entryName= entry.getName().replace('\\', '/');
 
       // Resource is directory
       if (entryRes.isDirectory()) continue;
 
       // Add file to archive
-      getLogger().debug("XAR: Add [" + entry.getName() + "] -> [" + entry.getFile() + "]");
-      this.archive.addEntry(new XarEntry(entry.getName(), entry.getFile()));
+      getLogger().debug("XAR: Add [" + entryName + "] -> [" + entry.getFile() + "]");
+      this.archive.addEntry(new XarEntry(entryName, entry.getFile()));
     }
   }
 

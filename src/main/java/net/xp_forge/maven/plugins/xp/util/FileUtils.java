@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
 import java.io.StringBufferInputStream;
 import java.util.List;
 import java.util.ArrayList;
@@ -116,19 +115,19 @@ public final class FileUtils {
     }
 
     // Save InputStream contents to file
-    BufferedOutputStream os= null;
+    FileOutputStream os= null;
     try {
-      os= new BufferedOutputStream(new FileOutputStream(file));
+      os= new FileOutputStream(file);
       byte[] buffer= new byte[2048];
       int bytesRead;
-      while (-1 != (bytesRead = is.read(buffer))) {
+      while (-1 != (bytesRead= is.read(buffer, 0, 2048))) {
         os.write(buffer, 0, bytesRead);
       }
-    } catch (Exception ex) {
-      throw new IOException("Failed to set file contents", ex);
-    } finally {
       is.close();
-      if (os != null) {
+      os.flush();
+      os.close();
+    } finally {
+      if (null != os) {
         os.close();
       }
     }

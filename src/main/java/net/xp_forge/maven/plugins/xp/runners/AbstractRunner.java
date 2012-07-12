@@ -180,7 +180,7 @@ public abstract class AbstractRunner {
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(classpaths, "\n"));
+      FileUtils.setFileContents(pthFile, StringUtils.join(classpaths, "\r\n"));
     } catch (IOException ex) {
       throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }

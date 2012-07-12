@@ -267,38 +267,44 @@ public class IniProperties {
   }
 
   /**
-   * Dumps properties to output stream
+   * Dumps properties to specified file
    *
-   * @param  java.io.PrintStream out
+   * @param  java.io.File file
    * @return void
    */
-  public void dump(PrintStream out) {
+  public void dump(File file) throws IOException {
+    PrintStream out= new PrintStream(file);
 
     // Global properties
     Iterator<String> props= this.properties();
     while (props.hasNext()) {
       String name= props.next();
-      out.printf("%s=%s\n", name, IniProperties.dumpEscape(this.getProperty(name)));
+      out.printf("%s=%s\r\n", name, IniProperties.dumpEscape(this.getProperty(name)));
     }
 
-    // sections
+    // Sections
     Iterator<String> sections= this.sections();
     while (sections.hasNext()) {
       String section= sections.next();
-      out.printf("\n[%s]\n", section);
+      out.printf("\r\n[%s]\r\n", section);
       props= this.properties(section);
       while (props.hasNext()) {
         String name= props.next();
-        out.printf("%s=%s\n", name, IniProperties.dumpEscape(this.getProperty(section, name)));
+        out.printf("%s=%s\r\n", name, IniProperties.dumpEscape(this.getProperty(section, name)));
       }
     }
+
+    // Close stream
+    out.flush();
+    out.close();
   }
 
   private static String dumpEscape(String s) {
-    return s.replaceAll("\\\\", "\\\\\\\\")
-      .replaceAll(";", "\\\\;")
-      .replaceAll("#", "\\\\#")
-      .replaceAll("(\r?\n|\r)", "\\\\$1");
+    return s;
+//    return s.replaceAll("\\\\", "\\\\\\\\")
+//      .replaceAll(";", "\\\\;")
+//      .replaceAll("#", "\\\\#")
+//      .replaceAll("(\r?\n|\r)", "\\\\$1");
   }
 
   /**

@@ -144,8 +144,12 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
       );
     }
 
-    // Attach generated archive as project artifact
-    this.project.getArtifact().setFile(outputFile);
+    // Attach/set generated archive as project artifact
+    if (null != this.classifier) {
+      this.projectHelper.attachArtifact(this.project, this.format, this.classifier, outputFile);
+    } else {
+      this.project.getArtifact().setFile(outputFile);
+    }
   }
 
   /**
@@ -241,7 +245,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     getLog().info("Packing on-the-fly created [runtime.pth] to archive");
     File pthFile= new File(this.outputDirectory, "runtime.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\n"));
+      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\r\n"));
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }
@@ -276,7 +280,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     getLog().info("Packing on-the-fly created [project.pth] to archive");
     File pthFile= new File(this.outputDirectory, "project.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\n"));
+      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\r\n"));
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }

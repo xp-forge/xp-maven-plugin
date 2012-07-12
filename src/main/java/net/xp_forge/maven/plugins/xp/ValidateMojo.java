@@ -8,7 +8,6 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.HashMap;
@@ -121,9 +120,9 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Create [target/bootstrap/boot.pth]
     File pthFile= new File(bootstrapDirectory, "boot.pth");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries.toArray(), "\n"));
+      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries.toArray(), "\r\n"));
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot write [" + pthFile + "]");
+      throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
     }
 
     // Extract XP-runners
@@ -155,8 +154,8 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Dump ini file
     File iniFile= new File(this.runnersDirectory, "xp.ini");
     try {
-      ini.dump(new PrintStream(iniFile));
-    } catch (FileNotFoundException ex) {
+      ini.dump(iniFile);
+    } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + iniFile + "]", ex);
     }
   }
