@@ -37,7 +37,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
   /**
    * Name of the generated XAR
    *
-   * @parameter default-value="${project.build.finalName}"
+   * @parameter expression="${project.build.finalName}"
    * @required
    */
   protected String finalName;
@@ -70,15 +70,15 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
   protected String format;
 
   /**
-   * Specify how to pack dependencies. There are 3 options:
-   * - ignore  - dependencies are ignored when building the package artifact
-   * - include - dependencies are included in the package artifact in "lib" directory
-   * - merge   - dependencies are merged in the package artifact
+   * Specify if dependencies will also be packed
    *
-   * @parameter expression="${xp.package.packDependencies}" default-value="ignore"
+   * For "app" stragegy, dependencies will be packed to "lib"
+   * For "lib" stragegy, dependencies will be merged to "/"
+   *
+   * @parameter expression="${xp.package.packDependencies}" default-value="false"
    * @required
    */
-  protected String packDependencies;
+  protected boolean packDependencies;
 
   /**
    * Specify if XP-artifacts (core & tools) and the XP-runners should also be packed
@@ -107,34 +107,25 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
 
     getLog().info("Classes directory  [" + this.getSourcesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
-    getLog().info("Pack runtime       [" + (this.packRuntime ? "yes" : "no") + "]");
-    getLog().info("Pack dependencies  [" + this.packDependencies + "]");
     getLog().info("Packaging strategy [" + this.strategy + "]");
     getLog().info("Artifact format    [" + this.format + "]");
+    getLog().info("Pack runtime       [" + (this.packRuntime ? "yes" : "no") + "]");
+    getLog().info("Pack dependencies  [" + (this.packDependencies ? "yes" : "no") + "]");
 
     // Load archiver
     this.archiver= ArchiveUtils.getArchiver(outputFile);
 
     // Package library
     if (this.strategy.equals("lib")) {
-
-      // Pack project classes
       this.packClasses(null);
+      if (this.packDependencies) this.mergeDependencies();
 
     // Package application
     } else if (this.strategy.equals("app")) {
-
-      // Pack project classes
       this.packClasses("classes/");
-
-      // Pack XP-runtime
-      this.packRuntime();
-
-      // Pack project dependencies
-      this.packDependencies();
-
-      // Pack application resources
       this.packApplicationResources();
+      if (this.packRuntime) this.includeRuntime();
+      if (this.packDependencies) this.includeDependencies();
 
     // Invalid packing strategy
     } else{
@@ -192,13 +183,16 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
   }
 
   /**
-   * Pack XP-runtime
+   * Include XP-runtime
+   *
+   * - Include bootstrap files into "runtime/bootstrap"
+   * - Include XP-artifacts into "runtime/lib"
+   * - Generate [runtime.pth] and include it into archive root
    *
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
-  private void packRuntime() throws MojoExecutionException {
-    if (!this.packRuntime) return;
-    getLog().info("Packing XP-runtime");
+  private void includeRuntime() throws MojoExecutionException {
+    getLog().info("Including XP-runtime");
 
     // Init [runtime.pth] entries
     List<String> pthEntries= new ArrayList<String>();
@@ -257,86 +251,73 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
   }
 
   /**
-   * Pach project dependencies into archive
+   * Include project dependencies into "lib"
    *
+   * @return void
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
-  private void packDependencies() throws MojoExecutionException {
+  private void includeDependencies() throws MojoExecutionException {
+    List<String> pthEntries= new ArrayList<String>();
 
-    // Ignore dependencies
-    if (this.packDependencies.equals("ignore")) return;
+    getLog().info("Including dependencies");
+    for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
+      getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
 
-    // Include dependencies into the "lib" folder
-    if (this.packDependencies.equals("include")) {
-      List<String> pthEntries= new ArrayList<String>();
-
-      getLog().info("Including dependencies");
-      for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
-        getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
-
-        getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
-        this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
-        pthEntries.add("libs/" + artifact.getFile().getName());
-      }
-
-      // Add libs to [project.pth]
-      pthEntries.add("classes");
-      pthEntries.add("lib");
-
-      // On-the-fly generate a "project.pth" file and add it to archive
-      getLog().info("Packing on-the-fly created [project.pth] to archive");
-      File pthFile= new File(this.outputDirectory, "project.pth-package");
-      try {
-        FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\n"));
-      } catch (IOException ex) {
-        throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
-      }
-
-      getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
-      this.archiver.addFile(pthFile, "project.pth");
-
-      // Done
-      return;
+      getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
+      this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
+      pthEntries.add("libs/" + artifact.getFile().getName());
     }
 
-    // Include dependencies into the [lib] folder
-    if (this.packDependencies.equals("merge")) {
-      getLog().info("Merging dependencies");
+    // Add libs to [project.pth]
+    pthEntries.add("classes");
+    pthEntries.add("lib");
 
-      File tmpDirectory= new File(new File(this.outputDirectory, "package.tmp"), "dependencies");
-      for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
-        getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
-
-        try {
-          ArchiveUtils.dumpArtifact(artifact, tmpDirectory, artifact.getClassifier().equals("patch"));
-        } catch (ArchiverException ex) {
-          throw new MojoExecutionException("Cannot dump artifact [" + artifact.getFile() + "] into [" + tmpDirectory + "]");
-        }
-      }
-
-      // Add dump dumpDirectory to archive
-      getLog().debug(" - Add directory [" + tmpDirectory + "] to [classes/]");
-      archiver.addDirectory(tmpDirectory, "classes/");
-
-      // Done
-      return;
+    // On-the-fly generate a "project.pth" file and add it to archive
+    getLog().info("Packing on-the-fly created [project.pth] to archive");
+    File pthFile= new File(this.outputDirectory, "project.pth-package");
+    try {
+      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\n"));
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }
 
-    // Invalid settings for ${xp.package.packDependencies}
-    throw new MojoExecutionException(
-      "${xp.package.packDependencies} has an invalid value [" + this.packDependencies + "]"
-    );
+    getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
+    this.archiver.addFile(pthFile, "project.pth");
   }
 
   /**
-   * Pack application resources: "doc_root", "etc", "xsl"
+   * Merge project dependencies into archive root
+   *
+   * @return void
+   * @throw  org.apache.maven.plugin.MojoExecutionException
+   */
+  private void mergeDependencies() throws MojoExecutionException {
+    getLog().info("Merging dependencies");
+
+    File tmpDirectory= new File(new File(this.outputDirectory, "package.tmp"), "dependencies");
+    for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
+      getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
+
+      try {
+        ArchiveUtils.dumpArtifact(artifact, tmpDirectory, artifact.getClassifier().equals("patch"));
+      } catch (ArchiverException ex) {
+        throw new MojoExecutionException("Cannot dump artifact [" + artifact.getFile() + "] into [" + tmpDirectory + "]");
+      }
+    }
+
+    // Add dump dumpDirectory to archive
+    getLog().debug(" - Add directory [" + tmpDirectory + "] to [/]");
+    archiver.addDirectory(tmpDirectory);
+  }
+
+  /**
+   * Pack application resources: "doc_root", "etc", "xsl" into archive root
    *
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
   private void packApplicationResources() throws MojoExecutionException {
+    getLog().info("Including application resources");
 
-    // Add application directories
-    getLog().info("Packing application resources");
     File mainDir= new File(this.project.getBuild().getSourceDirectory()).getParentFile();
     for (String appDirName : Arrays.asList("doc_root", "etc", "xsl")) {
 
