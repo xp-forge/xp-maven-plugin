@@ -20,6 +20,7 @@ import java.util.ArrayList;
  *
  */
 public final class FileUtils {
+  private static File tempDirectory;
 
   /**
    * Utility classes should not have a public or default constructor
@@ -131,5 +132,35 @@ public final class FileUtils {
         os.close();
       }
     }
+  }
+
+  /**
+   *
+   *
+   */
+  public static void setTempDirectory(File directory) {
+    if (!directory.exists()) {
+      directory.mkdirs();
+    }
+    FileUtils.tempDirectory= directory;
+  }
+
+  /**
+   * Create a temporary directory
+   *
+   * @return java.io.File
+   * @throw  java.io.IOException
+   */
+  public static File getTempDirectory() throws IOException {
+
+    // Create a temporary file to get a unique name
+    File tmpFile= File.createTempFile("mxp-", null, FileUtils.tempDirectory);
+    tmpFile.deleteOnExit();
+
+    // Create temporary directory
+    File tmpDirectory= new File(tmpFile.getPath() + ".directory");
+    tmpDirectory.mkdirs();
+    tmpDirectory.deleteOnExit();
+    return tmpDirectory;
   }
 }

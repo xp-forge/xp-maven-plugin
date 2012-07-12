@@ -17,7 +17,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
  * Run XP Framework XCC compiler (compile test .xp sources)
  *
  * @goal test-compile
- * @requiresDependencyResolution
+ * @requiresDependencyResolution compile
  */
 public class TestCompileMojo extends AbstractCompileMojo {
 
@@ -39,8 +39,9 @@ public class TestCompileMojo extends AbstractCompileMojo {
 
   /**
    * The source directories containing the sources to be compiled
+   * Default value: [src/test/xp]
    *
-   * @parameter default-value="${project.testCompileSourceRoots}"
+   * @parameter expression="${project.testCompileSourceRoots}"
    * @required
    * @readonly
    */
@@ -52,6 +53,10 @@ public class TestCompileMojo extends AbstractCompileMojo {
    */
   @Override
   protected List<String> getPhpSourceRoots() {
+    if (null == this.testPhpSourceRoots || this.testPhpSourceRoots.isEmpty()) {
+      this.testPhpSourceRoots= new ArrayList<String>();
+      this.testPhpSourceRoots.add("src" + File.separator + "test" + File.separator + "php");
+    }
     return this.testPhpSourceRoots;
   }
 
@@ -71,6 +76,14 @@ public class TestCompileMojo extends AbstractCompileMojo {
   @Override
   protected String getAdditionalClasspath() {
     return this.classesDirectory.getAbsolutePath();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected File getClassesDirectory() {
+    return this.testClassesDirectory;
   }
 
   /**

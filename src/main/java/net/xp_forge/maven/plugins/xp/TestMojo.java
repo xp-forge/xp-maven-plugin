@@ -102,7 +102,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     input.verbose= this.verbose;
 
     // Add dependency classpaths
-    input.addClasspath(project.getArtifacts());
+    input.addClasspath(this.getArtifacts(false));
 
     // Add custom classpaths
     input.addClasspath(this.classpaths);
@@ -136,7 +136,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Configure [unittest] runner
     File executable= new File(this.runnersDirectory, "unittest");
     UnittestRunner runner= new UnittestRunner(executable, input);
-    runner.setTrace(getLog());
+    runner.setLog(getLog());
 
     // Set runner working directory to [/target]
     try {

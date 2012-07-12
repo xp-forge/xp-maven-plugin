@@ -41,26 +41,11 @@ public class AbstractClasspathRunnerInput {
   public void addClasspath(Set<Artifact> artifacts) {
     for (Artifact artifact : artifacts) {
 
-      // Ignore non-XAR artifacts
-      if (!artifact.getType().equalsIgnoreCase("xar")) continue;
-
-      // Ignore XP-Framework artifacts (loaded via bootstrap)
-      if (
-        artifact.getGroupId().equals("net.xp-framework") &&
-        (
-          artifact.getArtifactId().equals("core") ||
-          artifact.getArtifactId().equals("tools") ||
-          artifact.getArtifactId().equals("language")
-        )
-      ) {
-        continue;
-      }
-
       // Add to classpath
       if (artifact.getClassifier().equals("patch")) {
         this.addClasspath("!" + artifact.getFile().getAbsolutePath());
       } else {
-        this.addClasspath(artifact.getFile().getAbsolutePath());
+        this.addClasspath(artifact.getFile());
       }
     }
   }
@@ -73,7 +58,6 @@ public class AbstractClasspathRunnerInput {
    */
   public void addClasspath(List<String> classpaths) {
     if (null == classpaths) return;
-
     for (String classpath : classpaths) {
       this.addClasspath(classpath);
     }
@@ -101,15 +85,11 @@ public class AbstractClasspathRunnerInput {
   /**
    * Setter for classpaths
    *
-   * @param  java.io.File file XAR to add to classpath
+   * @param  java.io.File file Archive to add to classpath
    * @return void
    */
   public void addClasspath(File file) {
-
-    // Invalid path
-    if (!file.exists()) {
-      return;
-    }
+    if (!file.exists()) return;
 
     // Add to list
     this.addClasspath(file.getAbsolutePath());

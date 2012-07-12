@@ -9,12 +9,9 @@ package net.xp_forge.maven.plugins.xp;
 import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
-
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
-import net.xp_forge.maven.plugins.xp.AbstractCompileMojo;
 
 /**
  * Run XP Framework XCC compiler (compile .xp sources)
@@ -34,8 +31,9 @@ public class CompileMojo extends AbstractCompileMojo {
 
   /**
    * The source directories containing the sources to be compiled
+   * Default value: [src/main/xp]
    *
-   * @parameter default-value="${project.compileSourceRoots}"
+   * @parameter expression="${project.compileSourceRoots}"
    * @required
    * @readonly
    */
@@ -47,6 +45,10 @@ public class CompileMojo extends AbstractCompileMojo {
    */
   @Override
   protected List<String> getPhpSourceRoots() {
+    if (null == this.phpSourceRoots || this.phpSourceRoots.isEmpty()) {
+      this.phpSourceRoots= new ArrayList<String>();
+      this.phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
+    }
     return this.phpSourceRoots;
   }
 
@@ -66,6 +68,14 @@ public class CompileMojo extends AbstractCompileMojo {
   @Override
   protected String getAdditionalClasspath() {
     return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected File getClassesDirectory() {
+    return this.classesDirectory;
   }
 
   /**

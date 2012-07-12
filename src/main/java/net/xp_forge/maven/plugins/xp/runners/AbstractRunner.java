@@ -26,7 +26,7 @@ import net.xp_forge.maven.plugins.xp.runners.RunnerException;
  *
  */
 public abstract class AbstractRunner {
-  private Log cat;
+  private Log log;
   private File executable;
   private File workingDirectory;
   private Map<String, String> environmentVariables= new HashMap<String, String>();
@@ -50,45 +50,20 @@ public abstract class AbstractRunner {
   /**
    * Set logging trace
    *
-   * @param  org.apache.maven.plugin.logging.Log cat
+   * @param  org.apache.maven.plugin.logging.Log log
    * @return void
    */
-  public void setTrace(Log cat) {
-    this.cat= cat;
+  public void setLog(Log log) {
+    this.log= log;
   }
 
   /**
-   * Output an INFO message to log
+   * Get logging trace
    *
-   * @param  java.lang.String msg Message to output
-   * @return void
+   * @return org.apache.maven.plugin.logging.Log
    */
-  protected void info(String msg) {
-    if (null == this.cat) return;
-    this.cat.info(msg);
-  }
-
-  /**
-   * Output an ERROR message to log
-   *
-   * @param  java.lang.String msg Message to output
-   * @return void
-   */
-  protected void error(String msg) {
-    if (null == this.cat) return;
-    this.cat.error(msg);
-  }
-
-  /**
-   * Output an ERROR message to log
-   *
-   * @param  java.lang.String msg Message to output
-   * @param  java.lang.Throwable ex Caught exception
-   * @return void
-   */
-  protected void error(String msg, Throwable ex) {
-    if (null == this.cat) return;
-    this.cat.error(msg, ex);
+  public Log getLog() {
+    return this.log;
   }
 
   /**
@@ -174,7 +149,7 @@ public abstract class AbstractRunner {
         arguments,
         this.getWorkingDirectory(),
         this.getEnvironmentVariables(),
-        this.cat
+        this.log
       );
     } catch (ExecutionException ex) {
       throw new RunnerException("Execution failed", ex);

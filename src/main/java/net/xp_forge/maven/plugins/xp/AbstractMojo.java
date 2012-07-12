@@ -7,6 +7,8 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
@@ -76,7 +78,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * The directory containing generated classes of the project being tested
    * This will be included after the test classes in the test classpath
    *
-   * @parameter default-value="${project.build.outputDirectory}"
+   * @parameter expression="${project.build.outputDirectory}"
    */
   protected File classesDirectory;
 
@@ -84,14 +86,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * The directory containing generated test classes of the project being tested
    * This will be included at the beginning of the test classpath
    *
-   * @parameter default-value="${project.build.testOutputDirectory}"
+   * @parameter expression="${project.build.testOutputDirectory}"
    */
   protected File testClassesDirectory;
 
   /**
    * Whether to use local XP-Framework install or to use bootstrap in [/target]. Default [false].
    *
-   * @parameter default-value="${xp.runtime.local}"
+   * @parameterexpression="${xp.runtime.local}"
    */
   protected boolean local;
 
@@ -99,27 +101,26 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * Directory where XP runners are located. If not set, runners will be
    * extracted from resources to "${project.build.directory}/bootstrap/runners"
    *
-   * @parameter default-value="${xp.runtime.runners.directory}"
+   * @parameter expression="${xp.runtime.runners.directory}"
    */
   protected File runnersDirectory;
 
   /**
    * Bootstrap timezone. If not set will use system default
    *
-   * @parameter default-value="${xp.runtime.timezone}"
+   * @parameter expression="${xp.runtime.timezone}"
    */
   protected String timezone;
 
   /**
    * Location of the PHP executable. If not set will search for it in PATH
    *
-   * @parameter default-value="${xp.runtime.php}"
+   * @parameter expression="${xp.runtime.php}"
    */
   protected File php;
 
   /**
    * Helper function to find a project dependency
-   *
    *
    * @param  java.lang.String groupId
    * @param  java.lang.String artifactId
@@ -140,7 +141,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
   /**
    * Helper function to find a project artifact
    *
-   *
    * @param  java.lang.String groupId
    * @param  java.lang.String artifactId
    * @return org.apache.maven.artifact.Artifact null if the specified artifact cannot be found
@@ -155,5 +155,30 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     // Specified artifact not found
     return null;
+  }
+
+  /**
+   * Helper function to return all project artifacts
+   *
+   *
+   * @param  boolean includeXpArtifacts
+   * @return java.util.Set<org.apache.maven.artifact.Artifact> null if the specified artifact cannot be found
+   */
+  @SuppressWarnings("unchecked")
+  protected Set<Artifact> getArtifacts(boolean includeXpArtifacts) {
+
+    // Short-circut
+    if (includeXpArtifacts) {
+      return this.project.getArtifacts();
+    }
+
+    // Return all non XP-artifacts
+    Set<Artifact> retVal= new HashSet<Artifact>();
+    for (Artifact artifact : (Iterable<Artifact>)this.project.getArtifacts()) {
+      if (artifact.getGroupId().equals("net.xp-framework")) continue;
+      retVal.add(artifact);
+    }
+
+    return retVal;
   }
 }

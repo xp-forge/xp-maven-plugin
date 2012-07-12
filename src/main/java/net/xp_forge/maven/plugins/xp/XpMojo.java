@@ -78,7 +78,7 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     input.verbose= this.verbose;
 
     // Add dependency classpaths
-    input.addClasspath(project.getArtifacts());
+    input.addClasspath(this.getArtifacts(false));
 
     // Add custom classpaths
     input.addClasspath(this.classpaths);
@@ -93,7 +93,7 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Configure "xp" runner
     File executable= new File(this.runnersDirectory, "xp");
     XpRunner runner= new XpRunner(executable, input);
-    runner.setTrace(getLog());
+    runner.setLog(getLog());
 
     // Set runner working directory to [/target]
     try {

@@ -94,6 +94,12 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
   protected abstract String getAdditionalClasspath();
 
   /**
+   * Get classes directory where to output copied/compiled classes
+   *
+   */
+  protected abstract File getClassesDirectory();
+
+  /**
    * If true, skip compiling
    *
    */
@@ -111,13 +117,9 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
       return;
     }
 
-    // Copy hard-coded-path raw PHP files
+    // Copy raw PHP files
     List<String> phpSourceRoots= this.getPhpSourceRoots();
-    if (null == phpSourceRoots || phpSourceRoots.isEmpty()) {
-      phpSourceRoots= new ArrayList<String>();
-      phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
-    }
-    this.copyPhpSources(phpSourceRoots, this.classesDirectory);
+    this.copyPhpSources(phpSourceRoots, this.getClassesDirectory());
 
     // Cleanup source roots
     List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
@@ -140,7 +142,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
     this.addClasspath(this.getAdditionalClasspath());
 
     // Execute [xcc]
-    this.executeXcc(compileSourceRoots, this.classesDirectory);
+    this.executeXcc(compileSourceRoots, this.getClassesDirectory());
   }
 
   /**
@@ -182,7 +184,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
     input.verbose= this.verbose;
 
     // Add dependency classpaths
-    input.addClasspath(project.getArtifacts());
+    input.addClasspath(this.getArtifacts(false));
 
     // Add custom classpaths
     input.addClasspath(this.classpaths);
@@ -215,7 +217,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
     // Configure [xcc] runner
     File executable= new File(this.runnersDirectory, "xcc");
     XccRunner runner= new XccRunner(executable, input);
-    runner.setTrace(getLog());
+    runner.setLog(getLog());
 
     // Set runner working directory to [/target]
     try {

@@ -16,16 +16,15 @@ import java.util.Calendar;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.apache.maven.plugin.MojoExecutionException;
-
-import net.xp_forge.xar.XarArchive;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xp.util.IniProperties;
+import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
+import net.xp_forge.maven.plugins.xp.ini.IniProperties;
 
 /**
  * Check for the presence of XP-Framework runners
@@ -41,11 +40,11 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    */
   public void execute() throws MojoExecutionException {
 
-    // Prepare XP-Framework bootstrap
+    // Prepare XP-Framework runtime
     if (this.local) {
-      this.setupUserBootstrap();
+      this.setupUserRuntime();
     } else {
-      this.setupLocalBootstrap();
+      this.setupLocalRuntime();
     }
     getLog().info("Using runners from [" + this.runnersDirectory.getAbsolutePath() + "]");
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
@@ -55,79 +54,79 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   }
 
   /**
-   * Use XP-Framework installed on local machine by searching for XP runners in PATH
+   * Use XP-Framework runtime already installed on local machine
+   * by searching for XP runners in PATH
    *
    * @return void
    * @throws import org.apache.maven.plugin.MojoExecutionException
    */
-  private void setupUserBootstrap() throws MojoExecutionException {
-    getLog().debug("Looking for XP-Framework local install");
+  private void setupUserRuntime() throws MojoExecutionException {
+    getLog().debug("Looking for XP-Framework local runtime");
     try {
       this.runnersDirectory= ExecuteUtils.getExecutable("xp").getParentFile();
-
-    // Extract runners from resources
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot find XP Framework local install", ex);
+      throw new MojoExecutionException("Cannot find XP Framework local runtime", ex);
     }
   }
 
   /**
-   * Prepare our own bootstrap in [/target/bootstrap]
+   * Prepare our own XP-runtime in [target/.runtime]
    *
    * @return void
    * @throws import org.apache.maven.plugin.MojoExecutionException
    */
-  private void setupLocalBootstrap() throws MojoExecutionException {
-    getLog().debug("Preparing XP-Framework bootstrap");
-    File bootstrapDirectory= new File(this.outputDirectory, "_bootstrap");
-    this.runnersDirectory= new File(this.outputDirectory, "_runners");
+  private void setupLocalRuntime() throws MojoExecutionException {
+    UnArchiver unArchiver;
 
-    // Init boot.pth entries
-    List<String> bootEntries= new ArrayList<String>();
-    bootEntries.add(bootstrapDirectory.getAbsolutePath());
+    getLog().debug("Preparing XP-Framework runtime");
+    File runtimeDirectory= new File(this.outputDirectory, ".runtime");
 
-    // ===== Get dependencies for [net.xp-framework:core]
+    File bootstrapDirectory= new File(runtimeDirectory, "bootstrap");
+    this.runnersDirectory= new File(runtimeDirectory, "runners");
+
+    // Init [boot.pth] entries
+    List<String> pthEntries= new ArrayList<String>();
+    pthEntries.add(bootstrapDirectory.getAbsolutePath());
+
+    // Locate required XP-artifacts: core & tools
     Artifact coreArtifact= this.findArtifact("net.xp-framework", "core");
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
 
-    // Extract [lang.base.php] from [net.xp-framework:core]
-    // Target: [/target/bootstrap]
-    this.extract("lang.base.php", coreArtifact, new File(bootstrapDirectory, "lang.base.php"));
-    bootEntries.add(coreArtifact.getFile().getAbsolutePath());
-
-    // ===== Get dependencies for [net.xp-framework:core]
     Artifact toolsArtifact = this.findArtifact("net.xp-framework", "tools");
     if (null == toolsArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }
 
-    // Extract [tools/class.php], [tools/web.php] and [tools/xar.php] from [net.xp-framework:tools]
-    // Target: [/target/bootstrap/tools]
-    File toolsDirectory= new File(bootstrapDirectory, "tools");
-    this.extract("tools/class.php", toolsArtifact, new File(toolsDirectory, "class.php"));
-    this.extract("tools/web.php", toolsArtifact, new File(toolsDirectory, "web.php"));
-    this.extract("tools/xar.php", toolsArtifact, new File(toolsDirectory, "xar.php"));
-    bootEntries.add(toolsArtifact.getFile().getAbsolutePath());
+    pthEntries.add(coreArtifact.getFile().getAbsolutePath());
+    pthEntries.add(toolsArtifact.getFile().getAbsolutePath());
 
-    // ===== Get dependencies for [net.xp-framework:language] - NOT required
+    // Locate optional XP-artifacts: language
     Artifact languageArtifact= this.findArtifact("net.xp-framework", "language");
     if (null != languageArtifact) {
-      bootEntries.add(languageArtifact.getFile().getAbsolutePath());
+      pthEntries.add(languageArtifact.getFile().getAbsolutePath());
     }
 
-    // Create [/target/bootstrap/boot.pth]
+    // Unpack bootstrap
+    unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
+    unArchiver.extract("lang.base.php", bootstrapDirectory);
+
+    File toolsDirectory= new File(bootstrapDirectory, "tools");
+    unArchiver= ArchiveUtils.getUnArchiver(toolsArtifact);
+    unArchiver.extract("tools/class.php", toolsDirectory);
+    unArchiver.extract("tools/web.php", toolsDirectory);
+    unArchiver.extract("tools/xar.php", toolsDirectory);
+
+    // Create [target/bootstrap/boot.pth]
+    File pthFile= new File(bootstrapDirectory, "boot.pth");
     try {
-      FileUtils.setFileContents(
-        new File(bootstrapDirectory, "boot.pth"),
-        StringUtils.join(bootEntries.toArray(), "\n")
-      );
+      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries.toArray(), "\n"));
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot save [/target/bootstrap/boot.pth] file");
+      throw new MojoExecutionException("Cannot write [" + pthFile + "]");
     }
 
-    // ===== Extract runners
+    // Extract XP-runners
     try {
       getLog().debug(" - Extracting runners from resources");
 
@@ -139,7 +138,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
       ExecuteUtils.saveRunner("unittest", this.runnersDirectory);
 
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot extract XP runners", ex);
+      throw new MojoExecutionException("Cannot extract XP-runners to [" + this.runnersDirectory + "]", ex);
     }
 
     // Set USE_XP
@@ -154,11 +153,11 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     ini.setProperty("runtime", "date.timezone", this.timezone);
 
     // Dump ini file
+    File iniFile= new File(this.runnersDirectory, "xp.ini");
     try {
-      File iniFile= new File(this.runnersDirectory, "xp.ini");
       ini.dump(new PrintStream(iniFile));
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot save [xp.ini] file", ex);
+      throw new MojoExecutionException("Cannot write [" + iniFile + "]", ex);
     }
   }
 
@@ -214,26 +213,6 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Update ${xp.runtime.timezone} property
     getLog().debug(" - Using timezone [" + this.timezone + "]");
     this.project.getProperties().setProperty("xp.runtime.timezone", this.timezone);
-  }
-
-  /**
-   * Extract the specified xar entry to the specified destination
-   *
-   * @param  java.lang.String entry
-   * @param  org.apache.maven.artifact.Artifact artifact
-   * @param  java.io.File out
-   * @return void
-   * @throws org.apache.maven.plugin.MojoExecutionException
-   */
-  private void extract(String entry, Artifact artifact, File out) throws MojoExecutionException {
-    try {
-      FileUtils.setFileContents(out, new XarArchive(artifact.getFile()).getEntry(entry).getInputStream());
-    } catch (IOException ex) {
-      throw new MojoExecutionException(
-        "Cannot extract [" + entry + "] from [" + artifact.getFile() + "] to [" + out + "]",
-        ex
-      );
-    }
   }
 
   /**
