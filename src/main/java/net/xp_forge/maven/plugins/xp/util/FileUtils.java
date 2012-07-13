@@ -139,7 +139,7 @@ public final class FileUtils {
    * Save contents to the specified file
    *
    * @param  java.io.File file
-   * @param  java.lang.String text
+   * @param  java.util.List<java.lang.String> lines
    * @throw  java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, List<String> lines) throws IOException {
