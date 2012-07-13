@@ -268,7 +268,12 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
 
       getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
       this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
-      pthEntries.add("libs/" + artifact.getFile().getName());
+
+      if (artifact.getClassifier().equals("patch")) {
+        pthEntries.add("!libs/" + artifact.getFile().getName());
+      } else {
+        pthEntries.add("libs/" + artifact.getFile().getName());
+      }
     }
 
     // Add libs to [project.pth]
