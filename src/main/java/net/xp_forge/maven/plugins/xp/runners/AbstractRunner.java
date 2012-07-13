@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
@@ -180,7 +179,7 @@ public abstract class AbstractRunner {
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(classpaths, "\r\n"));
+      FileUtils.setFileContents(pthFile, classpaths);
     } catch (IOException ex) {
       throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }

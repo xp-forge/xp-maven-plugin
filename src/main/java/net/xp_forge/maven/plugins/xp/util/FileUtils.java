@@ -14,6 +14,8 @@ import java.io.StringBufferInputStream;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Utility class
  *
@@ -83,17 +85,6 @@ public final class FileUtils {
    * Save contents to the specified file
    *
    * @param  java.io.File file
-   * @param  java.lang.String text
-   * @throw  java.io.IOException when I/O errors occur
-   */
-  public static void setFileContents(File file, String text) throws IOException {
-    FileUtils.setFileContents(file, new StringBufferInputStream(text));
-  }
-
-  /**
-   * Save contents to the specified file
-   *
-   * @param  java.io.File file
    * @param  java.io.InputStream is
    * @throw  java.io.IOException when I/O errors occur
    */
@@ -131,6 +122,30 @@ public final class FileUtils {
         os.close();
       }
     }
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.lang.String text
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, String text) throws IOException {
+    FileUtils.setFileContents(file, new StringBufferInputStream(text));
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.lang.String text
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, List<String> lines) throws IOException {
+    FileUtils.setFileContents(file, new StringBufferInputStream(
+      StringUtils.join(lines, String.format("%n"))
+    ));
   }
 
   /**

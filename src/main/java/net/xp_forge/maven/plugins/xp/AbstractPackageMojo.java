@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -245,7 +244,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     getLog().info("Packing on-the-fly created [runtime.pth] to archive");
     File pthFile= new File(this.outputDirectory, "runtime.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\r\n"));
+      FileUtils.setFileContents(pthFile, pthEntries);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }
@@ -280,7 +279,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     getLog().info("Packing on-the-fly created [project.pth] to archive");
     File pthFile= new File(this.outputDirectory, "project.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries, "\r\n"));
+      FileUtils.setFileContents(pthFile, pthEntries);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }

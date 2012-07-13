@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Calendar;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -120,7 +119,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Create [target/bootstrap/boot.pth]
     File pthFile= new File(bootstrapDirectory, "boot.pth");
     try {
-      FileUtils.setFileContents(pthFile, StringUtils.join(pthEntries.toArray(), "\r\n"));
+      FileUtils.setFileContents(pthFile, pthEntries);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
     }
