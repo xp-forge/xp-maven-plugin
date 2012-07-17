@@ -94,7 +94,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
   /**
    * Whether to use local XP-Framework install or to use bootstrap in [/target]. Default [false].
    *
-   * @parameterexpression="${xp.runtime.local}"
+   * @parameter expression="${xp.runtime.local}"
    */
   protected boolean local;
 
