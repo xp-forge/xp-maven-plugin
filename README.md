@@ -97,6 +97,13 @@ There are project properties that xp-maven-plugin is using to configure itself. 
 - Or via command line via Maven's `-D` argument
 
 
+### ${maven.test.skip} ###
+- boolean, default FALSE
+- applies to compile and test phases
+
+xp-maven-plugin will honour the Maven skip test property and will not compile nor run the project tests
+
+
 ### ${xp.runtime.local} ###
 - boolean, default FALSE
 - applies to all phases
@@ -119,7 +126,7 @@ This option is used only when `${xp.runtime.local}` is set to TRUE
 
 
 ### ${xp.runtime.php} ###
-- file, auto-detected via the `PATH` enviroment variable. E.g.: /usr/bin/php
+- file, auto-detected via the `PATH` enviroment variable. E.g. /usr/bin/php
 - applies to all phases
 
 This option is used only when `${xp.runtime.local}` is set to TRUE. It contains the path to the `php` executable
