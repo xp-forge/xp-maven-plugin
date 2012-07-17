@@ -79,13 +79,12 @@ public abstract class AbstractRunner {
    *
    * @param  java.io.File workingDirectory
    * @return void
-   * @throws java.io.FileNotFoundException When working directory does not exist
    */
-  public void setWorkingDirectory(File workingDirectory) throws FileNotFoundException {
+  public void setWorkingDirectory(File workingDirectory) {
 
     // Check directory exists
     if (!workingDirectory.exists()) {
-      throw new FileNotFoundException("Working directory not found [" + workingDirectory + "]");
+      workingDirectory.mkdirs();
     }
 
     // Set working directory

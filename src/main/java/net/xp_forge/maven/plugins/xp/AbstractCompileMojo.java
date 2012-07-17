@@ -220,11 +220,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
     runner.setLog(getLog());
 
     // Set runner working directory to [/target]
-    try {
-      runner.setWorkingDirectory(this.outputDirectory);
-    } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set [xcc] runner working directory", ex);
-    }
+    runner.setWorkingDirectory(this.outputDirectory);
 
     // Execute runner
     try {

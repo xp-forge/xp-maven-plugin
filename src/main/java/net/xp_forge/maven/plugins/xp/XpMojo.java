@@ -96,11 +96,7 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     runner.setLog(getLog());
 
     // Set runner working directory to [/target]
-    try {
-      runner.setWorkingDirectory(this.outputDirectory);
-    } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot set [xp] runner working directory", ex);
-    }
+    runner.setWorkingDirectory(this.outputDirectory);
 
     // Execute runner
     try {
