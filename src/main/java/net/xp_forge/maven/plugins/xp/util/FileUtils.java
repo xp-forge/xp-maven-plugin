@@ -139,6 +139,20 @@ public final class FileUtils {
    * Save contents to the specified file
    *
    * @param  java.io.File file
+   * @param  java.lang.String text
+   * @param  java.lang.String header
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, String text, String header) throws IOException {
+    FileUtils.setFileContents(file, new StringBufferInputStream(
+      String.format("%s%n%s", header, text)
+    ));
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
    * @param  java.util.List<java.lang.String> lines
    * @throw  java.io.IOException when I/O errors occur
    */
@@ -146,6 +160,18 @@ public final class FileUtils {
     FileUtils.setFileContents(file, new StringBufferInputStream(
       StringUtils.join(lines, String.format("%n"))
     ));
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.util.List<java.lang.String> lines
+   * @param  java.lang.String header
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  public static void setFileContents(File file, List<String> lines, String header) throws IOException {
+    FileUtils.setFileContents(file, StringUtils.join(lines, String.format("%n")), header);
   }
 
   /**

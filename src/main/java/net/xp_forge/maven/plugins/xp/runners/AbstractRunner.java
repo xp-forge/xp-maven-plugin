@@ -179,7 +179,7 @@ public abstract class AbstractRunner {
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
     try {
-      FileUtils.setFileContents(pthFile, classpaths);
+      FileUtils.setFileContents(pthFile, classpaths, "#" + net.xp_forge.maven.plugins.xp.AbstractMojo.CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }

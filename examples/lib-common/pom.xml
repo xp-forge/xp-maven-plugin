@@ -39,7 +39,7 @@
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.1.0</version>
         <extensions>true</extensions>
         <configuration>
           <classifier>patch</classifier>

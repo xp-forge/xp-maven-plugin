@@ -23,6 +23,7 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
   public static final String LINE_SEPARATOR= "------------------------------------------------------------------------";
+  public static final String CREATED_BY_NOTICE= "This file was automatically created by xp-maven-plugin";
 
   /**
    * The Maven project

@@ -119,7 +119,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Create [target/bootstrap/boot.pth]
     File pthFile= new File(bootstrapDirectory, "boot.pth");
     try {
-      FileUtils.setFileContents(pthFile, pthEntries);
+      FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
     }
@@ -153,6 +153,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Dump ini file
     File iniFile= new File(this.runnersDirectory, "xp.ini");
     try {
+      ini.setComment(CREATED_BY_NOTICE);
       ini.dump(iniFile);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + iniFile + "]", ex);

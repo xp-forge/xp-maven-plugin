@@ -24,10 +24,10 @@ import java.util.Enumeration;
  */
 public class IniProperties {
   private static final int BUFF_SIZE= 1024;
-  private static final String NEW_LINE= String.format("%n");
 
   private Properties globalProperties;
   private Map<String, Properties> properties;
+  private String comment;
 
   enum ParseState {
     NORMAL,
@@ -54,6 +54,16 @@ public class IniProperties {
    */
   public void load(File file) throws IOException {
     this.load(new FileInputStream(file));
+  }
+
+  /**
+   * Set file comment
+   *
+   * @param  java.lang.String comment
+   * @return void
+   */
+  public void setComment(String comment) {
+    this.comment= comment;
   }
 
   /**
@@ -276,22 +286,32 @@ public class IniProperties {
   public void dump(File file) throws IOException {
     PrintStream out= new PrintStream(file);
 
+    // Comment
+    if (null != this.comment) {
+      out.printf(";%s", this.comment);
+      out.println();
+    }
+
     // Global properties
     Iterator<String> props= this.properties();
     while (props.hasNext()) {
       String name= props.next();
-      out.printf("%s=%s%s", name, IniProperties.dumpEscape(this.getProperty(name)), NEW_LINE);
+      out.printf("%s=%s", name, IniProperties.dumpEscape(this.getProperty(name)));
+      out.println();
     }
 
     // Sections
     Iterator<String> sections= this.sections();
     while (sections.hasNext()) {
       String section= sections.next();
-      out.printf("%s[%s]%s", NEW_LINE, section, NEW_LINE);
+      out.println();
+      out.printf("[%s]", section);
+      out.println();
       props= this.properties(section);
       while (props.hasNext()) {
         String name= props.next();
-        out.printf("%s=%s%s", name, IniProperties.dumpEscape(this.getProperty(section, name)), NEW_LINE);
+        out.printf("%s=%s", name, IniProperties.dumpEscape(this.getProperty(section, name)));
+        out.println();
       }
     }
 

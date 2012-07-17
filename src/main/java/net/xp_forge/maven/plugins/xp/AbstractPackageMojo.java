@@ -244,7 +244,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     getLog().info("Packing on-the-fly created [runtime.pth] to archive");
     File pthFile= new File(this.outputDirectory, "runtime.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, pthEntries);
+      FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
     }
