@@ -103,70 +103,75 @@ There are project properties that xp-maven-plugin is using to configure itself. 
 
 If this option is TRUE, xp-maven-plugin will use the locally installed XP-Framework runners by looking in the the `PATH` environment variable. If it cannot find the XP-runers (xcc, unittest, etc.), an exception will be thrown.
 
-If this option is FALSE, xp-maven-plugin will create a local XP-runtime environment in the `target/.runtime` directory. You must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:language` dependency defined in `pom.xml`
+Information on how to install XP-framework on your machine can be found here:
+- https://github.com/xp-framework/xp-framework/wiki/setup.framework
+
+If this option is FALSE, you don't need to have XP-framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:language` dependency defined in `pom.xml`
+
+xp-maven-plugin will download the needed XP-artifacts from repository (Maven central or as configured) and will create a local XP-runtime environment in the `target/.runtime` directory.
 
 
 ### ${xp.runtime.timezone} ###
-- string, default machine local
+- string, default machine local. E.g. Europe/Berlin
 - applies to all phases
 
 This option is used only when `${xp.runtime.local}` is set to TRUE
 
 
 ### ${xp.runtime.php} ###
-- file, auto-detected via the `PATH` enviroment variable
+- file, auto-detected via the `PATH` enviroment variable. E.g.: /usr/bin/php
 - applies to all phases
 
-This option is used only when `${xp.runtime.local}` is set to TRUE. It contains the path to the `php` executable. E.g.: /usr/bin/php
+This option is used only when `${xp.runtime.local}` is set to TRUE. It contains the path to the `php` executable
 
 
 ### ${xp.compile.verbose} ###
 - boolean, default FALSE
 - applies to the compile phase
 
-This options sets `xcc` verbosity on or off (-v flag)
+This options sets `xcc` runner verbosity on or off (-v flag)
 
 
 ### ${xp.compile.classpaths} ###
 - string[], default NULL
 - applies to the compile phase
 
-This options adds more chasspaths to `xcc` (-cp flag)
+This options adds more classpaths to `xcc` runner (-cp flag)
 
 
 ### ${xp.compile.sourcepaths} ###
 - string[], default NULL
 - applies to the compile phase
 
-This options adds more sourcepaths to `xcc` (-sp flag)
+This options adds more sourcepaths to `xcc` runner (-sp flag)
 
 
 ### ${xp.compile.emitter} ###
 - string, default NULL
 - applies to the compile phase
 
-This options sets `xcc` emitter (-e flag)
+This options sets `xcc` runner emitter (-e flag)
 
 
 ### ${xp.compile.profiles} ###
 - string[], default ['default']
 - applies to the compile phase
 
-This options sets `xcc` profiles (-p flag)
+This options sets `xcc` runner profiles (-p flag)
 
 
 ### ${xp.test.verbose} ###
 - boolean, default FALSE
 - applies to the test phase
 
-This options sets `unittest` verbosity on or off (-v flag)
+This options sets `unittest` runner verbosity on or off (-v flag)
 
 
 ### ${xp.test.classpaths} ###
 - string[], default NULL
 - applies to the compile phase
 
-This options adds more chasspaths to `unittest` (-cp flag)
+This options adds more classpaths to `unittest` runner (-cp flag)
 
 
 ### ${xp.test.iniDirectory} ###
