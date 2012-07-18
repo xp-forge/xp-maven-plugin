@@ -42,13 +42,6 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
   protected String finalName;
 
   /**
-   * Classifier to add to the generated artifact
-   *
-   * @parameter
-   */
-  protected String classifier;
-
-  /**
    * Packing strategy: specify what type of artifact to build. There are 2 options:
    * - lib
    * - app

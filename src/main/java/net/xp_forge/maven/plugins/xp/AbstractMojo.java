@@ -92,6 +92,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
   protected File testClassesDirectory;
 
   /**
+   * Classifier to add to the generated artifact
+   *
+   * @parameter
+   */
+  protected String classifier;
+
+  /**
    * Whether to use local XP-Framework install or to use bootstrap in [/target]. Default [false].
    *
    * @parameter expression="${xp.runtime.local}"
