@@ -108,7 +108,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     input.addClasspath(this.classpaths);
 
     // Add classesDirectory to classpath
-    if (this.classifier.equals("patch")) {
+    if (null != this.classifier && this.classifier.equals("patch")) {
       input.addClasspath("!" + this.classesDirectory);
     } else {
       input.addClasspath(this.classesDirectory);

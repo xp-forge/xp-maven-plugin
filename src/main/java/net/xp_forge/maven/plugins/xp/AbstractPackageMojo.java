@@ -262,7 +262,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
       getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
       this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
 
-      if (artifact.getClassifier().equals("patch")) {
+      if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
         pthEntries.add("!libs/" + artifact.getFile().getName());
       } else {
         pthEntries.add("libs/" + artifact.getFile().getName());
@@ -300,7 +300,8 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
       getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
 
       try {
-        ArchiveUtils.dumpArtifact(artifact, tmpDirectory, artifact.getClassifier().equals("patch"));
+        boolean isPatch= null != artifact.getClassifier() && artifact.getClassifier().equals("patch");
+        ArchiveUtils.dumpArtifact(artifact, tmpDirectory, isPatch);
       } catch (ArchiverException ex) {
         throw new MojoExecutionException("Cannot dump artifact [" + artifact.getFile() + "] into [" + tmpDirectory + "]");
       }

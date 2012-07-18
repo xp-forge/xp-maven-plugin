@@ -42,7 +42,7 @@ public class AbstractClasspathRunnerInput {
     for (Artifact artifact : artifacts) {
 
       // Add to classpath
-      if (artifact.getClassifier().equals("patch")) {
+      if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
         this.addClasspath("!" + artifact.getFile().getAbsolutePath());
       } else {
         this.addClasspath(artifact.getFile());
