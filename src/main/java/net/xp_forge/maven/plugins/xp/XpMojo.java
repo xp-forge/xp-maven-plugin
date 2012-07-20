@@ -32,7 +32,7 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * The -v argument for the xp runner
    *
-   * @parameter expression="${xp.xp.verbose}" default-value="false"
+   * @parameter expression="${xp.run.verbose}" default-value="false"
    */
   protected boolean verbose;
 
@@ -41,21 +41,21 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * The -cp argument for the xp runner
    *
-   * @parameter expression="${xp.xp.classpaths}"
+   * @parameter expression="${xp.run.classpaths}"
    */
   protected List<String> classpaths;
 
   /**
    * Define name of class to run
    *
-   * @parameter expression="${xp.xp.classname}"
+   * @parameter expression="${xp.run.classname}"
    */
   protected String className;
 
   /**
    * Define inline code to run
    *
-   * @parameter expression="${xp.xp.code}"
+   * @parameter expression="${xp.run.code}"
    */
   protected String code;
 
