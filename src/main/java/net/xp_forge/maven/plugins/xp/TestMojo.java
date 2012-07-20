@@ -7,12 +7,8 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Set;
 import java.util.List;
-import java.util.Iterator;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.runners.RunnerException;
@@ -127,8 +123,8 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Inifiles
     input.addInifileDirectory(this.iniDirectory);
     if (null != this.iniDirectories) {
-      for (File iniDirectory : this.iniDirectories) {
-        input.addInifileDirectory(iniDirectory);
+      for (File dir : this.iniDirectories) {
+        input.addInifileDirectory(dir);
       }
     }
 

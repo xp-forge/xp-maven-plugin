@@ -10,9 +10,6 @@ import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import net.xp_forge.maven.plugins.xp.util.FileUtils;
-
 /**
  * Run XP Framework XCC compiler (compile test .xp sources)
  *

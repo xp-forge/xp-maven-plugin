@@ -7,7 +7,6 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
-import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Package classes and resources

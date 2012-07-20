@@ -9,7 +9,6 @@ package net.xp_forge.maven.plugins.xp.runners.input;
 import java.io.File;
 import java.util.Set;
 import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;

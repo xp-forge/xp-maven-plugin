@@ -8,7 +8,6 @@ package net.xp_forge.maven.plugins.xp.runners;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;

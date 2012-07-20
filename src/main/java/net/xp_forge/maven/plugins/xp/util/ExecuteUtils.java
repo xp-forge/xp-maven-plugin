@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
@@ -28,7 +27,6 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
 //import org.apache.commons.exec.LogOutputStream;
-import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.OS;
 

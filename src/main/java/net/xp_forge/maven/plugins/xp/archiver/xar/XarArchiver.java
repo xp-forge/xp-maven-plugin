@@ -13,8 +13,6 @@ import org.codehaus.plexus.archiver.AbstractArchiver;
 import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.ResourceIterator;
-import org.codehaus.plexus.archiver.util.ArchiveEntryUtils;
-import org.codehaus.plexus.archiver.util.ResourceUtils;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 
 import net.xp_forge.xar.XarEntry;

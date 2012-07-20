@@ -9,7 +9,6 @@ package net.xp_forge.maven.plugins.xp.runners.input;
 import java.io.File;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ArrayList;
 
 import net.xp_forge.maven.plugins.xp.runners.filter.InifileFilter;

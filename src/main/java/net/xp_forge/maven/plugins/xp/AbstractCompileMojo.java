@@ -8,14 +8,11 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
 import org.apache.maven.model.Resource;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.runners.XccRunner;

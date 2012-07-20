@@ -10,11 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Calendar;
 import java.util.ArrayList;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.apache.maven.plugin.MojoExecutionException;

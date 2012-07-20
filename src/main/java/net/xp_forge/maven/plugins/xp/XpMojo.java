@@ -7,12 +7,9 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.runners.RunnerException;
@@ -65,7 +62,6 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    */
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
-    Iterator i;
 
     // Debug info
     getLog().debug("Classes directory      [" + this.classesDirectory + "]");

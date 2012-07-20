@@ -8,10 +8,8 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -20,7 +18,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
