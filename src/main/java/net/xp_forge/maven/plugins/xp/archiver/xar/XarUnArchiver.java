@@ -7,15 +7,15 @@
 package net.xp_forge.maven.plugins.xp.archiver.xar;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
+import java.io.FileOutputStream;
 
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.AbstractUnArchiver;
 
 import net.xp_forge.xar.XarEntry;
 import net.xp_forge.xar.XarArchive;
-
-import net.xp_forge.maven.plugins.xp.util.FileUtils;
 
 /**
  * A plexus unarchiver implementation for XAR file format
@@ -66,7 +66,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
       File outFile= new File(destDirectory, entry.getName().replace('/', File.separatorChar));
       try {
         //getLogger().debug("Expanding [" + entry.getName() + "] into [" + outFile + "]");
-        FileUtils.setFileContents(outFile, entry.getInputStream());
+        this.setFileContents(outFile, entry.getInputStream());
       } catch (IOException ex) {
         throw new ArchiverException("Error while expanding [" + entry.getName() + "]", ex);
       }
@@ -133,7 +133,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
 
       try {
         //getLogger().debug("Expanding [" + entry.getName() + "] into [" + outputDirectory + "]");
-        FileUtils.setFileContents(outFile, entry.getInputStream());
+        this.setFileContents(outFile, entry.getInputStream());
       } catch (IOException ex) {
         throw new ArchiverException("Error while expanding [" + entry.getName() + "]", ex);
       }
@@ -141,5 +141,39 @@ public class XarUnArchiver extends AbstractUnArchiver {
 
     // Cleanup
     this.archive= null;
+  }
+
+  /**
+   * Save contents to the specified file
+   *
+   * @param  java.io.File file
+   * @param  java.io.InputStream is
+   * @throw  java.io.IOException when I/O errors occur
+   */
+  private void setFileContents(File file, InputStream is) throws IOException {
+
+    // Make dirs
+    File parent= file.getParentFile();
+    if (null != parent && !parent.exists()) {
+      parent.mkdirs();
+    }
+
+    // Save InputStream contents to file
+    FileOutputStream os= null;
+    try {
+      os= new FileOutputStream(file);
+      byte[] buffer= new byte[2048];
+      int bytesRead;
+      while (-1 != (bytesRead= is.read(buffer, 0, 2048))) {
+        os.write(buffer, 0, bytesRead);
+      }
+      is.close();
+      os.flush();
+      os.close();
+    } finally {
+      if (null != os) {
+        os.close();
+      }
+    }
   }
 }
