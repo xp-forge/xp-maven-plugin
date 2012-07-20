@@ -239,7 +239,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     try {
       FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
+      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
     }
 
     getLog().debug(" - Add file [" + pthFile + "] to [runtime.pth]");
@@ -279,7 +279,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     try {
       FileUtils.setFileContents(pthFile, pthEntries);
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]");
+      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
     }
 
     getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
@@ -303,7 +303,9 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
         boolean isPatch= null != artifact.getClassifier() && artifact.getClassifier().equals("patch");
         ArchiveUtils.dumpArtifact(artifact, tmpDirectory, isPatch);
       } catch (ArchiverException ex) {
-        throw new MojoExecutionException("Cannot dump artifact [" + artifact.getFile() + "] into [" + tmpDirectory + "]");
+        throw new MojoExecutionException(
+          "Cannot dump artifact [" + artifact.getFile() + "] into [" + tmpDirectory + "]", ex
+        );
       }
     }
 
