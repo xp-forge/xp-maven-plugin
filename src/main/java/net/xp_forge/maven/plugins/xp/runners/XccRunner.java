@@ -60,15 +60,15 @@ public class XccRunner extends AbstractRunner {
 
     // Add profile (-p)
     if (!this.input.profiles.isEmpty()) {
-      String profilesString= "";
+      StringBuffer profilesBuff= new StringBuffer();
       Iterator it= this.input.profiles.iterator();
       while (it.hasNext()) {
-        profilesString+= (String)it.next();
-        if (it.hasNext()) profilesString+= ",";
+        profilesBuff.append((String)it.next());
+        if (it.hasNext()) profilesBuff.append(",");
       }
 
       arguments.add("-p");
-      arguments.add(profilesString);
+      arguments.add(profilesBuff.toString());
     }
 
     // Add output (-o)
