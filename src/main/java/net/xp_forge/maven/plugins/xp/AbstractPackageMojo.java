@@ -153,7 +153,7 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     return new File(
       this.outputDirectory,
       this.finalName +
-      (null != this.classifier && this.classifier.startsWith("-") ? "" : "-") + this.classifier +
+      (this.classifier.startsWith("-") ? "" : "-") + this.classifier +
       "." + this.format
     );
   }
