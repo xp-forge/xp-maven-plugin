@@ -284,7 +284,7 @@ public class IniProperties {
    * @return void
    */
   public void dump(File file) throws IOException {
-    PrintStream out= new PrintStream(file);
+    PrintStream out= new PrintStream(file, "UTF-8");
 
     // Comment
     if (null != this.comment) {
