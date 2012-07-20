@@ -46,7 +46,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
    *
    * @parameter expression="${xp.compile.classpaths}"
    */
-  protected ArrayList<String> classpaths;
+  protected List<String> classpaths;
 
   /**
    * Adds path to source path (source path will equal classpath initially)
@@ -55,7 +55,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
    *
    * @parameter expression="${xp.compile.sourcepaths}"
    */
-  protected ArrayList<String> sourcepaths;
+  protected List<String> sourcepaths;
 
   /**
    * Use emitter, defaults to "source"
@@ -73,7 +73,7 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
    *
    * @parameter expression="${xp.compile.profiles}"
    */
-  protected ArrayList<String> profiles;
+  protected List<String> profiles;
 
   /**
    * Get PHP sources

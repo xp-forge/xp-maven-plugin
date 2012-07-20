@@ -9,8 +9,8 @@ package net.xp_forge.maven.plugins.xp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Set;
+import java.util.List;
 import java.util.Iterator;
-import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,7 +43,7 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * @parameter expression="${xp.xp.classpaths}"
    */
-  protected ArrayList<String> classpaths;
+  protected List<String> classpaths;
 
   /**
    * Define name of class to run

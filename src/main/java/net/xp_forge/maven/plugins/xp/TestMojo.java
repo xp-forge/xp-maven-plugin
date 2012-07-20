@@ -9,7 +9,7 @@ package net.xp_forge.maven.plugins.xp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
 import org.apache.maven.artifact.Artifact;
@@ -51,7 +51,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * @parameter expression="${xp.test.classpaths}"
    */
-  protected ArrayList<String> classpaths;
+  protected List<String> classpaths;
 
   /**
    * Define argument to pass to tests
@@ -60,7 +60,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * @parameter expression="${xp.test.testArguments}"
    */
-  protected ArrayList<String> testArguments;
+  protected List<String> testArguments;
 
   /**
    * Directory to scan for *.ini files
@@ -74,7 +74,7 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    *
    * @parameter
    */
-  protected ArrayList<File> iniDirectories;
+  protected List<File> iniDirectories;
 
   /**
    * {@inheritDoc}
