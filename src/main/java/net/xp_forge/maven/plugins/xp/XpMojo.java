@@ -8,7 +8,6 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.util.List;
-import java.util.Iterator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
