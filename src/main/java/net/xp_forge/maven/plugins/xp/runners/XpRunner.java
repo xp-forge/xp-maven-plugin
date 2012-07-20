@@ -17,7 +17,7 @@ import net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput;
  *
  */
 public class XpRunner extends AbstractRunner {
-  XpRunnerInput input;
+  private XpRunnerInput input;
 
   /**
    * Constructor

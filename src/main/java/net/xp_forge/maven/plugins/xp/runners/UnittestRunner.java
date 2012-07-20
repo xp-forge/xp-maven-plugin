@@ -17,7 +17,7 @@ import net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput;
  *
  */
 public class UnittestRunner extends AbstractRunner {
-  UnittestRunnerInput input;
+  private UnittestRunnerInput input;
 
   /**
    * Constructor

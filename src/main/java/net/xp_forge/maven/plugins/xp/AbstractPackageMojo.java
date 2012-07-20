@@ -28,7 +28,7 @@ import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
  *
  */
 public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
-  Archiver archiver;
+  private Archiver archiver;
 
   /**
    * Name of the generated XAR
