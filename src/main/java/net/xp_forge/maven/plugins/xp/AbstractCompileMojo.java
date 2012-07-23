@@ -172,9 +172,9 @@ public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.
 
     // Debug info
     getLog().info("Source directory [" + sourceDirectory + "]");
-    getLog().debug("Classes directory [" + classesDirectory + "]");
-    getLog().debug("Sourcepaths       [" + (null == this.sourcepaths ? "NULL" : this.sourcepaths.toString()) + "]");
-    getLog().debug("Classpaths        [" + (null == this.classpaths  ? "NULL" : this.classpaths.toString())  + "]");
+    getLog().info("Classes directory [" + classesDirectory + "]");
+    getLog().debug("Sourcepaths       [" + (null == this.sourcepaths ? "NULL" : this.sourcepaths) + "]");
+    getLog().debug("Classpaths        [" + (null == this.classpaths  ? "NULL" : this.classpaths)  + "]");
 
     // Prepare xcc input
     XccRunnerInput input= new XccRunnerInput();

@@ -87,11 +87,11 @@ public class TestMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
     // Debug info
     getLog().info("Running tests from [" + this.iniDirectory + "]");
-    getLog().debug("Additional directories [" + (null == this.iniDirectories ? "NULL" : this.iniDirectories.toString()) + "]");
+    getLog().debug("Additional directories [" + (null == this.iniDirectories ? "NULL" : this.iniDirectories) + "]");
     getLog().debug("Classes directory      [" + this.classesDirectory + "]");
     getLog().debug("Test classes directory [" + this.testClassesDirectory + "]");
-    getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths.toString()) + "]");
-    getLog().debug("Test arguments         [" + (null == this.testArguments ? "NULL" : this.testArguments.toString()) + "]");
+    getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths) + "]");
+    getLog().debug("Test arguments         [" + (null == this.testArguments ? "NULL" : this.testArguments) + "]");
 
     // Prepare [unittest] input
     UnittestRunnerInput input= new UnittestRunnerInput();

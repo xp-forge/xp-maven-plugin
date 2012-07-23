@@ -8,6 +8,7 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.util.Set;
+import java.util.List;
 import java.util.HashSet;
 
 import org.apache.maven.model.Dependency;
@@ -33,6 +34,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * @readonly
    */
   protected MavenProject project;
+
+  /**
+   * The projects in the reactor
+   *
+   * @parameter expression="${reactorProjects}"
+   * @readonly
+   */
+  protected List<MavenProject> reactorProjects;
 
   /**
    * The Maven session
@@ -106,8 +115,15 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
   protected boolean local;
 
   /**
-   * Directory where XP runners are located. If not set, runners will be
-   * extracted from resources to "${project.build.directory}/bootstrap/runners"
+   * USE_XP
+   *
+   * @parameter expression="${xp.runtime.use_xp}"
+   */
+  protected String use_xp;
+
+  /**
+   * Directory where XP-Runners are located. If not set, runners will be
+   * extracted from resources to "${project.build.directory}/.runtime/runners"
    *
    * @parameter expression="${xp.runtime.runners.directory}"
    */
@@ -183,7 +199,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     // Return all non XP-artifacts
     Set<Artifact> retVal= new HashSet<Artifact>();
     for (Artifact artifact : (Iterable<Artifact>)this.project.getArtifacts()) {
-      if (artifact.getGroupId().equals("net.xp-framework")) continue;
+      if (
+        artifact.getGroupId().equals("net.xp-framework") &&
+        (
+          artifact.getArtifactId().equals("core") ||
+          artifact.getArtifactId().equals("tools") ||
+          artifact.getArtifactId().equals("language")
+        )
+      ) continue;
       retVal.add(artifact);
     }
 

@@ -14,8 +14,11 @@ import java.util.Calendar;
 import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.archiver.UnArchiver;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
+
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.archiver.UnArchiver;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
@@ -36,53 +39,114 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
    */
   public void execute() throws MojoExecutionException {
 
-    // Prepare XP-Framework runtime
+    // User clearly specified to use already installed XP-Runtime via ${xp.runtime.local}
     if (this.local) {
-      this.setupUserRuntime();
+      this.setupRuntimeFromLocalInstall();
+
+    // Special case: self-bootstrap for compiling XP-Framework itself
+    // Setup XP-Runtime using project resources
+    } else if (
+        this.project.getGroupId().equals("net.xp-framework") &&
+        (
+          this.project.getArtifactId().equals("core") ||
+          this.project.getArtifactId().equals("tools") ||
+          this.project.getArtifactId().equals("language")
+        )
+      ) {
+      this.setupRuntimeFromResources(new File(this.outputDirectory, ".runtime"));
+
+    // Setup XP-Runtime using project dependencies
     } else {
-      this.setupLocalRuntime();
+      this.setupRuntimeFromDependencies(new File(this.outputDirectory, ".runtime"));
     }
-    getLog().info("Using runners from [" + this.runnersDirectory.getAbsolutePath() + "]");
+
+    getLog().info("Using runners from [" + this.runnersDirectory + "]");
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
+
+    getLog().info("USE_XP [" + (null == this.use_xp ? "N/A" : this.use_xp) + "]");
+    this.project.getProperties().setProperty("xp.runtime.use_xp", this.use_xp);
 
     // Alter default Maven settings
     this.alterSourceDirectories();
   }
 
   /**
-   * Use XP-Framework runtime already installed on local machine
-   * by searching for XP runners in PATH
+   * Use XP-Runtime already installed on local machine
+   * by searching for XP-Runners in PATH
    *
    * @return void
    * @throws import org.apache.maven.plugin.MojoExecutionException
    */
-  private void setupUserRuntime() throws MojoExecutionException {
-    getLog().debug("Looking for XP-Framework local runtime");
+  private void setupRuntimeFromLocalInstall() throws MojoExecutionException {
+    getLog().debug("Preparing XP-Runtime from local install");
     try {
       this.runnersDirectory= ExecuteUtils.getExecutable("xp").getParentFile();
     } catch (FileNotFoundException ex) {
-      throw new MojoExecutionException("Cannot find XP Framework local runtime", ex);
+      throw new MojoExecutionException("Cannot find XP-Framework. Please install it from http://xp-framework.net/", ex);
     }
   }
 
   /**
-   * Prepare our own XP-runtime in [target/.runtime]
+   * Prepare our own XP-Runtime into specified directory using project dependencies
    *
+   * @param  java.io.File targetDirectory
    * @return void
-   * @throws import org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
-  private void setupLocalRuntime() throws MojoExecutionException {
-    UnArchiver unArchiver;
+  private void setupRuntimeFromDependencies(File targetDirectory) throws MojoExecutionException {
+    getLog().debug("Preparing XP-Runtime from project dependencies into [" + targetDirectory + "]");
 
-    getLog().debug("Preparing XP-Framework runtime");
-    File runtimeDirectory= new File(this.outputDirectory, ".runtime");
+    // Configure directories
+    File bootstrapDirectory = new File(targetDirectory, "bootstrap");
+    this.runnersDirectory   = new File(targetDirectory, "runners");
 
-    File bootstrapDirectory= new File(runtimeDirectory, "bootstrap");
-    this.runnersDirectory= new File(runtimeDirectory, "runners");
+    // Setup bootstrap from dependencies
+    this.setupBootstrapFromDependencies(bootstrapDirectory);
+
+    // Setup XP-Runners
+    this.use_xp= bootstrapDirectory.getAbsolutePath();
+    this.setupRunners(this.runnersDirectory, this.use_xp);
+  }
+
+  /**
+   * Prepare our own XP-Runtime into specified directory using project resources
+   *
+   * @param  java.io.File targetDirectory
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void setupRuntimeFromResources(File targetDirectory) throws MojoExecutionException {
+    getLog().debug("Preparing XP-Runtime from project resources into [" + targetDirectory + "]");
+
+    // Configure directories
+    this.runnersDirectory= new File(targetDirectory, "runners");
+
+    // Configure USE_XP from reactor projects
+    List<String> reactorRoots= new ArrayList<String>();
+    for (MavenProject reactorProject : this.reactorProjects) {
+      if (reactorProject.getArtifactId().equals("core") || reactorProject.getArtifactId().equals("tools")) {
+        reactorRoots.add(reactorProject.getBasedir().getAbsolutePath());
+      }
+    }
+
+    // Setup XP-Runners
+    this.use_xp= StringUtils.join(reactorRoots.iterator(), File.pathSeparator);
+    this.setupRunners(this.runnersDirectory, this.use_xp);
+  }
+
+  /**
+   * Prepare XP-Bootstrap using project dependencies into specified directory
+   *
+   * @param  java.io.File targetDirectory
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void setupBootstrapFromDependencies(File targetDirectory) throws MojoExecutionException {
+    getLog().debug("- Preparing XP-Bootstrap from project dependencies into [" + targetDirectory + "]");
 
     // Init [boot.pth] entries
     List<String> pthEntries= new ArrayList<String>();
-    pthEntries.add(bootstrapDirectory.getAbsolutePath());
+    pthEntries.add(targetDirectory.getAbsolutePath());
 
     // Locate required XP-artifacts: core & tools
     Artifact coreArtifact= this.findArtifact("net.xp-framework", "core");
@@ -90,7 +154,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
 
-    Artifact toolsArtifact = this.findArtifact("net.xp-framework", "tools");
+    Artifact toolsArtifact= this.findArtifact("net.xp-framework", "tools");
     if (null == toolsArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }
@@ -105,41 +169,53 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     }
 
     // Unpack bootstrap
-    unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
-    unArchiver.extract("lang.base.php", bootstrapDirectory);
+    UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
+    unArchiver.extract("lang.base.php", targetDirectory);
 
-    File toolsDirectory= new File(bootstrapDirectory, "tools");
+    File toolsDirectory= new File(targetDirectory, "tools");
     unArchiver= ArchiveUtils.getUnArchiver(toolsArtifact);
     unArchiver.extract("tools/class.php", toolsDirectory);
     unArchiver.extract("tools/web.php", toolsDirectory);
     unArchiver.extract("tools/xar.php", toolsDirectory);
 
     // Create [target/bootstrap/boot.pth]
-    File pthFile= new File(bootstrapDirectory, "boot.pth");
+    File pthFile= new File(targetDirectory, "boot.pth");
     try {
       FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
     }
+  }
+
+  /**
+   * Setup XP-Runners into specified directory
+   *
+   * @param  java.io.File targetDirectory
+   * @param  java.lang.String useXp value of USE_XP
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void setupRunners(File targetDirectory, String useXp) throws MojoExecutionException {
+    getLog().debug("- Preparing XP-Runners into [" + targetDirectory + "]");
 
     // Extract XP-runners
     try {
       getLog().debug(" - Extracting runners from resources");
 
-      ExecuteUtils.saveRunner("xp", this.runnersDirectory);
-      ExecuteUtils.saveRunner("xcc", this.runnersDirectory);
-      ExecuteUtils.saveRunner("xar", this.runnersDirectory);
-      ExecuteUtils.saveRunner("xpcli", this.runnersDirectory);
-      ExecuteUtils.saveRunner("doclet", this.runnersDirectory);
-      ExecuteUtils.saveRunner("unittest", this.runnersDirectory);
+      ExecuteUtils.saveRunner("xp", targetDirectory);
+      ExecuteUtils.saveRunner("xcc", targetDirectory);
+      ExecuteUtils.saveRunner("xar", targetDirectory);
+      ExecuteUtils.saveRunner("xpcli", targetDirectory);
+      ExecuteUtils.saveRunner("doclet", targetDirectory);
+      ExecuteUtils.saveRunner("unittest", targetDirectory);
 
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot extract XP-runners to [" + this.runnersDirectory + "]", ex);
+      throw new MojoExecutionException("Cannot extract XP-runners to [" + targetDirectory + "]", ex);
     }
 
     // Set USE_XP
     IniProperties ini= new IniProperties();
-    ini.setProperty("use", bootstrapDirectory.getAbsolutePath());
+    ini.setProperty("use", useXp);
 
     // Set PHP executable and timezone
     this.setupPhp();
@@ -149,7 +225,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     ini.setProperty("runtime", "date.timezone", this.timezone);
 
     // Dump ini file
-    File iniFile= new File(this.runnersDirectory, "xp.ini");
+    File iniFile= new File(targetDirectory, "xp.ini");
     try {
       ini.setComment(CREATED_BY_NOTICE);
       ini.dump(iniFile);
@@ -159,7 +235,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   }
 
   /**
-   * Locate PHP executable
+   * Locate PHP executable. If ${xp.runtime.php} is not set, look for 'php' executable in PATH
    *
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException
@@ -189,7 +265,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   }
 
   /**
-   * Determine timezone
+   * Determine timezone. If ${xp.runtime.timezone} is not set, use system timezone
    *
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException
