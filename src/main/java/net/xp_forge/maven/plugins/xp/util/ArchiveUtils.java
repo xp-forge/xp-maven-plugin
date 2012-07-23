@@ -124,8 +124,9 @@ public final class ArchiveUtils {
 
     // Copy entries
     File tmpDirectory= FileUtils.getTempDirectory();
-    for (String srcEntry: entries.keySet()) {
-      String destEntry= entries.get(srcEntry);
+    for (Map.Entry<String, String> entry: entries.entrySet()) {
+      String srcEntry  = entry.getKey();
+      String destEntry = entry.getValue();
 
       // Get entry name
       String entryName= srcEntry;
