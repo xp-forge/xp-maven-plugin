@@ -1,3 +1,26 @@
+xp-maven-plugin (3.1.0)
+
+  * add support for using isolated enviroment (use specific XP version)
+    - setup classpath via .pth files not via -cp parameter
+    - bootstraping via project dependencies
+    - bootstraping via project resources (to build XP-Framework itself)
+    - use separate classpath (project.pth) for each target: compile, test, xp
+
+  * add support to build full applications zip
+    - use java-xarlib instead of the "xar" XP-Runner to manipulate XAR archives
+    - add support for reading/creating ZIP artifacts
+    - add ${xp.package.*} flags to control the packaging phase
+
+  * naming cleanup
+    - rename namespace from "net.xp_forge.maven.plugins.xpframework" to "net.xp_forge.maven.plugins.xp"
+    - rename @parameters to ${xp.*.*}
+
+  * add support for !patch dependencies
+  * fix some Sonar warnings
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 23 Jul 2012
+
+
 xp-maven-plugin (3.0.0)
 
   * update pom.xml:
