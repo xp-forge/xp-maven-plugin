@@ -86,6 +86,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    *
    * @parameter expression="${project.build.directory}"
    * @required
+   * @readonly
    */
   protected File outputDirectory;
 
@@ -94,6 +95,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * This will be included after the test classes in the test classpath
    *
    * @parameter expression="${project.build.outputDirectory}"
+   * @required
+   * @readonly
    */
   protected File classesDirectory;
 
@@ -102,6 +105,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * This will be included at the beginning of the test classpath
    *
    * @parameter expression="${project.build.testOutputDirectory}"
+   * @required
+   * @readonly
    */
   protected File testClassesDirectory;
 
@@ -109,6 +114,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
    * Classifier to add to the generated artifact
    *
    * @parameter
+   * @readonly
    */
   protected String classifier;
 

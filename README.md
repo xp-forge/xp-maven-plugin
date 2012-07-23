@@ -271,7 +271,7 @@ If your XP-Framework project depends on other XP-Framework project, alter the "p
 Running XP code
 ---------------
 
-If you have the need to run an XP class (like w/ xp f.q.c.n or xp -e "code"), then you can use the "xp" goal):
+If you have the need to run an XP class (like w/ xp f.q.c.n or xp -e "code"), then you can use the "xp:run-fork" goal):
 
 ```xml
 <build>
@@ -290,7 +290,7 @@ If you have the need to run an XP class (like w/ xp f.q.c.n or xp -e "code"), th
             <code>Console::writeLine('* Hello World from XP Framework.');</code>
           </configuration>
           <goals>
-            <goal>xp</goal>
+            <goal>run-fork</goal>
           </goals>
         </execution>
       </executions>

@@ -45,9 +45,11 @@ public class XpRunner extends AbstractRunner {
     // Check what to execute
     if (null != this.input.className) {
         arguments.add(this.input.className);
+
     } else if (null != this.input.code) {
         arguments.add("-e");
         arguments.add(" " + this.input.code);
+
     } else {
         throw new RunnerException("Neither className nor code given");
     }

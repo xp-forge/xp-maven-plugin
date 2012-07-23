@@ -11,17 +11,17 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.runners.RunnerException;
 import net.xp_forge.maven.plugins.xp.runners.XpRunner;
+import net.xp_forge.maven.plugins.xp.runners.RunnerException;
 import net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput;
 
 /**
  * Run XP classes
  *
- * @goal xp
+ * @goal run
  * @requiresDependencyResolution runtime
  */
-public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
+public class RunMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
 
   /**
    * Display verbose diagnostics
@@ -63,10 +63,10 @@ public class XpMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
   public void execute() throws MojoExecutionException {
 
     // Debug info
-    getLog().debug("Classes directory      [" + this.classesDirectory + "]");
-    getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths.toString()) + "]");
-    getLog().debug("ClassName              [" + this.className + "]");
-    getLog().debug("Code                   [" + this.code + "]");
+    getLog().debug("Classes directory [" + this.classesDirectory + "]");
+    getLog().debug("Classpaths        [" + (null == this.classpaths ? "NULL" : this.classpaths) + "]");
+    getLog().debug("ClassName         [" + (null == this.className ? "NULL" : this.className) + "]");
+    getLog().debug("Code              [" + (null == this.code ? "NULL" : this.code) + "]");
 
     // Prepare unittest input
     XpRunnerInput input= new XpRunnerInput();
