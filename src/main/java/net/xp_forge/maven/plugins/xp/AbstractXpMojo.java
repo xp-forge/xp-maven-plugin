@@ -13,6 +13,7 @@ import java.util.HashSet;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.execution.MavenSession;
@@ -22,7 +23,7 @@ import org.apache.maven.shared.filtering.MavenResourcesFiltering;
  * Base class for all MOJO's
  *
  */
-public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
+public abstract class AbstractXpMojo extends AbstractMojo {
   public static final String LINE_SEPARATOR= "------------------------------------------------------------------------";
   public static final String CREATED_BY_NOTICE= "This file was automatically created by xp-maven-plugin";
 

@@ -24,7 +24,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
 import net.xp_forge.maven.plugins.xp.ini.IniProperties;
-import static net.xp_forge.maven.plugins.xp.AbstractMojo.*;
+import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
  * Check for the presence of XP-Framework runners
@@ -32,7 +32,7 @@ import static net.xp_forge.maven.plugins.xp.AbstractMojo.*;
  * @goal validate
  * @requiresDependencyResolution compile
  */
-public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
+public class ValidateMojo extends AbstractXpMojo {
 
   /**
    * {@inheritDoc}

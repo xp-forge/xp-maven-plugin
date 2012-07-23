@@ -22,13 +22,13 @@ import org.codehaus.plexus.archiver.ArchiverException;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
-import static net.xp_forge.maven.plugins.xp.AbstractMojo.*;
+import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
  * Build project package artifact
  *
  */
-public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
+public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private Archiver archiver;
 
   /**

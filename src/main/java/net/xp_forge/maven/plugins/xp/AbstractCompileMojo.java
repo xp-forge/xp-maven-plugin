@@ -25,7 +25,7 @@ import net.xp_forge.maven.plugins.xp.util.MavenResourceUtils;
  * Wrapper around the XP-Framework "XccRunner;" runner
  *
  */
-public abstract class AbstractCompileMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
+public abstract class AbstractCompileMojo extends AbstractXpMojo {
 
   /**
    * Display verbose diagnostics

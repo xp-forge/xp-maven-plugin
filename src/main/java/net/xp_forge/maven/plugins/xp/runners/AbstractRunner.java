@@ -18,6 +18,7 @@ import org.apache.maven.plugin.logging.Log;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.runners.RunnerException;
+import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
  * Base class for all XP-Framework runners
@@ -177,7 +178,7 @@ public abstract class AbstractRunner {
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
     try {
-      FileUtils.setFileContents(pthFile, classpaths, "#" + net.xp_forge.maven.plugins.xp.AbstractMojo.CREATED_BY_NOTICE);
+      FileUtils.setFileContents(pthFile, classpaths, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }
