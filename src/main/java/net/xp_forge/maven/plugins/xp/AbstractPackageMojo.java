@@ -22,6 +22,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
+import static net.xp_forge.maven.plugins.xp.AbstractMojo.*;
 
 /**
  * Build project package artifact
@@ -190,13 +191,13 @@ public abstract class AbstractPackageMojo extends net.xp_forge.maven.plugins.xp.
     // Init [runtime.pth] entries
     List<String> pthEntries= new ArrayList<String>();
 
-    // Locate "core" and "tools" artifacts
-    Artifact coreArtifact= this.findArtifact("net.xp-framework", "core");
+    // Locate CORE_ARTIFACT_ID and TOOLS_ARTIFACT_ID artifacts
+    Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
 
-    Artifact toolsArtifact= this.findArtifact("net.xp-framework", "tools");
+    Artifact toolsArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, TOOLS_ARTIFACT_ID);
     if (null == toolsArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }

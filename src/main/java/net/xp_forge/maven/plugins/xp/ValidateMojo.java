@@ -24,6 +24,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
 import net.xp_forge.maven.plugins.xp.ini.IniProperties;
+import static net.xp_forge.maven.plugins.xp.AbstractMojo.*;
 
 /**
  * Check for the presence of XP-Framework runners
@@ -46,11 +47,11 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Special case: self-bootstrap for compiling XP-Framework itself
     // Setup XP-Runtime using project resources
     } else if (
-        this.project.getGroupId().equals("net.xp-framework") &&
+        this.project.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
         (
-          this.project.getArtifactId().equals("core") ||
-          this.project.getArtifactId().equals("tools") ||
-          this.project.getArtifactId().equals("language")
+          this.project.getArtifactId().equals(CORE_ARTIFACT_ID) ||
+          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
+          this.project.getArtifactId().equals(LANGUAGE_ARTIFACT_ID)
         )
       ) {
       this.setupRuntimeFromResources(new File(this.outputDirectory, ".runtime"));
@@ -124,7 +125,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     // Configure USE_XP from reactor projects
     List<String> reactorRoots= new ArrayList<String>();
     for (MavenProject reactorProject : this.reactorProjects) {
-      if (reactorProject.getArtifactId().equals("core") || reactorProject.getArtifactId().equals("tools")) {
+      if (reactorProject.getArtifactId().equals(CORE_ARTIFACT_ID) || reactorProject.getArtifactId().equals(TOOLS_ARTIFACT_ID)) {
         reactorRoots.add(reactorProject.getBasedir().getAbsolutePath());
       }
     }
@@ -149,12 +150,12 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     pthEntries.add(targetDirectory.getAbsolutePath());
 
     // Locate required XP-artifacts: core & tools
-    Artifact coreArtifact= this.findArtifact("net.xp-framework", "core");
+    Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
 
-    Artifact toolsArtifact= this.findArtifact("net.xp-framework", "tools");
+    Artifact toolsArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, TOOLS_ARTIFACT_ID);
     if (null == toolsArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }
@@ -163,7 +164,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     pthEntries.add(toolsArtifact.getFile().getAbsolutePath());
 
     // Locate optional XP-artifacts: language
-    Artifact languageArtifact= this.findArtifact("net.xp-framework", "language");
+    Artifact languageArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, LANGUAGE_ARTIFACT_ID);
     if (null != languageArtifact) {
       pthEntries.add(languageArtifact.getFile().getAbsolutePath());
     }
@@ -172,7 +173,7 @@ public class ValidateMojo extends net.xp_forge.maven.plugins.xp.AbstractMojo {
     UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
     unArchiver.extract("lang.base.php", targetDirectory);
 
-    File toolsDirectory= new File(targetDirectory, "tools");
+    File toolsDirectory= new File(targetDirectory, TOOLS_ARTIFACT_ID);
     unArchiver= ArchiveUtils.getUnArchiver(toolsArtifact);
     unArchiver.extract("tools/class.php", toolsDirectory);
     unArchiver.extract("tools/web.php", toolsDirectory);

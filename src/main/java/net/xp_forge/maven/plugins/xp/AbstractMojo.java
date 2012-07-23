@@ -26,6 +26,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
   public static final String LINE_SEPARATOR= "------------------------------------------------------------------------";
   public static final String CREATED_BY_NOTICE= "This file was automatically created by xp-maven-plugin";
 
+  public static final String XP_FRAMEWORK_GROUP_ID = "net.xp-framework";
+  public static final String CORE_ARTIFACT_ID      = "core";
+  public static final String TOOLS_ARTIFACT_ID     = "tools";
+  public static final String LANGUAGE_ARTIFACT_ID  = "language";
+
   /**
    * The Maven project
    *
@@ -200,11 +205,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     Set<Artifact> retVal= new HashSet<Artifact>();
     for (Artifact artifact : (Iterable<Artifact>)this.project.getArtifacts()) {
       if (
-        artifact.getGroupId().equals("net.xp-framework") &&
+        artifact.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
         (
-          artifact.getArtifactId().equals("core") ||
-          artifact.getArtifactId().equals("tools") ||
-          artifact.getArtifactId().equals("language")
+          artifact.getArtifactId().equals(CORE_ARTIFACT_ID) ||
+          artifact.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
+          artifact.getArtifactId().equals(LANGUAGE_ARTIFACT_ID)
         )
       ) continue;
       retVal.add(artifact);
