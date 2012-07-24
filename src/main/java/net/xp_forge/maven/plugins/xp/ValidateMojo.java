@@ -50,8 +50,7 @@ public class ValidateMojo extends AbstractXpMojo {
         this.project.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
         (
           this.project.getArtifactId().equals(CORE_ARTIFACT_ID) ||
-          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
-          this.project.getArtifactId().equals(LANGUAGE_ARTIFACT_ID)
+          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID)
         )
       ) {
       this.setupRuntimeFromResources(new File(this.outputDirectory, ".runtime"));
@@ -65,7 +64,9 @@ public class ValidateMojo extends AbstractXpMojo {
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
 
     getLog().info("USE_XP [" + (null == this.use_xp ? "N/A" : this.use_xp) + "]");
-    this.project.getProperties().setProperty("xp.runtime.use_xp", this.use_xp);
+    if (null != this.use_xp) {
+      this.project.getProperties().setProperty("xp.runtime.use_xp", this.use_xp);
+    }
 
     // Alter default Maven settings
     this.alterSourceDirectories();
