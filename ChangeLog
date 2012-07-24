@@ -15,10 +15,11 @@ xp-maven-plugin (3.1.0)
     - rename namespace from "net.xp_forge.maven.plugins.xpframework" to "net.xp_forge.maven.plugins.xp"
     - rename @parameters to ${xp.*.*}
 
+  * add support for building XP-Framework using its own resources
   * add support for !patch dependencies
   * fix some Sonar warnings
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 23 Jul 2012
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 24 Jul 2012
 
 
 xp-maven-plugin (3.0.0)
