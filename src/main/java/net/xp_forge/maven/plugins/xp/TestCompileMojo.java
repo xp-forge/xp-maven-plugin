@@ -35,6 +35,14 @@ public class TestCompileMojo extends AbstractCompileMojo {
   private List<String> testPhpSourceRoots;
 
   /**
+   * PHP sources include pattern
+   * Default value: [** /*.class.php]
+   *
+   * @parameter expression="${xp.compile.testPhpIncludePattern}"
+   */
+  private String testPhpIncludePattern;
+
+  /**
    * The source directories containing the sources to be compiled
    * Default value: [src/test/xp]
    *
@@ -55,6 +63,15 @@ public class TestCompileMojo extends AbstractCompileMojo {
       this.testPhpSourceRoots.add("src" + File.separator + "test" + File.separator + "php");
     }
     return this.testPhpSourceRoots;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getPhpIncludePattern() {
+    return null == this.testPhpIncludePattern ? "**/*.class.php" : this.testPhpIncludePattern;
   }
 
   /**

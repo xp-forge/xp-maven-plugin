@@ -121,18 +121,18 @@ public class ValidateMojo extends AbstractXpMojo {
     getLog().debug("Preparing XP-Runtime from project resources into [" + targetDirectory + "]");
 
     // Configure directories
+    File bootstrapDirectory = new File(targetDirectory, "bootstrap");
     this.runnersDirectory= new File(targetDirectory, "runners");
 
-    // Configure USE_XP from reactor projects
-    List<String> reactorRoots= new ArrayList<String>();
-    for (MavenProject reactorProject : this.reactorProjects) {
-      if (reactorProject.getArtifactId().equals(CORE_ARTIFACT_ID) || reactorProject.getArtifactId().equals(TOOLS_ARTIFACT_ID)) {
-        reactorRoots.add(reactorProject.getBasedir().getAbsolutePath());
-      }
-    }
+    // Setup bootstrap from dependencies
+    this.setupBootstrapFromResources(bootstrapDirectory);
+
+    // Setup use_xp
+    this.use_xp = bootstrapDirectory.getAbsolutePath();
+    this.use_xp+= File.pathSeparator;
+    this.use_xp+= new File(this.basedir.getParentFile(), "tools").getAbsolutePath();
 
     // Setup XP-Runners
-    this.use_xp= StringUtils.join(reactorRoots.iterator(), File.pathSeparator);
     this.setupRunners(this.runnersDirectory, this.use_xp);
   }
 
@@ -186,6 +186,28 @@ public class ValidateMojo extends AbstractXpMojo {
       FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
+    }
+  }
+
+  /**
+   * Prepare XP-Bootstrap using project resources into specified directory
+   *
+   * @param  java.io.File targetDirectory
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void setupBootstrapFromResources(File targetDirectory) throws MojoExecutionException {
+    getLog().debug("- Preparing XP-Bootstrap from project resources into [" + targetDirectory + "]");
+
+    try {
+
+      // Copy [lang.base.php]
+      FileUtils.copyFile(
+        new File(this.basedir.getParentFile(), "core/src/main/php/lang.base.php"),
+        new File(targetDirectory, "lang.base.php")
+      );
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot copy bootstrap files to [" + targetDirectory + "]", ex);
     }
   }
 

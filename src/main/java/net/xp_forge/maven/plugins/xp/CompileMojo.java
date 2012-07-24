@@ -27,6 +27,14 @@ public class CompileMojo extends AbstractCompileMojo {
   private List<String> phpSourceRoots;
 
   /**
+   * PHP sources include pattern
+   * Default value: [** /*.class.php]
+   *
+   * @parameter expression="${xp.compile.phpIncludePattern}"
+   */
+  private String phpIncludePattern;
+
+  /**
    * The source directories containing the sources to be compiled
    * Default value: [src/main/xp]
    *
@@ -47,6 +55,15 @@ public class CompileMojo extends AbstractCompileMojo {
       this.phpSourceRoots.add("src" + File.separator + "main" + File.separator + "php");
     }
     return this.phpSourceRoots;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getPhpIncludePattern() {
+    return null == this.phpIncludePattern ? "**/*.class.php" : this.phpIncludePattern;
   }
 
   /**

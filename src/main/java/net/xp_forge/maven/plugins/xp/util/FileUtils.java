@@ -9,8 +9,10 @@ package net.xp_forge.maven.plugins.xp.util;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringBufferInputStream;
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -202,5 +204,60 @@ public final class FileUtils {
     tmpDirectory.mkdirs();
     tmpDirectory.deleteOnExit();
     return tmpDirectory;
+  }
+
+  /**
+   * Copies a file to a new location
+   *
+   * @param  java.io.File srcFile
+   * @param  java.io.File destFile
+   * @return void
+   * @throw  java.io.IOException
+   */
+  public static void copyFile(File srcFile, File destFile) throws IOException {
+
+    if (!destFile.exists()) {
+
+      // Create directory; if the case
+      File destDirectory= destFile.getParentFile();
+      if (null != destDirectory && !destDirectory.exists()) {
+        destDirectory.mkdirs();
+      }
+
+      // Create destination file
+      destFile.createNewFile();
+    }
+
+    FileInputStream fIn   = null;
+    FileOutputStream fOut = null;
+    FileChannel srcChan   = null;
+    FileChannel destChan  = null;
+
+    try {
+      fIn      = new FileInputStream(srcFile);
+      srcChan  = fIn.getChannel();
+      fOut     =  new FileOutputStream(destFile);
+      destChan = fOut.getChannel();
+
+      long transfered = 0;
+      long bytes      = srcChan.size();
+
+      while (transfered < bytes) {
+        transfered += destChan.transferFrom(srcChan, 0, srcChan.size());
+        destChan.position(transfered);
+      }
+    } finally {
+      if (null != srcChan) {
+        srcChan.close();
+      } else if (null != fIn) {
+        fIn.close();
+      }
+
+      if (null != destChan) {
+        destChan.close();
+      } else if (null != fOut) {
+        fOut.close();
+      }
+    }
   }
 }

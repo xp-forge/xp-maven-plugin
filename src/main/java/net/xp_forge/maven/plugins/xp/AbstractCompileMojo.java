@@ -79,6 +79,12 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
   protected abstract List<String> getPhpSourceRoots();
 
   /**
+   * Get PHP sources include pattern
+   *
+   */
+  protected abstract String getPhpIncludePattern();
+
+  /**
    * Get XP sources
    *
    */
@@ -116,7 +122,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
 
     // Copy raw PHP files
     List<String> phpSourceRoots= this.getPhpSourceRoots();
-    this.copyPhpSources(phpSourceRoots, this.getClassesDirectory());
+    this.copyPhpSources(phpSourceRoots, this.getClassesDirectory(), this.getPhpIncludePattern());
 
     // Cleanup source roots
     List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
@@ -171,10 +177,11 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
     Iterator i;
 
     // Debug info
-    getLog().info("Source directory [" + sourceDirectory + "]");
-    getLog().info("Classes directory [" + classesDirectory + "]");
-    getLog().debug("Sourcepaths       [" + (null == this.sourcepaths ? "NULL" : this.sourcepaths) + "]");
-    getLog().debug("Classpaths        [" + (null == this.classpaths  ? "NULL" : this.classpaths)  + "]");
+    getLog().info("Source directory    [" + sourceDirectory + "]");
+    getLog().info("PHP include pattern [" + this.getPhpIncludePattern() + "]");
+    getLog().info("Classes directory    [" + classesDirectory + "]");
+    getLog().debug("Sourcepaths          [" + (null == this.sourcepaths ? "NULL" : this.sourcepaths) + "]");
+    getLog().debug("Classpaths           [" + (null == this.classpaths  ? "NULL" : this.classpaths)  + "]");
 
     // Prepare xcc input
     XccRunnerInput input= new XccRunnerInput();
@@ -269,10 +276,11 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    *
    * @param  java.util.List<String> phpSourceRoots Source where raw PHP files are
    * @param  java.io.File classesDirectory Destination where to copy PHP files
+   * @param  java.lang.String phpIncludePattern
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException When copy of the PHP source files failed
    */
-  protected void copyPhpSources(List<String> phpSourceRoots, File classesDirectory) throws MojoExecutionException {
+  protected void copyPhpSources(List<String> phpSourceRoots, File classesDirectory, String phpIncludePattern) throws MojoExecutionException {
 
     // Debug info
     getLog().debug("PHP source directories [" + (null == phpSourceRoots ? "NULL" : phpSourceRoots.toString()) + "]");
@@ -296,7 +304,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
       }
 
       Resource resource= new Resource();
-      resource.addInclude("**/*.class.php");
+      resource.addInclude(phpIncludePattern);
       resource.setFiltering(false);
       resource.setDirectory(phpSourceRoot);
       resources.add(resource);
