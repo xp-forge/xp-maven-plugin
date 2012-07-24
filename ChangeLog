@@ -1,3 +1,10 @@
+xp-maven-plugin (3.1.1)
+
+  * fix bootstrap when building XP-Framework itself
+    - add ${xp.compile.phpIncludePattern} and ${xp.compile.testPhpIncludePattern}
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 24 Jul 2012
+
 xp-maven-plugin (3.1.0)
 
   * add support for using isolated enviroment (use specific XP version)
@@ -19,8 +26,7 @@ xp-maven-plugin (3.1.0)
   * add support for !patch dependencies
   * fix some Sonar warnings
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 24 Jul 2012
-
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 24 Jul 2012
 
 xp-maven-plugin (3.0.0)
 
