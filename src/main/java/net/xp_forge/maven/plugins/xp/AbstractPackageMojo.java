@@ -255,7 +255,15 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     getLog().info("Including dependencies");
     for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
-      getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
+
+      // Ignore non-xar artifacts
+      if (!artifact.getType().equals("xar")) {
+        getLog().info(" - Ignore non-xar dependency [" + artifact.getFile() + "]");
+        continue;
+
+      } else {
+        getLog().info(" + Add dependency [" + artifact.getFile() + "]");
+      }
 
       getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
       this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
@@ -295,7 +303,15 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     File tmpDirectory= new File(new File(this.outputDirectory, "package.tmp"), "dependencies");
     for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
-      getLog().info(" - " + artifact.getType() + " [" + artifact.getFile() + "]");
+
+      // Ignore non-xar artifacts
+      if (!artifact.getType().equals("xar")) {
+        getLog().info(" - Ignore non-xar dependency [" + artifact.getFile() + "]");
+        continue;
+
+      } else {
+        getLog().info(" + Merge dependency [" + artifact.getFile() + "]");
+      }
 
       try {
         boolean isPatch= null != artifact.getClassifier() && artifact.getClassifier().equals("patch");

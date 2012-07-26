@@ -21,7 +21,6 @@ public class AbstractClasspathRunnerInput {
   public List<String> classpaths;
   public boolean verbose;
 
-
   /**
    * Constructor
    *
@@ -39,6 +38,9 @@ public class AbstractClasspathRunnerInput {
    */
   public void addClasspath(Set<Artifact> artifacts) {
     for (Artifact artifact : artifacts) {
+
+      // Skip non-xar artifacts
+      if (!artifact.getType().equals("xar")) continue;
 
       // Add to classpath
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
