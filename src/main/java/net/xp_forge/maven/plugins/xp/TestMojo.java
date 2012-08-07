@@ -59,9 +59,9 @@ public class TestMojo extends AbstractXpMojo {
   protected List<String> testArguments;
 
   /**
-   * Directory to scan for *.ini files
+   * Directory to scan for [*.ini] files
    *
-   * @parameter expression="${xp.test.iniDirectory}" default-value="${project.build.testOutputDirectory}/etc/unittest"
+   * @parameter expression="${xp.test.iniDirectory}" default-value="${basedir}/src/test/ini"
    */
   protected File iniDirectory;
 

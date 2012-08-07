@@ -1,3 +1,10 @@
+xp-maven-plugin (3.1.2)
+
+  * change default unittest ini files location to 'src/test/ini'
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 07 Aug 2012
+
+
 xp-maven-plugin (3.1.1)
 
   * fix bootstrap when building XP-Framework itself
