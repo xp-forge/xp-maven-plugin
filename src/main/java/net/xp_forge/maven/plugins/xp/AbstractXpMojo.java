@@ -115,7 +115,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   /**
    * Classifier to add to the generated artifact
    *
-   * @parameter
+   * @parameter expression="${project.classifier}"
    * @readonly
    */
   protected String classifier;
