@@ -86,7 +86,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    *
    * @return java.io.File
    */
-  protected abstract File getSourcesDirectory();
+  protected abstract File getClassesDirectory();
 
   /**
    * {@inheritDoc}
@@ -95,7 +95,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   public void execute() throws MojoExecutionException {
     File outputFile= this.getOutputFile();
 
-    getLog().info("Classes directory  [" + this.getSourcesDirectory() + "]");
+    getLog().info("Classes directory  [" + this.getClassesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
     getLog().info("Packaging strategy [" + this.strategy + "]");
     getLog().info("Artifact format    [" + this.format + "]");
@@ -160,19 +160,25 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   }
 
   /**
-   * Pack project sources into archive
+   * Pack project classes into archive
    *
    * @param  java.lang.String prefix
    * @return void
    */
   private void packClasses(String prefix) {
-    File sourcesDirectory= this.getSourcesDirectory();
+    File classesDirectory= this.getClassesDirectory();
 
-    getLog().debug(" - Add directory [" + sourcesDirectory + "] to [" + (null == prefix ? "/" : prefix) + "]");
+    // Check classes directory is empty
+    if (!classesDirectory.exists()) {
+      getLog().info(" - Classes directory [" + classesDirectory + "] does not exist");
+      return;
+    }
+
+    getLog().debug(" - Add classes directory [" + classesDirectory + "] to [" + (null == prefix ? "/" : prefix) + "]");
     if (null == prefix) {
-      this.archiver.addDirectory(sourcesDirectory);
+      this.archiver.addDirectory(classesDirectory);
     } else {
-      this.archiver.addDirectory(sourcesDirectory, prefix);
+      this.archiver.addDirectory(classesDirectory, prefix);
     }
   }
 

@@ -21,7 +21,7 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected File getSourcesDirectory() {
+  protected File getClassesDirectory() {
     return this.testClassesDirectory;
   }
 }

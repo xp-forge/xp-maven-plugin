@@ -77,6 +77,8 @@ public class XarArchiver extends AbstractArchiver {
    */
   @Override
   protected void close() throws IOException {
+    if (null == this.archive) return;
+
     getLogger().debug("XAR: Close archive [" + this.getDestFile() + "]");
     this.archive.save(this.getDestFile());
   }
