@@ -20,8 +20,8 @@
    </dependency>
    <dependency>
      <groupId>net.xp-framework</groupId>
-     <artifactId>language</artifactId>
-     <version>5.8.6</version>
+     <artifactId>compiler</artifactId>
+     <version>5.8.7</version>
      <type>xar</type>
      <scope>compile</scope>
    </dependency>

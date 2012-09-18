@@ -113,7 +113,7 @@ If this option is TRUE, xp-maven-plugin will use the locally installed XP-Framew
 Information on how to install XP-framework on your machine can be found here:
 - https://github.com/xp-framework/xp-framework/wiki/setup.framework
 
-If this option is FALSE, you don't need to have XP-framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:language` dependency defined in `pom.xml`
+If this option is FALSE, you don't need to have XP-framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:compiler` dependency defined in `pom.xml`
 
 xp-maven-plugin will download the needed XP-artifacts from repository (Maven central or as configured) and will create a local XP-runtime environment in the `target/.runtime` directory.
 

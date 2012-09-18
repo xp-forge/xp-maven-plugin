@@ -31,7 +31,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   public static final String POM_ARTIFACT_ID       = "pom";
   public static final String CORE_ARTIFACT_ID      = "core";
   public static final String TOOLS_ARTIFACT_ID     = "tools";
-  public static final String LANGUAGE_ARTIFACT_ID  = "language";
+  public static final String COMPILER_ARTIFACT_ID  = "compiler";
 
   /**
    * The Maven project
@@ -218,7 +218,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
           artifact.getArtifactId().equals(POM_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(CORE_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
-          artifact.getArtifactId().equals(LANGUAGE_ARTIFACT_ID)
+          artifact.getArtifactId().equals(COMPILER_ARTIFACT_ID)
         )
       ) continue;
       retVal.add(artifact);

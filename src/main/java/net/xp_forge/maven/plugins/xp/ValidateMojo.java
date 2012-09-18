@@ -164,10 +164,10 @@ public class ValidateMojo extends AbstractXpMojo {
     pthEntries.add(coreArtifact.getFile().getAbsolutePath());
     pthEntries.add(toolsArtifact.getFile().getAbsolutePath());
 
-    // Locate optional XP-artifacts: language
-    Artifact languageArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, LANGUAGE_ARTIFACT_ID);
-    if (null != languageArtifact) {
-      pthEntries.add(languageArtifact.getFile().getAbsolutePath());
+    // Locate optional XP-artifacts: compiler
+    Artifact compilerArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, COMPILER_ARTIFACT_ID);
+    if (null != compilerArtifact) {
+      pthEntries.add(compilerArtifact.getFile().getAbsolutePath());
     }
 
     // Unpack bootstrap
