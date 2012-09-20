@@ -32,6 +32,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private Archiver archiver;
 
   /**
+   * Its use is NOT RECOMMENDED, but quite convenient on occasion
+   *
+   * @parameter expression="${maven.test.skip}" default-value="false"
+   */
+  private boolean skip;
+
+  /**
    * Name of the generated XAR
    *
    * @parameter expression="${project.build.finalName}"
@@ -89,38 +96,85 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract File getClassesDirectory();
 
   /**
+   * Get artifact classifier
+   *
+   * @return java.lang.String
+   */
+  protected abstract String getClassifier();
+
+  /**
+   * Get strategy
+   *
+   * @return java.lang.String
+   */
+  protected abstract String getStrategy();
+
+  /**
+   * Get format
+   *
+   * @return java.lang.String
+   */
+  protected abstract String getFormat();
+
+  /**
+   * Get packDependencies
+   *
+   * @return boolean
+   */
+  protected abstract boolean getPackDependencies();
+
+  /**
+   * Get packRuntime
+   *
+   * @return boolean
+   */
+  protected abstract boolean getPackRuntime();
+
+  /**
    * {@inheritDoc}
    *
    */
   public void execute() throws MojoExecutionException {
-    File outputFile= this.getOutputFile();
+    String classifier        = this.getClassifier();
+    File outputFile          = this.getOutputFile();
+    String strategy          = this.getStrategy();
+    String format            = this.getFormat();
+    boolean packDependencies = this.getPackDependencies();
+    boolean packRuntime      = this.getPackRuntime();
 
     getLog().info("Classes directory  [" + this.getClassesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
-    getLog().info("Packaging strategy [" + this.strategy + "]");
-    getLog().info("Artifact format    [" + this.format + "]");
-    getLog().info("Pack runtime       [" + (this.packRuntime ? "yes" : "no") + "]");
-    getLog().info("Pack dependencies  [" + (this.packDependencies ? "yes" : "no") + "]");
+    getLog().info("Classifier         [" + (null == classifier ? "n/a" : classifier) + "]");
+    getLog().info("Packaging strategy [" + strategy + "]");
+    getLog().info("Artifact format    [" + format + "]");
+    getLog().info("Pack runtime       [" + (packRuntime ? "yes" : "no") + "]");
+    getLog().info("Pack dependencies  [" + (packDependencies ? "yes" : "no") + "]");
+
+    // Check ${maven.test.skip} is active and we're trying to package the "tests" artifact
+    if (this.skip && null != classifier && classifier.equals("tests")) {
+      getLog().info("Skipping packaging of tests (maven.test.skip)");
+      return;
+    }
 
     // Load archiver
     this.archiver= ArchiveUtils.getArchiver(outputFile);
 
     // Package library
-    if (this.strategy.equals("lib")) {
+    if (strategy.equals("lib")) {
       this.packClasses(null);
-      if (this.packDependencies) this.mergeDependencies();
+      if (packDependencies) this.mergeDependencies();
 
     // Package application
-    } else if (this.strategy.equals("app")) {
+    } else if (strategy.equals("app")) {
       this.packClasses("classes/");
       this.packApplicationResources();
-      if (this.packRuntime) this.includeRuntime();
-      if (this.packDependencies) this.includeDependencies();
+      if (packRuntime) this.includeRuntime();
+      if (packDependencies) this.includeDependencies();
 
     // Invalid packing strategy
     } else{
       throw new MojoExecutionException(
-        "${xp.package.strategy} has an invalid value [" + this.strategy + "]"
+        "${xp.package.strategy} has an invalid value [" + strategy + "]"
       );
     }
 
@@ -130,13 +184,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.archiver.createArchive();
     } catch (Exception ex) {
       throw new MojoExecutionException(
-        "Cannot create [" + this.format + "] to [" + outputFile + "]", ex
+        "Cannot create [" + format + "] to [" + outputFile + "]", ex
       );
     }
 
     // Attach/set generated archive as project artifact
-    if (null != this.classifier) {
-      this.projectHelper.attachArtifact(this.project, this.format, this.classifier, outputFile);
+    if (null != classifier) {
+      this.projectHelper.attachArtifact(this.project, format, classifier, outputFile);
     } else {
       this.project.getArtifact().setFile(outputFile);
     }
@@ -148,14 +202,17 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * @return java.io.File Location where to generate the output XAR file
    */
   private File getOutputFile() {
-    if (null == this.classifier || this.classifier.length() <= 0) {
-      return new File(this.outputDirectory, this.finalName + "." + this.format);
+    String classifier = this.getClassifier();
+    String format     = this.getFormat();
+
+    if (null == classifier || classifier.length() <= 0) {
+      return new File(this.outputDirectory, this.finalName + "." + format);
     }
     return new File(
       this.outputDirectory,
       this.finalName +
-      (this.classifier.startsWith("-") ? "" : "-") + this.classifier +
-      "." + this.format
+      (classifier.startsWith("-") ? "" : "-") + classifier +
+      "." + format
     );
   }
 
@@ -170,7 +227,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     // Check classes directory is empty
     if (!classesDirectory.exists()) {
-      getLog().info(" - Classes directory [" + classesDirectory + "] does not exist");
+      getLog().warn(" - Classes directory [" + classesDirectory + "] does not exist");
       return;
     }
 

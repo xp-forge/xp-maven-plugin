@@ -24,7 +24,6 @@ import net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput;
 public class TestMojo extends AbstractXpMojo {
 
   /**
-   *
    * Its use is NOT RECOMMENDED, but quite convenient on occasion
    *
    * @parameter expression="${maven.test.skip}" default-value="false"

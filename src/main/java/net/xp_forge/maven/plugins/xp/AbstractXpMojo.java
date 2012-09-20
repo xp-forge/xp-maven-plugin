@@ -214,6 +214,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
     for (Artifact artifact : (Iterable<Artifact>)this.project.getArtifacts()) {
       if (
         artifact.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
+        null == artifact.getClassifier() &&       // Some projects may require core-tests artifact as dependency
         (
           artifact.getArtifactId().equals(POM_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(CORE_ARTIFACT_ID) ||

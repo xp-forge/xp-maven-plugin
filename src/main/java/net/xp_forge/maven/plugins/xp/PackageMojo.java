@@ -12,6 +12,7 @@ import java.io.File;
  * Package classes and resources
  *
  * @goal package
+ * @requiresProject
  * @requiresDependencyResolution runtime
  */
 public class PackageMojo extends AbstractPackageMojo {
@@ -23,5 +24,50 @@ public class PackageMojo extends AbstractPackageMojo {
   @Override
   protected File getClassesDirectory() {
     return this.classesDirectory;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getClassifier() {
+    return this.classifier;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getStrategy() {
+    return this.strategy;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getFormat() {
+    return this.format;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean getPackDependencies() {
+    return this.packDependencies;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean getPackRuntime() {
+    return this.packRuntime;
   }
 }
