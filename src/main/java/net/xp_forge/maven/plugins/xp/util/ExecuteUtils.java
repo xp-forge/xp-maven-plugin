@@ -26,7 +26,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
-//import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.OS;
 
@@ -152,9 +152,9 @@ public final class ExecuteUtils {
 
     Executor executor= new DefaultExecutor();
     executor.setWorkingDirectory(workingDirectory);
-    executor.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
+    //executor.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
 
-    /* executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
+    executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
       @Override
       protected void processLine(String line, @SuppressWarnings("unused") int level) {
         if (line.toLowerCase().indexOf("error") > -1) {
@@ -165,7 +165,7 @@ public final class ExecuteUtils {
           cat.info(line);
         }
       }
-    }));*/
+    }));
 
     // Prepare environment
     Map<String, String> env;
