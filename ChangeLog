@@ -1,6 +1,8 @@
 xp-maven-plugin (3.1.5)
 
+  * Use Maven output when displaying unittest results
   * Remove ${xp.package.format} and replace it with ${project.packaging}
+  * Create just one pth file (project.pth) for "lib" ${xp.package.strategy}
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 25 Sep 2012
 
