@@ -40,8 +40,8 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getStrategy() {
-    return "lib";
+  protected String getPackaging() {
+    return "xar";
   }
 
   /**
@@ -49,8 +49,8 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getFormat() {
-    return "xar";
+  protected String getStrategy() {
+    return "lib";
   }
 
   /**

@@ -40,8 +40,8 @@ public class PackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getStrategy() {
-    return this.strategy;
+  protected String getPackaging() {
+    return this.packaging;
   }
 
   /**
@@ -49,8 +49,8 @@ public class PackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getFormat() {
-    return this.format;
+  protected String getStrategy() {
+    return this.strategy;
   }
 
   /**

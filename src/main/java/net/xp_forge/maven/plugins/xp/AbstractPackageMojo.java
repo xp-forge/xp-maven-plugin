@@ -31,12 +31,15 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private Archiver archiver;
 
+  // [project.pth] entries (for [app] packaging)
+  private List<String> projectPthEntries;
+
   /**
    * Its use is NOT RECOMMENDED, but quite convenient on occasion
    *
    * @parameter expression="${maven.test.skip}" default-value="false"
    */
-  private boolean skip;
+  protected boolean skip;
 
   /**
    * Name of the generated XAR
@@ -47,6 +50,16 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected String finalName;
 
   /**
+   * Specify what archiver to use. There are 2 options:
+   * - zip
+   * - xar
+   *
+   * @parameter expression="${project.packaging}" default-value="xar"
+   * @required
+   */
+  protected String packaging;
+
+  /**
    * Packing strategy: specify what type of artifact to build. There are 2 options:
    * - lib
    * - app
@@ -55,16 +68,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * @required
    */
   protected String strategy;
-
-  /**
-   * Specify what archiver to use. There are 2 options:
-   * - zip
-   * - xar
-   *
-   * @parameter expression="${xp.package.format}" default-value="xar"
-   * @required
-   */
-  protected String format;
 
   /**
    * Specify if dependencies will also be packed
@@ -110,11 +113,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract String getStrategy();
 
   /**
-   * Get format
+   * Get packaging
    *
    * @return java.lang.String
    */
-  protected abstract String getFormat();
+  protected abstract String getPackaging();
 
   /**
    * Get packDependencies
@@ -138,15 +141,15 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     String classifier        = this.getClassifier();
     File outputFile          = this.getOutputFile();
     String strategy          = this.getStrategy();
-    String format            = this.getFormat();
+    String packaging         = this.getPackaging();
     boolean packDependencies = this.getPackDependencies();
     boolean packRuntime      = this.getPackRuntime();
 
     getLog().info("Classes directory  [" + this.getClassesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
     getLog().info("Classifier         [" + (null == classifier ? "n/a" : classifier) + "]");
+    getLog().info("Packaging format   [" + packaging + "]");
     getLog().info("Packaging strategy [" + strategy + "]");
-    getLog().info("Artifact format    [" + format + "]");
     getLog().info("Pack runtime       [" + (packRuntime ? "yes" : "no") + "]");
     getLog().info("Pack dependencies  [" + (packDependencies ? "yes" : "no") + "]");
 
@@ -159,6 +162,10 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Load archiver
     this.archiver= ArchiveUtils.getArchiver(outputFile);
 
+    // Init [project.pth] entries
+    this.projectPthEntries= new ArrayList<String>();
+    this.projectPthEntries.add("classes");
+
     // Package library
     if (strategy.equals("lib")) {
       this.packClasses(null);
@@ -170,6 +177,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.packApplicationResources();
       if (packRuntime) this.includeRuntime();
       if (packDependencies) this.includeDependencies();
+      this.packProjectPth();
 
     // Invalid packing strategy
     } else{
@@ -184,35 +192,35 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.archiver.createArchive();
     } catch (Exception ex) {
       throw new MojoExecutionException(
-        "Cannot create [" + format + "] to [" + outputFile + "]", ex
+        "Cannot create [" + packaging + "] to [" + outputFile + "]", ex
       );
     }
 
     // Attach/set generated archive as project artifact
     if (null != classifier) {
-      this.projectHelper.attachArtifact(this.project, format, classifier, outputFile);
+      this.projectHelper.attachArtifact(this.project, packaging, classifier, outputFile);
     } else {
       this.project.getArtifact().setFile(outputFile);
     }
   }
 
   /**
-   * Returns the output file, based on finalName, classifier and format
+   * Returns the output file, based on finalName, classifier and packaging
    *
    * @return java.io.File Location where to generate the output XAR file
    */
   private File getOutputFile() {
     String classifier = this.getClassifier();
-    String format     = this.getFormat();
+    String packaging  = this.getPackaging();
 
     if (null == classifier || classifier.length() <= 0) {
-      return new File(this.outputDirectory, this.finalName + "." + format);
+      return new File(this.outputDirectory, this.finalName + "." + packaging);
     }
     return new File(
       this.outputDirectory,
       this.finalName +
       (classifier.startsWith("-") ? "" : "-") + classifier +
-      "." + format
+      "." + packaging
     );
   }
 
@@ -244,15 +252,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    *
    * - Include bootstrap files into "runtime/bootstrap"
    * - Include XP-artifacts into "runtime/lib"
-   * - Generate [runtime.pth] and include it into archive root
    *
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
   private void includeRuntime() throws MojoExecutionException {
     getLog().info("Including XP-runtime");
-
-    // Init [runtime.pth] entries
-    List<String> pthEntries= new ArrayList<String>();
 
     // Locate CORE_ARTIFACT_ID and TOOLS_ARTIFACT_ID artifacts
     Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
@@ -268,11 +272,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Pack XP-artifacts
     getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [runtime/lib]");
     this.archiver.addFile(coreArtifact.getFile(), "runtime/lib/" + coreArtifact.getFile().getName());
-    pthEntries.add("runtime/lib/" + coreArtifact.getFile().getName());
+    this.projectPthEntries.add("runtime/lib/" + coreArtifact.getFile().getName());
 
     getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [runtime/lib]");
     this.archiver.addFile(toolsArtifact.getFile(), "runtime/lib/" + toolsArtifact.getFile().getName());
-    pthEntries.add("runtime/lib/" + toolsArtifact.getFile().getName());
+    this.projectPthEntries.add("runtime/lib/" + toolsArtifact.getFile().getName());
 
     // Pack bootstrap
     try {
@@ -293,18 +297,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot pack XP-runtime", ex);
     }
-
-    // On-the-fly generate a [runtime.pth] file and add it to archive
-    getLog().info("Packing on-the-fly created [runtime.pth] to archive");
-    File pthFile= new File(this.outputDirectory, "runtime.pth-package");
-    try {
-      FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
-    } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
-    }
-
-    getLog().debug(" - Add file [" + pthFile + "] to [runtime.pth]");
-    this.archiver.addFile(pthFile, "runtime.pth");
   }
 
   /**
@@ -314,8 +306,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
   private void includeDependencies() throws MojoExecutionException {
-    List<String> pthEntries= new ArrayList<String>();
-
     getLog().info("Including dependencies");
     for (Artifact artifact : (Iterable<Artifact>)this.getArtifacts(false)) {
 
@@ -332,27 +322,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
 
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        pthEntries.add("!libs/" + artifact.getFile().getName());
+        this.projectPthEntries.add("!libs/" + artifact.getFile().getName());
       } else {
-        pthEntries.add("libs/" + artifact.getFile().getName());
+        this.projectPthEntries.add("libs/" + artifact.getFile().getName());
       }
     }
-
-    // Add libs to [project.pth]
-    pthEntries.add("classes");
-    pthEntries.add("lib");
-
-    // On-the-fly generate a "project.pth" file and add it to archive
-    getLog().info("Packing on-the-fly created [project.pth] to archive");
-    File pthFile= new File(this.outputDirectory, "project.pth-package");
-    try {
-      FileUtils.setFileContents(pthFile, pthEntries);
-    } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
-    }
-
-    getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
-    this.archiver.addFile(pthFile, "project.pth");
   }
 
   /**
@@ -410,5 +384,23 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       getLog().debug(" - Add directory [" + appDir + "] to [" + appDirName + "/]");
       this.archiver.addDirectory(appDir, appDirName + "/");
     }
+  }
+
+  /**
+   * Pack on-the-fly created [project.pth] with entries from this.projectPthEntries
+   *
+   * @throw  org.apache.maven.plugin.MojoExecutionException
+   */
+  private void packProjectPth() throws MojoExecutionException {
+    getLog().info("Packing on-the-fly created [project.pth] to archive");
+    File pthFile= new File(this.outputDirectory, "project.pth-package");
+    try {
+      FileUtils.setFileContents(pthFile, this.projectPthEntries);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
+    }
+
+    getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
+    this.archiver.addFile(pthFile, "project.pth");
   }
 }

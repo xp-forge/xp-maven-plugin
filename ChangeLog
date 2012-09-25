@@ -1,3 +1,9 @@
+xp-maven-plugin (3.1.5)
+
+  * Remove ${xp.package.format} and replace it with ${project.packaging}
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 25 Sep 2012
+
 xp-maven-plugin (3.1.4)
 
   * Fix the "test-package" goal
