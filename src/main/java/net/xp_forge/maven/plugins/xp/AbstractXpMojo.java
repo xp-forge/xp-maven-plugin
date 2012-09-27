@@ -84,6 +84,15 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   protected File basedir;
 
   /**
+   * Current version of the project
+   *
+   * @parameter expression="${project.version}"
+   * @required
+   * @readonly
+   */
+  protected String version;
+
+  /**
    * Directory containing the generated XAR
    *
    * @parameter expression="${project.build.directory}"

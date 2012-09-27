@@ -27,18 +27,21 @@ import net.xp_forge.maven.plugins.xp.ini.IniProperties;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
- * Check for the presence of XP-Framework runners
+ * Initialize phase that bootstraps XP-Framework
  *
- * @goal validate
+ * @goal initialize
  * @requiresDependencyResolution compile
  */
-public class ValidateMojo extends AbstractXpMojo {
+public class InitializeMojo extends AbstractXpMojo {
 
   /**
    * {@inheritDoc}
    *
    */
   public void execute() throws MojoExecutionException {
+
+    // Calculate stripped version
+    String strippedVersion= this.version.replaceAll("-SNAPSHOT", "");
 
     // User clearly specified to use already installed XP-Runtime via ${xp.runtime.local}
     if (this.local) {
@@ -60,10 +63,13 @@ public class ValidateMojo extends AbstractXpMojo {
       this.setupRuntimeFromDependencies(new File(this.outputDirectory, ".runtime"));
     }
 
-    getLog().info("Using runners from [" + this.runnersDirectory + "]");
+    getLog().info("Stripped [" + strippedVersion + "]");
+    this.project.getProperties().setProperty("xp.strippedVersion", strippedVersion);
+
+    getLog().info("Runners  [" + this.runnersDirectory + "]");
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
 
-    getLog().info("USE_XP [" + (null == this.use_xp ? "N/A" : this.use_xp) + "]");
+    getLog().info("USE_XP   [" + (null == this.use_xp ? "N/A" : this.use_xp) + "]");
     if (null != this.use_xp) {
       this.project.getProperties().setProperty("xp.runtime.use_xp", this.use_xp);
     }

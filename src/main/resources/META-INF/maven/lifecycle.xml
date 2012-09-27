@@ -5,11 +5,11 @@
     <id>xar</id>
     <phases>
       <phase>
-        <id>validate</id>
+        <id>initialize</id>
         <executions>
           <execution>
             <goals>
-              <goal>validate</goal>
+              <goal>initialize</goal>
             </goals>
           </execution>
         </executions>
@@ -72,11 +72,11 @@
     <id>zip</id>
     <phases>
       <phase>
-        <id>validate</id>
+        <id>initialize</id>
         <executions>
           <execution>
             <goals>
-              <goal>validate</goal>
+              <goal>initialize</goal>
             </goals>
           </execution>
         </executions>

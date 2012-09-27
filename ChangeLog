@@ -1,3 +1,10 @@
+xp-maven-plugin (3.1.6)
+
+  * Moved all operation from phase "validate" to phase "initialize"
+  * Add ${xp.strippedVersion} to project properties
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 27 Sep 2012
+
 xp-maven-plugin (3.1.5)
 
   * Use Maven output when displaying unittest results
