@@ -1,7 +1,7 @@
 /**
  * This file is part of the XP-Framework
  *
- * Maven plugin for XP-Framework
+ * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
 package net.xp_forge.maven.plugins.xp;
@@ -82,15 +82,6 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    * @readonly
    */
   protected File basedir;
-
-  /**
-   * Current version of the project
-   *
-   * @parameter expression="${project.version}"
-   * @required
-   * @readonly
-   */
-  protected String version;
 
   /**
    * Directory containing the generated XAR

@@ -1,7 +1,7 @@
 /**
  * This file is part of the XP-Framework
  *
- * Maven plugin for XP-Framework
+ * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
 package net.xp_forge.maven.plugins.xp.ini;

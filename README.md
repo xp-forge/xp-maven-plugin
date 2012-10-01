@@ -1,4 +1,4 @@
-XP-Framework plugin for Maven
+XP-Framework Maven plugin
 =======================================================================
 
 xp-maven-plugin is a Maven 2/3 plugin to manage the lifecycle of an XP-Framework project:

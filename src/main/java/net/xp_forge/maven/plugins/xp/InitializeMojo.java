@@ -1,7 +1,7 @@
 /**
  * This file is part of the XP-Framework
  *
- * Maven plugin for XP-Framework
+ * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
 package net.xp_forge.maven.plugins.xp;
@@ -40,9 +40,6 @@ public class InitializeMojo extends AbstractXpMojo {
    */
   public void execute() throws MojoExecutionException {
 
-    // Calculate stripped version
-    String strippedVersion= this.version.replaceAll("-SNAPSHOT", "");
-
     // User clearly specified to use already installed XP-Runtime via ${xp.runtime.local}
     if (this.local) {
       this.setupRuntimeFromLocalInstall();
@@ -63,9 +60,6 @@ public class InitializeMojo extends AbstractXpMojo {
       this.setupRuntimeFromDependencies(new File(this.outputDirectory, ".runtime"));
     }
 
-    getLog().info("Stripped [" + strippedVersion + "]");
-    this.project.getProperties().setProperty("xp.strippedVersion", strippedVersion);
-
     getLog().info("Runners  [" + this.runnersDirectory + "]");
     this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
 
@@ -83,7 +77,7 @@ public class InitializeMojo extends AbstractXpMojo {
    * by searching for XP-Runners in PATH
    *
    * @return void
-   * @throws import org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void setupRuntimeFromLocalInstall() throws MojoExecutionException {
     getLog().debug("Preparing XP-Runtime from local install");
@@ -232,15 +226,18 @@ public class InitializeMojo extends AbstractXpMojo {
     try {
       getLog().debug(" - Extracting runners from resources");
 
-      ExecuteUtils.saveRunner("xp", targetDirectory);
-      ExecuteUtils.saveRunner("xcc", targetDirectory);
-      ExecuteUtils.saveRunner("xar", targetDirectory);
-      ExecuteUtils.saveRunner("xpcli", targetDirectory);
+      ExecuteUtils.saveRunner("cgen", targetDirectory);
       ExecuteUtils.saveRunner("doclet", targetDirectory);
       ExecuteUtils.saveRunner("unittest", targetDirectory);
+      ExecuteUtils.saveRunner("xar", targetDirectory);
+      ExecuteUtils.saveRunner("xcc", targetDirectory);
+      ExecuteUtils.saveRunner("xp", targetDirectory);
+      ExecuteUtils.saveRunner("xpcli", targetDirectory);
+      ExecuteUtils.saveRunner("xpi", targetDirectory);
+      ExecuteUtils.saveRunner("xpws", targetDirectory);
 
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot extract XP-runners to [" + targetDirectory + "]", ex);
+      throw new MojoExecutionException("Cannot extract XP-Runners to [" + targetDirectory + "]", ex);
     }
 
     // Set USE_XP

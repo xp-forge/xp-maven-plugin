@@ -1,4 +1,10 @@
 #!/bin/sh
+
+
+
+
+
+
 PATHSEP=':'
 DIRSEP='/'
 
@@ -60,11 +66,9 @@ locate() {
   if [ $expect = 1 ] ; then echo "*** Failed to locate $file in $path" >&2 ; fi
   echo ""
 }
-
 OPTIND=0
 INCLUDE_PATH="."
 TOOL=
-
 if [ 0 = $# ] ; then
   TOOL="xp.runtime.ShowResource|usage.txt|255"
 else
@@ -74,7 +78,6 @@ else
       OPTIND=`expr $OPTIND + 2`
       continue
     fi
-
     case $arg in
       -v) # Display version
         TOOL="xp.runtime.Version"
@@ -83,6 +86,9 @@ else
       -e) # Run source passed via command line
         TOOL="xp.runtime.Evaluate"
         OPTIND=$(expr $OPTIND + 1)
+        ;;
+      -w|-d) # Evaluate source and dump result
+        TOOL="xp.runtime.Dump"
         ;;
       -r) # Reflect given class
         TOOL="xp.runtime.Reflect"
@@ -106,62 +112,73 @@ else
   done
   shift $OPTIND
 fi
-
 base="$DIRNAME" RUNNER="class" INCLUDE=$INCLUDE_PATH xppath="$DIRNAME" ARGS=$TOOL IFS="|";
-
-
 ifs="|"
-
 if [ "" = "$USE_XP" ] ; then
   unset USE_XP
 else
   USE_XP=$(translate_paths "." "$USE_XP")
 fi
 RT_ARG=""
+dkeys=""
+vkeys=""
 for i in "." "$HOME/.xp" "$base" ; do
   if [ -e "$i/xp.ini" ] ; then
     section=default
-    while read line ; do
+    while read line || [ -n "$line" ] ; do
       case "$section.$line" in
         default.use=*)
           USE_XP=${USE_XP-$(translate_paths "$i" "${line#*=}")}
         ;;
-
+        default.rt=*)
+          XP_RT=${XP_RT-${line#*=}}
+        ;;
         *.\;*)
           ;;
-
         *.\[*\])
           section=${line#\[}
           section=${section%]}
         ;;
-
+        runtime.extension=*|runtime@$XP_RT.extension=*)
+          RT_ARG="$RT_ARG${ifs}-dextension=${line#*=}"
+        ;;
         runtime.*=*)
           key=${line%=*}
-          if [ default = $key ] ; then
-            XP_RT=${XP_RT-"${line#*=}"}
-          else
-            RT_ARG="$RT_ARG${ifs}-d$key=\"${line#*=}\""
-          fi
+          key=$(echo $key | sed 's/\./__/g')
+          dkeys="$dkeys${ifs}$key"
+          eval "d$key"=${line#*=}
+        ;;
+        runtime@$XP_RT.*=*)
+          key=${line%=*}
+          key=$(echo $key | sed 's/\./__/g')
+          vkeys="$vkeys${ifs}$key"
+          eval "v$key"=${line#*=}
         ;;
       esac
     done < "$i/xp.ini"
   fi
 done
-
-XP_RT=${XP_RT-php}
+for k in $vkeys ; do
+  eval "d$k=\$v$k"
+  dkeys="$dkeys${ifs}$k"
+done
+for k in $dkeys ; do
+  if [ $k ] ; then
+    eval "v=\$d$k"
+    if [ default = $k ] ; then
+      XP_EXE=${XP_EXE-$v}
+    else
+      RT_ARG="$RT_ARG${ifs}-d$(echo $k | sed 's/__/./g')=\"$v\""
+    fi
+  fi
+done
+XP_EXE=${XP_EXE-php}
 if [ "" = "$USE_XP" ] ; then
   echo "*** Cannot determine use_xp setting from [ ENV $HOME/.xp/xp.ini $base/xp.ini ]" >&2
   exit 255
 fi
-
 args="-C${ifs}-q${ifs}-dinclude_path=\".$PATHSEP$USE_XP$PATHSEP$PATHSEP$INCLUDE\"${ifs}-dmagic_quotes_gpc=0$RT_ARG"
 tool=$(locate "$USE_XP" "tools/"${RUNNER}".php" 1)
-
-
-
-
-
-
-export XP_RT
+export XP_EXE
 IFS="|"
-${XP_RT}${ifs}${args}${ifs}$tool ${ARGS} "$@"
+${XP_EXE}${ifs}${args}${ifs}$tool ${ARGS} "$@"
