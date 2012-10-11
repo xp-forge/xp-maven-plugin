@@ -8,11 +8,16 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.TimeZone;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -22,6 +27,7 @@ import org.codehaus.plexus.archiver.ArchiverException;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
+import net.xp_forge.maven.plugins.xp.ini.IniProperties;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
@@ -54,10 +60,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * - zip
    * - xar
    *
-   * @parameter expression="${project.packaging}" default-value="xar"
-   * @required
+   * If not set, ${project.packaging} will be used
+   *
+   * @parameter expression="${xp.package.format}"
    */
-  protected String packaging;
+  protected String format;
 
   /**
    * Packing strategy: specify what type of artifact to build. There are 2 options:
@@ -92,6 +99,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected boolean packRuntime;
 
   /**
+   * Specify main class for this artifact. used when calling [xp -xar artifact.xar]
+   *
+   * @parameter expression="${xp.package.mainClass}"
+   */
+  protected String mainClass;
+
+  /**
    * Get location of compiled files (.class.php) to include in the package
    *
    * @return java.io.File
@@ -106,18 +120,18 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract String getClassifier();
 
   /**
-   * Get strategy
+   * Get packaging strategy
    *
    * @return java.lang.String
    */
   protected abstract String getStrategy();
 
   /**
-   * Get packaging
+   * Get packaging format
    *
    * @return java.lang.String
    */
-  protected abstract String getPackaging();
+  protected abstract String getFormat();
 
   /**
    * Get packDependencies
@@ -141,14 +155,14 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     String classifier        = this.getClassifier();
     File outputFile          = this.getOutputFile();
     String strategy          = this.getStrategy();
-    String packaging         = this.getPackaging();
+    String format            = this.getFormat();
     boolean packDependencies = this.getPackDependencies();
     boolean packRuntime      = this.getPackRuntime();
 
     getLog().info("Classes directory  [" + this.getClassesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
     getLog().info("Classifier         [" + (null == classifier ? "n/a" : classifier) + "]");
-    getLog().info("Packaging format   [" + packaging + "]");
+    getLog().info("Packaging format   [" + format + "]");
     getLog().info("Packaging strategy [" + strategy + "]");
     getLog().info("Pack runtime       [" + (packRuntime ? "yes" : "no") + "]");
     getLog().info("Pack dependencies  [" + (packDependencies ? "yes" : "no") + "]");
@@ -186,41 +200,44 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       );
     }
 
+    // Package manifest file [META-INF/manifest.ini]
+    this.packManifest();
+
     // Save archive to output file
     try {
       getLog().debug(" - Creating archive [" + outputFile + "]");
       this.archiver.createArchive();
     } catch (Exception ex) {
       throw new MojoExecutionException(
-        "Cannot create [" + packaging + "] to [" + outputFile + "]", ex
+        "Cannot create [" + format + "] to [" + outputFile + "]", ex
       );
     }
 
     // Attach/set generated archive as project artifact
     if (null != classifier) {
-      this.projectHelper.attachArtifact(this.project, packaging, classifier, outputFile);
+      this.projectHelper.attachArtifact(this.project, format, classifier, outputFile);
     } else {
       this.project.getArtifact().setFile(outputFile);
     }
   }
 
   /**
-   * Returns the output file, based on finalName, classifier and packaging
+   * Returns the output file, based on finalName, classifier and format
    *
    * @return java.io.File Location where to generate the output XAR file
    */
   private File getOutputFile() {
     String classifier = this.getClassifier();
-    String packaging  = this.getPackaging();
+    String format     = this.getFormat();
 
     if (null == classifier || classifier.length() <= 0) {
-      return new File(this.outputDirectory, this.finalName + "." + packaging);
+      return new File(this.outputDirectory, this.finalName + "." + format);
     }
     return new File(
       this.outputDirectory,
       this.finalName +
       (classifier.startsWith("-") ? "" : "-") + classifier +
-      "." + packaging
+      "." + format
     );
   }
 
@@ -402,5 +419,75 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     getLog().debug(" - Add file [" + pthFile + "] to [project.pth]");
     this.archiver.addFile(pthFile, "project.pth");
+  }
+
+  /**
+   * Pack on-thle-fly created [META-INF/manifest.ini]
+   *
+   * @throw  org.apache.maven.plugin.MojoExecutionException
+   */
+  private void packManifest() throws MojoExecutionException {
+    getLog().info("Packing on-the-fly created [manifest.ini] to archive");
+
+    // Init [manifest.ini]
+    IniProperties ini= new IniProperties();
+
+    // Set project properties
+    ini.setProperty("project", "group-id", this.project.getGroupId());
+    ini.setProperty("project", "artifact-id", this.project.getArtifactId());
+    ini.setProperty("project", "version", this.project.getVersion());
+    ini.setProperty("project", "name", this.project.getName());
+
+    if (null != this.getClassifier()) {
+      ini.setProperty("project", "classifier", this.getClassifier());
+    }
+
+    // Set archive properties
+    ini.setProperty("archive", "generator", "xp-maven-plugin");
+    ini.setProperty("archive", "created-by", this.getMachineInfo());
+    ini.setProperty("archive", "created-on", this.getCurrentTimestamp());
+    ini.setProperty("archive", "format", this.getFormat());
+
+    // Add main-class; if the case
+    if (null != this.mainClass && !this.mainClass.isEmpty()) {
+      ini.setProperty("archive", "main-class", this.mainClass);
+    }
+
+    // Dump ini file
+    File iniFile= new File(this.outputDirectory, "manifest.ini-package");
+    try {
+      ini.dump(iniFile);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot write [" + iniFile + "]", ex);
+    }
+
+    getLog().debug(" - Add file [" + iniFile + "] to [META-INF/manifest.ini]");
+    this.archiver.addFile(iniFile, "META-INF/manifest.ini");
+  }
+
+  /**
+   * Get formatted current date
+   *
+   * @return java.lang.String
+   */
+  private String getCurrentTimestamp() {
+    SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+    return sdf.format(new Date());
+  }
+
+  /**
+   * Get username@hostname
+   *
+   * @return java.lang.String
+   */
+  private String getMachineInfo() {
+    String retVal= System.getProperty("user.name") + "@";
+    try {
+      retVal+= InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException ex) {
+      retVal+= "unknown";
+    }
+    return retVal;
   }
 }

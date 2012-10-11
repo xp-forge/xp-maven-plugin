@@ -40,7 +40,7 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getPackaging() {
+  protected String getFormat() {
     return "xar";
   }
 

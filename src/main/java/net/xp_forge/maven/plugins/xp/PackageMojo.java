@@ -40,8 +40,13 @@ public class PackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
-  protected String getPackaging() {
-    return this.packaging;
+  protected String getFormat() {
+    if (null != this.format && !this.format.isEmpty()) {
+      return this.format;
+    }
+
+    // Format is not set; use ${project.packaging}
+    return this.project.getPackaging();
   }
 
   /**

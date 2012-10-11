@@ -61,11 +61,11 @@ public class InitializeMojo extends AbstractXpMojo {
     }
 
     getLog().info("Runners  [" + this.runnersDirectory + "]");
-    this.project.getProperties().setProperty("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
+    this.project.getProperties().put("xp.runtime.runners.directory", this.runnersDirectory.getAbsolutePath());
 
     getLog().info("USE_XP   [" + (null == this.use_xp ? "N/A" : this.use_xp) + "]");
     if (null != this.use_xp) {
-      this.project.getProperties().setProperty("xp.runtime.use_xp", this.use_xp);
+      this.project.getProperties().put("xp.runtime.use_xp", this.use_xp);
     }
 
     // Alter default Maven settings
@@ -288,7 +288,7 @@ public class InitializeMojo extends AbstractXpMojo {
 
     // Update ${xp.runtime.php} property
     getLog().debug(" - Using PHP from [" + this.php.getAbsolutePath() + "]");
-    this.project.getProperties().setProperty("xp.runtime.php", this.php.getAbsolutePath());
+    this.project.getProperties().put("xp.runtime.php", this.php.getAbsolutePath());
   }
 
   /**
@@ -312,7 +312,7 @@ public class InitializeMojo extends AbstractXpMojo {
 
     // Update ${xp.runtime.timezone} property
     getLog().debug(" - Using timezone [" + this.timezone + "]");
-    this.project.getProperties().setProperty("xp.runtime.timezone", this.timezone);
+    this.project.getProperties().put("xp.runtime.timezone", this.timezone);
   }
 
   /**

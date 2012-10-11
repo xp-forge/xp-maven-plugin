@@ -3,6 +3,7 @@ xp-maven-plugin (3.1.6)
   * Moved all operation from phase "validate" to phase "initialize"
   * Use new XP-Runners
   * Update project name to "XP-Framework Maven plugin"
+  * Include on-the-fly generated "META-INF/manifest.ini" in output artifact
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 1 Oct 2012
 
