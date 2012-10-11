@@ -382,7 +382,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       }
     }
 
-    // Add dump dumpDirectory to archive
+    // Add tmpDirectory to archive
     getLog().debug(" - Add directory [" + tmpDirectory + "] to [/]");
     DefaultFileSet fileSet= new DefaultFileSet();
     fileSet.setDirectory(tmpDirectory);
