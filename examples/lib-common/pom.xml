@@ -3,7 +3,7 @@
 
   <groupId>org.company.lib</groupId>
   <artifactId>lib-common</artifactId>
-  <version>1.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>Common library</name>
   <packaging>xar</packaging>
   <properties>
@@ -32,7 +32,7 @@
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.1.2-SNAPSHOT</version>
+        <version>3.1.6-SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
           <classifier>patch</classifier>

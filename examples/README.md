@@ -21,5 +21,5 @@ Build the "app-hello" application artifact
 Build and run the Uber-XAR
 --------------------------
 
-    ~/xp-maven-plugin/examples/app-hello $ mvn -Dxpframework.xar.mergeDependencies package
+    ~/xp-maven-plugin/examples/app-hello $ mvn package
     ~/xp-maven-plugin/examples/app-hello $ xp -xar target/app-hello-1.0-uber.xar

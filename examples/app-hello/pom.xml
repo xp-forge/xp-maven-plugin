@@ -3,11 +3,13 @@
 
   <groupId>org.company.app</groupId>
   <artifactId>app-hello</artifactId>
-  <version>1.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>Hello world application</name>
   <packaging>xar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <xp.package.mainClass>org.company.app.hello.Hello</xp.package.mainClass>
+    <xp.package.packDependencies>true</xp.package.packDependencies>
   </properties>
 
   <dependencies>
@@ -28,7 +30,7 @@
     <dependency>
       <groupId>org.company.lib</groupId>
       <artifactId>lib-common</artifactId>
-      <version>1.0</version>
+      <version>1.0.0-SNAPSHOT</version>
       <type>xar</type>
       <classifier>patch</classifier>
    </dependency>
@@ -39,7 +41,7 @@
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.1.2-SNAPSHOT</version>
+        <version>3.1.6-SNAPSHOT</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>

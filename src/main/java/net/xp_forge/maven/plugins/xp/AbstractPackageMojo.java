@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
@@ -35,6 +36,8 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
  *
  */
 public abstract class AbstractPackageMojo extends AbstractXpMojo {
+  public static final String[] EXCLUDES= {"META-INF/manifest.ini"};
+
   private Archiver archiver;
 
   // [project.pth] entries (for [app] packaging)
@@ -257,11 +260,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     }
 
     getLog().debug(" - Add classes directory [" + classesDirectory + "] to [" + (null == prefix ? "/" : prefix) + "]");
-    if (null == prefix) {
-      this.archiver.addDirectory(classesDirectory);
-    } else {
-      this.archiver.addDirectory(classesDirectory, prefix);
+    DefaultFileSet fileSet= new DefaultFileSet();
+    fileSet.setDirectory(classesDirectory);
+    fileSet.setExcludes(AbstractPackageMojo.EXCLUDES);
+    if (null != prefix) {
+      fileSet.setPrefix(prefix);
     }
+    this.archiver.addFileSet(fileSet);
   }
 
   /**
@@ -379,7 +384,10 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     // Add dump dumpDirectory to archive
     getLog().debug(" - Add directory [" + tmpDirectory + "] to [/]");
-    archiver.addDirectory(tmpDirectory);
+    DefaultFileSet fileSet= new DefaultFileSet();
+    fileSet.setDirectory(tmpDirectory);
+    fileSet.setExcludes(AbstractPackageMojo.EXCLUDES);
+    this.archiver.addFileSet(fileSet);
   }
 
   /**
@@ -399,7 +407,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
       // Add contents to archive
       getLog().debug(" - Add directory [" + appDir + "] to [" + appDirName + "/]");
-      this.archiver.addDirectory(appDir, appDirName + "/");
+      DefaultFileSet fileSet= new DefaultFileSet();
+      fileSet.setDirectory(appDir);
+      fileSet.setExcludes(AbstractPackageMojo.EXCLUDES);
+      fileSet.setPrefix(appDirName + "/");
+      this.archiver.addFileSet(fileSet);
     }
   }
 

@@ -4,8 +4,10 @@ xp-maven-plugin (3.1.6)
   * Use new XP-Runners
   * Update project name to "XP-Framework Maven plugin"
   * Include on-the-fly generated "META-INF/manifest.ini" in output artifact
+  * Use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
+  * Update examples in "examples" directory
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 1 Oct 2012
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 11 Oct 2012
 
 xp-maven-plugin (3.1.5)
 
