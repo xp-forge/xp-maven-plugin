@@ -7,6 +7,7 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Package classes and resources
@@ -69,5 +70,14 @@ public class TestPackageMojo extends AbstractPackageMojo {
   @Override
   protected boolean getPackRuntime() {
     return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected List<File> getAppDirectories() {
+    return null;
   }
 }

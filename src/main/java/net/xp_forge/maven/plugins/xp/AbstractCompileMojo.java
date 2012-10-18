@@ -8,6 +8,7 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -109,6 +110,12 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
   protected abstract boolean isSkip();
 
   /**
+   * Get application directories map
+   *
+   */
+  protected abstract Map<String, String> getAppDirectoriesMap();
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -124,28 +131,32 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
     List<String> phpSourceRoots= this.getPhpSourceRoots();
     this.copyPhpSources(phpSourceRoots, this.getClassesDirectory(), this.getPhpIncludePattern());
 
-    // Cleanup source roots
-    List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
-    if (compileSourceRoots.isEmpty()) {
-      getLog().info("There are no sources to compile");
-      return;
-    }
-
-    // Let [xcc] know where to get sources from
-    for (String compileSourceRoot : compileSourceRoots) {
-      this.addSourcepath(compileSourceRoot);
-    }
-
     // Also add the PHP sources to classpath
     for (String phpSourceRoot : phpSourceRoots) {
       this.addClasspath(phpSourceRoot);
     }
 
-    // Add additional classpath
-    this.addClasspath(this.getAdditionalClasspath());
+    // Cleanup source roots
+    List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
+    if (compileSourceRoots.isEmpty()) {
+      getLog().info("There are no sources to compile");
 
-    // Execute [xcc]
-    this.executeXcc(compileSourceRoots, this.getClassesDirectory());
+    } else {
+
+      // Let [xcc] know where to get sources from
+      for (String compileSourceRoot : compileSourceRoots) {
+        this.addSourcepath(compileSourceRoot);
+      }
+
+      // Add additional classpath
+      this.addClasspath(this.getAdditionalClasspath());
+
+      // Execute [xcc]
+      this.executeXcc(compileSourceRoots, this.getClassesDirectory());
+    }
+
+    // Copy application resources
+    this.copyAppDirectories(this.getAppDirectoriesMap());
   }
 
   /**
@@ -281,8 +292,6 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    * @throws org.apache.maven.plugin.MojoExecutionException When copy of the PHP source files failed
    */
   protected void copyPhpSources(List<String> phpSourceRoots, File classesDirectory, String phpIncludePattern) throws MojoExecutionException {
-
-    // Debug info
     getLog().debug("PHP source directories [" + (null == phpSourceRoots ? "NULL" : phpSourceRoots.toString()) + "]");
 
     // Ignore non-existing raw PHP files
@@ -315,6 +324,44 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
 
       } catch(IOException ex) {
         throw new MojoExecutionException("Failed to copy PHP sources", ex);
+      }
+    }
+  }
+
+  /**
+   * Copy application resources
+   *
+   * @param  Map<String, String> directoriesMap
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException When copy of application resources failed
+   */
+  protected void copyAppDirectories(Map<String, String> directoriesMap) throws MojoExecutionException {
+    getLog().debug("Copy application resources");
+
+    // Sanity check
+    if (null == directoriesMap) return;
+
+    // Process each application directory map entry
+    for (Map.Entry<String, String> entry:directoriesMap.entrySet()) {
+      String srcName= "src" + File.separator + "main" + File.separator + entry.getKey();
+      String dstName= entry.getValue();
+
+      // Check directory exists
+      if (!new File(this.basedir, srcName).exists()) continue;
+      getLog().debug(" * [" + srcName + "] => [target" + File.separator + dstName + "]");
+
+      // Define resources
+      Resource resource= new Resource();
+      resource.setFiltering(false);
+      resource.setDirectory(srcName);
+
+      // Copy resources
+      try {
+        File dstFile= new File(this.outputDirectory, dstName);
+        MavenResourceUtils.copyResource(resource, dstFile, this.project, this.session, this.mavenResourcesFiltering);
+
+      } catch(IOException ex) {
+        throw new MojoExecutionException("Failed to copy application resources", ex);
       }
     }
   }

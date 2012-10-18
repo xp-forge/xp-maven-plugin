@@ -151,6 +151,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract boolean getPackRuntime();
 
   /**
+   * Get application directories (from ${outputdir})
+   *
+   * @return java.util.List<File> 
+   */
+  protected abstract List<File> getAppDirectories();
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -398,19 +405,19 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private void packApplicationResources() throws MojoExecutionException {
     getLog().info("Including application resources");
 
-    File mainDir= new File(this.project.getBuild().getSourceDirectory()).getParentFile();
-    for (String appDirName : Arrays.asList("doc_root", "etc", "xsl")) {
+    // Get list of application directories
+    List<File> appDirs= this.getAppDirectories();
+    if (null == appDirs) return;
 
-      // If app dir does not exist; skip it
-      File appDir= new File(mainDir, appDirName);
+    for (File appDir : appDirs) {
       if (!appDir.exists()) continue;
 
-      // Add contents to archive
-      getLog().debug(" - Add directory [" + appDir + "] to [" + appDirName + "/]");
+      // Add app directory contents to archive
+      getLog().debug(" - Add directory [" + appDir + "] to [" + appDir.getName() + "/]");
       DefaultFileSet fileSet= new DefaultFileSet();
       fileSet.setDirectory(appDir);
       fileSet.setExcludes(AbstractPackageMojo.EXCLUDES);
-      fileSet.setPrefix(appDirName + "/");
+      fileSet.setPrefix(appDir.getName() + "/");
       this.archiver.addFileSet(fileSet);
     }
   }

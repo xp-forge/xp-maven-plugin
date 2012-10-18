@@ -7,8 +7,10 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.apache.maven.model.Dependency;
@@ -32,6 +34,18 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   public static final String CORE_ARTIFACT_ID      = "core";
   public static final String TOOLS_ARTIFACT_ID     = "tools";
   public static final String COMPILER_ARTIFACT_ID  = "compiler";
+
+  // Application directories mapping (input => output)
+  public static final Map<String, String> APP_DIRECTORIES_MAP;
+  static {
+    APP_DIRECTORIES_MAP= new HashMap<String, String>();
+    APP_DIRECTORIES_MAP.put("webapp", "doc_root");
+    APP_DIRECTORIES_MAP.put("doc_root", "doc_root");
+    APP_DIRECTORIES_MAP.put("config", "etc");
+    APP_DIRECTORIES_MAP.put("etc", "etc");
+    APP_DIRECTORIES_MAP.put("xsl", "xsl");
+    APP_DIRECTORIES_MAP.put("deploy", "config");
+  }
 
   /**
    * The Maven project

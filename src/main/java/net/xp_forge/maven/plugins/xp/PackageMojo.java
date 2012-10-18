@@ -7,6 +7,9 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Package classes and resources
@@ -74,5 +77,25 @@ public class PackageMojo extends AbstractPackageMojo {
   @Override
   protected boolean getPackRuntime() {
     return this.packRuntime;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected List<File> getAppDirectories() {
+    List<File> retVal= new ArrayList<File>();
+
+    // Iterate on APP_DIRECTORIES_MAP and return the list of unique values
+    for (String appDirName: AbstractXpMojo.APP_DIRECTORIES_MAP.values()) {
+      File appDir= new File(this.outputDirectory, appDirName);
+
+      // Add to list; if not already added
+      if (retVal.contains(appDir)) continue;
+      retVal.add(appDir);
+    }
+
+    return retVal;
   }
 }

@@ -7,6 +7,7 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -107,5 +108,14 @@ public class TestCompileMojo extends AbstractCompileMojo {
   @Override
   protected boolean isSkip() {
     return this.skip;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected Map<String, String> getAppDirectoriesMap() {
+    return null;
   }
 }
