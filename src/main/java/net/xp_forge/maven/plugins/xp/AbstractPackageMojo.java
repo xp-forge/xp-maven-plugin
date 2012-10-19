@@ -153,7 +153,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Get application directories (from ${outputdir})
    *
-   * @return java.util.List<File> 
+   * @return java.util.List<java.io.File>
    */
   protected abstract List<File> getAppDirectories();
 

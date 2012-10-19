@@ -76,42 +76,49 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
   /**
    * Get PHP sources
    *
+   * @return java.util.List<java.lang.String>
    */
   protected abstract List<String> getPhpSourceRoots();
 
   /**
    * Get PHP sources include pattern
    *
+   * @return java.lang.String
    */
   protected abstract String getPhpIncludePattern();
 
   /**
    * Get XP sources
    *
+   * @return java.util.List<java.lang.String>
    */
   protected abstract List<String> getCompileSourceRoots();
 
   /**
    * Get additional classpath
    *
+   * @return java.lang.String
    */
   protected abstract String getAdditionalClasspath();
 
   /**
    * Get classes directory where to output copied/compiled classes
    *
+   * @return java.io.File
    */
   protected abstract File getClassesDirectory();
 
   /**
    * If true, skip compiling
    *
+   * @return boolean
    */
   protected abstract boolean isSkip();
 
   /**
    * Get application directories map
    *
+   * @return java.util.Map<java.lang.String, java.lang.String>
    */
   protected abstract Map<String, String> getAppDirectoriesMap();
 
