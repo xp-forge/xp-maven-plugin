@@ -21,6 +21,56 @@ import java.util.ArrayList;
 public class PackageMojo extends AbstractPackageMojo {
 
   /**
+   * Specify what archiver to use. There are 2 options:
+   * - zip
+   * - xar
+   *
+   * If not set, ${project.packaging} will be used
+   *
+   * @parameter expression="${xp.package.format}"
+   */
+  protected String format;
+
+  /**
+   * Packing strategy: specify what type of artifact to build. There are 2 options:
+   * - lib
+   * - app
+   *
+   * @parameter expression="${xp.package.strategy}" default-value="lib"
+   * @required
+   */
+  protected String strategy;
+
+  /**
+   * Specify if dependencies will also be packed
+   *
+   * For "app" stragegy, dependencies will be packed to "lib"
+   * For "lib" stragegy, dependencies will be merged to "/"
+   *
+   * @parameter expression="${xp.package.packDependencies}" default-value="false"
+   * @required
+   */
+  protected boolean packDependencies;
+
+  /**
+   * Specify if XP-artifacts (core & tools) and the XP-runners should also be packed
+   *
+   * Bootstrap will be packed inside /runtime/bootstrap
+   * XP-artifacts will be packed inside /runtime/lib
+   *
+   * @parameter expression="${xp.package.packRuntime}" default-value="false"
+   * @required
+   */
+  protected boolean packRuntime;
+
+  /**
+   * Specify main class for this artifact. used when calling [xp -xar artifact.xar]
+   *
+   * @parameter expression="${xp.package.mainClass}"
+   */
+  protected String mainClass;
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -97,5 +147,23 @@ public class PackageMojo extends AbstractPackageMojo {
     }
 
     return retVal;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getMainClass() {
+    return this.mainClass;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean isSkip() {
+    return false;
   }
 }

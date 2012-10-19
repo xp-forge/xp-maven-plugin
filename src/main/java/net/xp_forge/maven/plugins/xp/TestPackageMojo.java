@@ -19,6 +19,13 @@ import java.util.List;
 public class TestPackageMojo extends AbstractPackageMojo {
 
   /**
+   * Its use is NOT RECOMMENDED, but quite convenient on occasion
+   *
+   * @parameter expression="${maven.test.skip}" default-value="false"
+   */
+  protected boolean skip;
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -79,5 +86,23 @@ public class TestPackageMojo extends AbstractPackageMojo {
   @Override
   protected List<File> getAppDirectories() {
     return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected String getMainClass() {
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean isSkip() {
+    return this.skip;
   }
 }

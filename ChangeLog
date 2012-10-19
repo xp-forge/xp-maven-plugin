@@ -1,27 +1,29 @@
 xp-maven-plugin (3.1.6)
 
-  * Moved all operation from phase "validate" to phase "initialize"
-  * Use new XP-Runners
-  * Update project name to "XP-Framework Maven plugin"
-  * Include on-the-fly generated "META-INF/manifest.ini" in output artifact
-  * Use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
-  * Update examples in "examples" directory
-  * Application directories (webapp, config, xsl) now copied to ${outputDirectory} during the "compile" phase
+  * move all operation from phase "validate" to phase "initialize"
+  * use new XP-Runners
+  * update project name to "XP-Framework Maven plugin"
+  * include on-the-fly generated "META-INF/manifest.ini" in output artifact
+  * use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
+  * update examples in "examples" directory
+  * application directories (webapp, config, xsl) now copied to ${outputDirectory} during the "compile" phase
   * change default unittest ini files location to 'src/test/config/unittest'
+  * move pth files handling to its own class
+  * refactor "package" and "test-package" phases
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 18 Oct 2012
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 19 Oct 2012
 
 xp-maven-plugin (3.1.5)
 
-  * Use Maven output when displaying unittest results
-  * Remove ${xp.package.format} and replace it with ${project.packaging}
-  * Create just one pth file (project.pth) for "lib" ${xp.package.strategy}
+  * use Maven output when displaying unittest results
+  * remove ${xp.package.format} and replace it with ${project.packaging}
+  * create just one pth file (project.pth) for "lib" ${xp.package.strategy}
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 25 Sep 2012
 
 xp-maven-plugin (3.1.4)
 
-  * Fix the "test-package" goal
+  * fix the "test-package" goal
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 20 Sep 2012
 

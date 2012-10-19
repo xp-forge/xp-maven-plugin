@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.maven.plugin.logging.Log;
 
-import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import net.xp_forge.maven.plugins.xp.io.PthFile;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.runners.RunnerException;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
@@ -177,8 +177,12 @@ public abstract class AbstractRunner {
    * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When cannot create project.pth file
    */
   public void setClasspath(List<String> classpaths, File pthFile) throws RunnerException {
+    PthFile pth= new PthFile();
+    pth.addEntries(classpaths);
+
     try {
-      FileUtils.setFileContents(pthFile, classpaths, "#" + CREATED_BY_NOTICE);
+      pth.setComment(CREATED_BY_NOTICE);
+      pth.dump(pthFile);
     } catch (IOException ex) {
       throw new RunnerException("Cannot write [" + pthFile + "] file", ex);
     }

@@ -20,10 +20,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.archiver.UnArchiver;
 
+import net.xp_forge.maven.plugins.xp.io.PthFile;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
-import net.xp_forge.maven.plugins.xp.ini.IniProperties;
+import net.xp_forge.maven.plugins.xp.io.IniFile;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
@@ -147,8 +148,8 @@ public class InitializeMojo extends AbstractXpMojo {
     getLog().debug("- Preparing XP-Bootstrap from project dependencies into [" + targetDirectory + "]");
 
     // Init [boot.pth] entries
-    List<String> pthEntries= new ArrayList<String>();
-    pthEntries.add(targetDirectory.getAbsolutePath());
+    PthFile pth= new PthFile();
+    pth.addFileEntry(targetDirectory);
 
     // Locate required XP-artifacts: core & tools
     Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
@@ -161,13 +162,13 @@ public class InitializeMojo extends AbstractXpMojo {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }
 
-    pthEntries.add(coreArtifact.getFile().getAbsolutePath());
-    pthEntries.add(toolsArtifact.getFile().getAbsolutePath());
+    pth.addArtifactEntry(coreArtifact);
+    pth.addArtifactEntry(toolsArtifact);
 
     // Locate optional XP-artifacts: compiler
     Artifact compilerArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, COMPILER_ARTIFACT_ID);
     if (null != compilerArtifact) {
-      pthEntries.add(compilerArtifact.getFile().getAbsolutePath());
+      pth.addArtifactEntry(compilerArtifact);
     }
 
     // Unpack bootstrap
@@ -183,7 +184,8 @@ public class InitializeMojo extends AbstractXpMojo {
     // Create [target/bootstrap/boot.pth]
     File pthFile= new File(targetDirectory, "boot.pth");
     try {
-      FileUtils.setFileContents(pthFile, pthEntries, "#" + CREATED_BY_NOTICE);
+      pth.setComment(CREATED_BY_NOTICE);
+      pth.dump(pthFile);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
     }
@@ -241,7 +243,7 @@ public class InitializeMojo extends AbstractXpMojo {
     }
 
     // Set USE_XP
-    IniProperties ini= new IniProperties();
+    IniFile ini= new IniFile();
     ini.setProperty("use", useXp);
 
     // Set PHP executable and timezone

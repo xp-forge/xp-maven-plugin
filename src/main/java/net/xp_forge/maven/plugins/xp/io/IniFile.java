@@ -4,7 +4,7 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.ini;
+package net.xp_forge.maven.plugins.xp.io;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import java.util.Enumeration;
  * Simple class to read/write ini files
  *
  */
-public class IniProperties {
+public class IniFile {
   private static final int BUFF_SIZE= 1024;
 
   private Properties globalProperties;
@@ -40,7 +40,7 @@ public class IniProperties {
    * Constructor
    *
    */
-  public IniProperties() {
+  public IniFile() {
     this.globalProperties= new Properties();
     this.properties= new HashMap<String, Properties>();
   }
@@ -74,8 +74,8 @@ public class IniProperties {
    * @throw  java.io.IOException when I/O errors occur
    */
   public void load(InputStream in) throws IOException {
-    byte[] buffer = new byte[IniProperties.BUFF_SIZE];
-    int bytesRead = in.read(buffer, 0, IniProperties.BUFF_SIZE);
+    byte[] buffer = new byte[IniFile.BUFF_SIZE];
+    int bytesRead = in.read(buffer, 0, IniFile.BUFF_SIZE);
 
     ParseState state      = ParseState.NORMAL;
     boolean isSectionOpen = false;
@@ -182,7 +182,7 @@ public class IniProperties {
       }
 
       // Read more from file
-      bytesRead= in.read(buffer, 0, IniProperties.BUFF_SIZE);
+      bytesRead= in.read(buffer, 0, IniFile.BUFF_SIZE);
     }
   }
 
@@ -288,7 +288,7 @@ public class IniProperties {
 
     // Comment
     if (null != this.comment) {
-      out.printf(";%s", this.comment);
+      out.printf("; %s", this.comment);
       out.println();
     }
 
@@ -296,7 +296,7 @@ public class IniProperties {
     Iterator<String> props= this.properties();
     while (props.hasNext()) {
       String name= props.next();
-      out.printf("%s=%s", name, IniProperties.dumpEscape(this.getProperty(name)));
+      out.printf("%s=%s", name, IniFile.dumpEscape(this.getProperty(name)));
       out.println();
     }
 
@@ -310,7 +310,7 @@ public class IniProperties {
       props= this.properties(section);
       while (props.hasNext()) {
         String name= props.next();
-        out.printf("%s=%s", name, IniProperties.dumpEscape(this.getProperty(section, name)));
+        out.printf("%s=%s", name, IniFile.dumpEscape(this.getProperty(section, name)));
         out.println();
       }
     }

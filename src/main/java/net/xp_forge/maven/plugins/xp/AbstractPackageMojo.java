@@ -26,9 +26,10 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
+import net.xp_forge.maven.plugins.xp.io.PthFile;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
-import net.xp_forge.maven.plugins.xp.ini.IniProperties;
+import net.xp_forge.maven.plugins.xp.io.IniFile;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
@@ -41,14 +42,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private Archiver archiver;
 
   // [project.pth] entries (for [app] packaging)
-  private List<String> projectPthEntries;
-
-  /**
-   * Its use is NOT RECOMMENDED, but quite convenient on occasion
-   *
-   * @parameter expression="${maven.test.skip}" default-value="false"
-   */
-  protected boolean skip;
+  private PthFile pth;
 
   /**
    * Name of the generated XAR
@@ -57,56 +51,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * @required
    */
   protected String finalName;
-
-  /**
-   * Specify what archiver to use. There are 2 options:
-   * - zip
-   * - xar
-   *
-   * If not set, ${project.packaging} will be used
-   *
-   * @parameter expression="${xp.package.format}"
-   */
-  protected String format;
-
-  /**
-   * Packing strategy: specify what type of artifact to build. There are 2 options:
-   * - lib
-   * - app
-   *
-   * @parameter expression="${xp.package.strategy}" default-value="lib"
-   * @required
-   */
-  protected String strategy;
-
-  /**
-   * Specify if dependencies will also be packed
-   *
-   * For "app" stragegy, dependencies will be packed to "lib"
-   * For "lib" stragegy, dependencies will be merged to "/"
-   *
-   * @parameter expression="${xp.package.packDependencies}" default-value="false"
-   * @required
-   */
-  protected boolean packDependencies;
-
-  /**
-   * Specify if XP-artifacts (core & tools) and the XP-runners should also be packed
-   *
-   * Bootstrap will be packed inside /runtime/bootstrap
-   * XP-artifacts will be packed inside /runtime/lib
-   *
-   * @parameter expression="${xp.package.packRuntime}" default-value="false"
-   * @required
-   */
-  protected boolean packRuntime;
-
-  /**
-   * Specify main class for this artifact. used when calling [xp -xar artifact.xar]
-   *
-   * @parameter expression="${xp.package.mainClass}"
-   */
-  protected String mainClass;
 
   /**
    * Get location of compiled files (.class.php) to include in the package
@@ -158,6 +102,20 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract List<File> getAppDirectories();
 
   /**
+   * Get application main class
+   *
+   * @return java.lang.String
+   */
+  protected abstract String getMainClass();
+
+  /**
+   * If true, skip compiling
+   *
+   * @return boolean
+   */
+  protected abstract boolean isSkip();
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -178,7 +136,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     getLog().info("Pack dependencies  [" + (packDependencies ? "yes" : "no") + "]");
 
     // Check ${maven.test.skip} is active and we're trying to package the "tests" artifact
-    if (this.skip && null != classifier && classifier.equals("tests")) {
+    if (this.isSkip()) {
       getLog().info("Skipping packaging of tests (maven.test.skip)");
       return;
     }
@@ -187,8 +145,8 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     this.archiver= ArchiveUtils.getArchiver(outputFile);
 
     // Init [project.pth] entries
-    this.projectPthEntries= new ArrayList<String>();
-    this.projectPthEntries.add("classes");
+    this.pth= new PthFile();
+    this.pth.addEntry("classes");
 
     // Package library
     if (strategy.equals("lib")) {
@@ -301,11 +259,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Pack XP-artifacts
     getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [runtime/lib]");
     this.archiver.addFile(coreArtifact.getFile(), "runtime/lib/" + coreArtifact.getFile().getName());
-    this.projectPthEntries.add("runtime/lib/" + coreArtifact.getFile().getName());
+    this.pth.addEntry("runtime/lib/" + coreArtifact.getFile().getName());
 
     getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [runtime/lib]");
     this.archiver.addFile(toolsArtifact.getFile(), "runtime/lib/" + toolsArtifact.getFile().getName());
-    this.projectPthEntries.add("runtime/lib/" + toolsArtifact.getFile().getName());
+    this.pth.addEntry("runtime/lib/" + toolsArtifact.getFile().getName());
 
     // Pack bootstrap
     try {
@@ -351,9 +309,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
 
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        this.projectPthEntries.add("!libs/" + artifact.getFile().getName());
+        this.pth.addEntry("!libs/" + artifact.getFile().getName());
       } else {
-        this.projectPthEntries.add("libs/" + artifact.getFile().getName());
+        this.pth.addEntry("libs/" + artifact.getFile().getName());
       }
     }
   }
@@ -423,7 +381,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   }
 
   /**
-   * Pack on-the-fly created [project.pth] with entries from this.projectPthEntries
+   * Pack on-the-fly created [project.pth]
    *
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
@@ -431,7 +389,8 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     getLog().info("Packing on-the-fly created [project.pth] to archive");
     File pthFile= new File(this.outputDirectory, "project.pth-package");
     try {
-      FileUtils.setFileContents(pthFile, this.projectPthEntries);
+      this.pth.setComment(CREATED_BY_NOTICE);
+      this.pth.dump(pthFile);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot create temp file [" + pthFile + "]", ex);
     }
@@ -449,7 +408,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     getLog().info("Packing on-the-fly created [manifest.ini] to archive");
 
     // Init [manifest.ini]
-    IniProperties ini= new IniProperties();
+    IniFile ini= new IniFile();
 
     // Set project properties
     ini.setProperty("project", "group-id", this.project.getGroupId());
@@ -468,8 +427,8 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     ini.setProperty("archive", "format", this.getFormat());
 
     // Add main-class; if the case
-    if (null != this.mainClass && !this.mainClass.isEmpty()) {
-      ini.setProperty("archive", "main-class", this.mainClass);
+    if (null != this.getMainClass()) {
+      ini.setProperty("archive", "main-class", this.getMainClass());
     }
 
     // Dump ini file
