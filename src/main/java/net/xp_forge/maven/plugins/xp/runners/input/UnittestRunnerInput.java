@@ -41,7 +41,7 @@ import net.xp_forge.maven.plugins.xp.runners.filter.InifileFilter;
  *   * {test.class.Name}::{testName}: A fully qualified class name and a test name
  *   * -e {test method sourcecode}: Evaluate source
  */
-public class UnittestRunnerInput extends AbstractClasspathRunnerInput {
+public class UnittestRunnerInput extends AbstractRunnerInput {
   public List<String> arguments;
   public List<File> inifiles;
 

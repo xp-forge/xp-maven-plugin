@@ -17,7 +17,7 @@ import org.apache.maven.artifact.Artifact;
  * Runner input with classpath configuration
  *
  */
-public class AbstractClasspathRunnerInput {
+public class AbstractRunnerInput {
   public List<String> classpaths;
   public boolean verbose;
 
@@ -25,7 +25,7 @@ public class AbstractClasspathRunnerInput {
    * Constructor
    *
    */
-  public AbstractClasspathRunnerInput() {
+  public AbstractRunnerInput() {
     this.classpaths = new ArrayList<String>();
     this.verbose    = false;
   }

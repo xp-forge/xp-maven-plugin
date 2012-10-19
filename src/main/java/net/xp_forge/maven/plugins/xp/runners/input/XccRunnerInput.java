@@ -59,7 +59,7 @@ import java.util.ArrayList;
  *   * [php  ] PHP 5.3 Syntax (no alternative syntax)
  *   * [xp   ] XP Language Syntax
  */
-public class XccRunnerInput extends AbstractClasspathRunnerInput {
+public class XccRunnerInput extends AbstractRunnerInput {
   public List<File>   sourcepaths;
   public String       emitter;
   public List<String> profiles;

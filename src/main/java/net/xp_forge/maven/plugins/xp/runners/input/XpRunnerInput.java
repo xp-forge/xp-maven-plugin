@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * -cp {path}: Add {path} to classpath
  *
  */
-public class XpRunnerInput extends AbstractClasspathRunnerInput {
+public class XpRunnerInput extends AbstractRunnerInput {
   public String className;
   public String code;
   public List<String> arguments;
