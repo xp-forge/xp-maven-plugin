@@ -7,6 +7,7 @@ xp-maven-plugin (3.1.6)
   * Use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
   * Update examples in "examples" directory
   * Application directories (webapp, config, xsl) now copied to ${outputDirectory} during the "compile" phase
+  * change default unittest ini files location to 'src/test/config/unittest'
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 18 Oct 2012
 

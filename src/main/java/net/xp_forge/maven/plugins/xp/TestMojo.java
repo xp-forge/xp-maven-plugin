@@ -60,7 +60,7 @@ public class TestMojo extends AbstractXpMojo {
   /**
    * Directory to scan for [*.ini] files
    *
-   * @parameter expression="${xp.test.iniDirectory}" default-value="${basedir}/src/test/ini"
+   * @parameter expression="${xp.test.iniDirectory}" default-value="${basedir}/src/test/config/unittest"
    */
   protected File iniDirectory;
 
