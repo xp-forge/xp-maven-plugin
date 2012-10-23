@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.maven.plugin.logging.Log;
+import org.apache.commons.exec.LogOutputStream;
 
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
@@ -132,6 +134,58 @@ public abstract class AbstractRunner {
   }
 
   /**
+   * Execute command using the specified arguments and returns the command output
+   *
+   * @param  java.util.List<String> arguments Executable arguments
+   * @param  boolean captureOutput
+   * @return java.util.List<java.lang.String>
+   * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When execution failed
+   */
+  protected List<String> executeCommand(List<String> arguments, boolean captureOutput) throws RunnerException {
+    final List<String> outputLines= new ArrayList<String>();
+
+    // If captureOutput is disabled, send output to $cat and return null
+    if (false == captureOutput) {
+      try {
+        ExecuteUtils.executeCommand(
+          this.getExecutable(),
+          arguments,
+          this.getWorkingDirectory(),
+          this.getEnvironmentVariables(),
+          this.log
+        );
+      } catch (ExecutionException ex) {
+        throw new RunnerException("Execution failed", ex);
+      }
+
+      return null;
+    }
+
+    // Execute command and capture output inside $outputLines
+    try {
+      ExecuteUtils.executeCommand(
+        this.getExecutable(),
+        arguments,
+        this.getWorkingDirectory(),
+        this.getEnvironmentVariables(),
+        this.log,
+        new LogOutputStream() {
+          @Override
+          protected void processLine(String line, @SuppressWarnings("unused") int level) {
+            outputLines.add(line);
+          }
+        }
+      );
+
+      // Return collected output lines
+      return outputLines;
+
+    } catch (ExecutionException ex) {
+      throw new RunnerException("Execution failed", ex);
+    }
+  }
+
+  /**
    * Execute command using the specified arguments
    *
    * @param  java.util.List<String> arguments Executable arguments
@@ -139,16 +193,6 @@ public abstract class AbstractRunner {
    * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When execution failed
    */
   protected void executeCommand(List<String> arguments) throws RunnerException {
-    try {
-      ExecuteUtils.executeCommand(
-        this.getExecutable(),
-        arguments,
-        this.getWorkingDirectory(),
-        this.getEnvironmentVariables(),
-        this.log
-      );
-    } catch (ExecutionException ex) {
-      throw new RunnerException("Execution failed", ex);
-    }
+    this.executeCommand(arguments, false);
   }
 }

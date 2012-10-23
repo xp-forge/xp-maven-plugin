@@ -24,7 +24,8 @@ public class XccRunner extends AbstractClasspathRunner {
   /**
    * Constructor
    *
-   * @param  net.xp_forge.maven.plugins.xp.runners.input.XccRunnerInput input
+   * @param  java.io.File executable
+   * @param  net.xp_forge.maven.plugins.xp.exec.input.xp.XccRunnerInput input
    */
   public XccRunner(File executable, XccRunnerInput input) {
     super(executable);

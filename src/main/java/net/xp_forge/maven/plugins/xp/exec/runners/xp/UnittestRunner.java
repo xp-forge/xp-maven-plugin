@@ -23,7 +23,8 @@ public class UnittestRunner extends AbstractClasspathRunner {
   /**
    * Constructor
    *
-   * @param  net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput input
+   * @param  java.io.File executable
+   * @param  net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput input
    */
   public UnittestRunner(File executable, UnittestRunnerInput input) {
     super(executable);

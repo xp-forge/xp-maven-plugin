@@ -23,7 +23,8 @@ public class XpRunner extends AbstractClasspathRunner {
   /**
    * Constructor
    *
-   * @param  net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput input
+   * @param  java.io.File executable
+   * @param  net.xp_forge.maven.plugins.xp.exec.input.xp.XpRunnerInput input
    */
   public XpRunner(File executable, XpRunnerInput input) {
     super(executable);
