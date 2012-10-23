@@ -4,7 +4,7 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.runners.input;
+package net.xp_forge.maven.plugins.xp.exec.input.xp;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * -cp {path}: Add {path} to classpath
  *
  */
-public class XpRunnerInput extends AbstractRunnerInput {
+public class XpRunnerInput extends AbstractClasspathRunnerInput {
   public String className;
   public String code;
   public List<String> arguments;

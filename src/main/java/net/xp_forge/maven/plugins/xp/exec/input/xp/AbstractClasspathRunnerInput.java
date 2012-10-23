@@ -4,7 +4,7 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.runners.input;
+package net.xp_forge.maven.plugins.xp.exec.input.xp;
 
 import java.io.File;
 import java.util.Set;
@@ -17,7 +17,7 @@ import org.apache.maven.artifact.Artifact;
  * Runner input with classpath configuration
  *
  */
-public class AbstractRunnerInput {
+public class AbstractClasspathRunnerInput {
   public List<String> classpaths;
   public boolean verbose;
 
@@ -25,7 +25,7 @@ public class AbstractRunnerInput {
    * Constructor
    *
    */
-  public AbstractRunnerInput() {
+  public AbstractClasspathRunnerInput() {
     this.classpaths = new ArrayList<String>();
     this.verbose    = false;
   }

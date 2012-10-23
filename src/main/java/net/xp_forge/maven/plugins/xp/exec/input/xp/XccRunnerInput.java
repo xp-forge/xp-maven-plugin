@@ -4,7 +4,7 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.runners.input;
+package net.xp_forge.maven.plugins.xp.exec.input.xp;
 
 import java.io.File;
 import java.util.List;
@@ -59,7 +59,7 @@ import java.util.ArrayList;
  *   * [php  ] PHP 5.3 Syntax (no alternative syntax)
  *   * [xp   ] XP Language Syntax
  */
-public class XccRunnerInput extends AbstractRunnerInput {
+public class XccRunnerInput extends AbstractClasspathRunnerInput {
   public List<File>   sourcepaths;
   public String       emitter;
   public List<String> profiles;

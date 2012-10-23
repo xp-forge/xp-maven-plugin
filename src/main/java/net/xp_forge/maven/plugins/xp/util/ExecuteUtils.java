@@ -104,13 +104,16 @@ public final class ExecuteUtils {
     throw new FileNotFoundException("Cannot find executable [" + executableFilename + "] in PATH [" + path + "]");
   }
 
+
+
+
   /**
    * Execute the specified executable with the specified arguments
    *
    * @param  java.io.File executable Executable to run
    * @param  java.util.List<String> argument Executable arguments
    * @param  java.io.File workingDirectory Executable working directory
-   * @param  org.apache.maven.plugin.logging.Log cat Log trace
+   * @param  org.apache.maven.plugin.logging.Log cat Log cat
    * @throws java.util.concurrent.ExecutionException when command execution failed
    */
   public static void executeCommand(
@@ -119,6 +122,43 @@ public final class ExecuteUtils {
     File workingDirectory,
     Map<String, String> environment,
     final Log cat
+  ) throws ExecutionException {
+
+    // We don't want to capture the command output; just send it to cat
+    LogOutputStream logOutputStream= new LogOutputStream() {
+      @Override
+      protected void processLine(String line, @SuppressWarnings("unused") int level) {
+        if (line.toLowerCase().indexOf("error") > -1) {
+          cat.error(line);
+        } else if (line.toLowerCase().indexOf("warn") > -1) {
+          cat.warn(line);
+        } else {
+          cat.info(line);
+        }
+      }
+    };
+
+    ExecuteUtils.executeCommand(executable, arguments, workingDirectory, environment, cat, logOutputStream);
+  }
+
+
+  /**
+   * Execute the specified executable with the specified arguments
+   *
+   * @param  java.io.File executable Executable to run
+   * @param  java.util.List<String> argument Executable arguments
+   * @param  java.io.File workingDirectory Executable working directory
+   * @param  org.apache.maven.plugin.logging.Log cat Log cat
+   * @param  org.apache.commons.exec.LogOutputStream logOutputStream
+   * @throws java.util.concurrent.ExecutionException when command execution failed
+   */
+  public static void executeCommand(
+    File executable,
+    List<String> arguments,
+    File workingDirectory,
+    Map<String, String> environment,
+    final Log cat,
+    final LogOutputStream logOutputStream
   ) throws ExecutionException {
 
     // Debug
@@ -152,20 +192,9 @@ public final class ExecuteUtils {
 
     Executor executor= new DefaultExecutor();
     executor.setWorkingDirectory(workingDirectory);
-    //executor.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
 
-    executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
-      @Override
-      protected void processLine(String line, @SuppressWarnings("unused") int level) {
-        if (line.toLowerCase().indexOf("error") > -1) {
-          cat.error(line);
-        } else if (line.toLowerCase().indexOf("warn") > -1) {
-          cat.warn(line);
-        } else {
-          cat.info(line);
-        }
-      }
-    }));
+    //executor.setStreamHandler(new PumpStreamHandler(System.out, System.err, System.in));
+    executor.setStreamHandler(new PumpStreamHandler(logOutputStream));
 
     // Prepare environment
     Map<String, String> env;

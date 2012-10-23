@@ -4,7 +4,7 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.runners.filter;
+package net.xp_forge.maven.plugins.xp.exec.input.xp.filter;
 
 import java.io.File;
 import java.io.FileFilter;

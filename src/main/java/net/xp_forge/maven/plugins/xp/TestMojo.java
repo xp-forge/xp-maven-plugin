@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.runners.RunnerException;
-import net.xp_forge.maven.plugins.xp.runners.UnittestRunner;
-import net.xp_forge.maven.plugins.xp.runners.input.UnittestRunnerInput;
+import net.xp_forge.maven.plugins.xp.exec.RunnerException;
+import net.xp_forge.maven.plugins.xp.exec.runners.xp.UnittestRunner;
+import net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput;
 
 /**
  * Run unittests

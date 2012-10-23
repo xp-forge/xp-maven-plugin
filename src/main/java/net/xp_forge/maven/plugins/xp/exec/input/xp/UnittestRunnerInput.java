@@ -4,14 +4,14 @@
  * XP-Framework Maven plugin
  * Copyright (c) 2011, XP-Framework Team
  */
-package net.xp_forge.maven.plugins.xp.runners.input;
+package net.xp_forge.maven.plugins.xp.exec.input.xp;
 
 import java.io.File;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xp.runners.filter.InifileFilter;
+import net.xp_forge.maven.plugins.xp.exec.input.xp.filter.InifileFilter;
 
 /**
  * Unittest command
@@ -41,7 +41,7 @@ import net.xp_forge.maven.plugins.xp.runners.filter.InifileFilter;
  *   * {test.class.Name}::{testName}: A fully qualified class name and a test name
  *   * -e {test method sourcecode}: Evaluate source
  */
-public class UnittestRunnerInput extends AbstractRunnerInput {
+public class UnittestRunnerInput extends AbstractClasspathRunnerInput {
   public List<String> arguments;
   public List<File> inifiles;
 

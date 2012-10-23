@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.runners.XccRunner;
-import net.xp_forge.maven.plugins.xp.runners.RunnerException;
-import net.xp_forge.maven.plugins.xp.runners.input.XccRunnerInput;
+import net.xp_forge.maven.plugins.xp.exec.RunnerException;
+import net.xp_forge.maven.plugins.xp.exec.runners.xp.XccRunner;
+import net.xp_forge.maven.plugins.xp.exec.input.xp.XccRunnerInput;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.MavenResourceUtils;
 

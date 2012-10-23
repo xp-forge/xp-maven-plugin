@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import net.xp_forge.maven.plugins.xp.runners.XpRunner;
-import net.xp_forge.maven.plugins.xp.runners.RunnerException;
-import net.xp_forge.maven.plugins.xp.runners.input.XpRunnerInput;
+import net.xp_forge.maven.plugins.xp.exec.RunnerException;
+import net.xp_forge.maven.plugins.xp.exec.runners.xp.XpRunner;
+import net.xp_forge.maven.plugins.xp.exec.input.xp.XpRunnerInput;
 
 /**
  * Run XP classes
