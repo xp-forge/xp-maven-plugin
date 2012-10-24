@@ -16,7 +16,7 @@
       <artifactId>pom</artifactId>
       <version>5.8.7</version>
       <type>pom</type>
-      <scope>import</scope>
+      <scope>compile</scope>
    </dependency>
    <dependency>
      <groupId>net.xp-framework</groupId>
@@ -37,7 +37,26 @@
         <configuration>
           <classifier>patch</classifier>
         </configuration>
+        <executions>
+          <execution>
+            <id>svntag-default</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>svntag</goal>
+            </goals>
+            <configuration>
+              <repositoryUrl>svn+ssh://mrosoiu@127.0.0.1/home/mrosoiu/myrepository</repositoryUrl>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+    <id>fictive-repository</id>
+    <url>file:///tmp/</url>
+    </repository>
+  </distributionManagement>
 </project>

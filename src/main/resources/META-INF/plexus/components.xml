@@ -16,25 +16,7 @@
           <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
-        </phases>
-      </configuration>
-    </component>
-    <component>
-      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
-      <role-hint>zip</role-hint>
-      <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
-      <configuration>
-        <phases>
-          <initialize>net.xp-forge.maven.plugins:xp-maven-plugin:initialize</initialize>
-          <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
-          <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
-          <compile>net.xp-forge.maven.plugins:xp-maven-plugin:compile</compile>
-          <test-compile>net.xp-forge.maven.plugins:xp-maven-plugin:test-compile</test-compile>
-          <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
-          <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
-          <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
-          <install>org.apache.maven.plugins:maven-install-plugin:install</install>
-          <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+          <svntag>net.xp-forge.maven.plugins:xp-maven-plugin:svntag</svntag>
         </phases>
       </configuration>
     </component>

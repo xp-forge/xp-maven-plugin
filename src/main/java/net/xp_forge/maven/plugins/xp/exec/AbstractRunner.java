@@ -18,6 +18,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.commons.exec.LogOutputStream;
 
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.exec.RunnerOutput;
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
 
 /**
@@ -29,6 +30,7 @@ public abstract class AbstractRunner {
   private File executable;
   private File workingDirectory;
   private Map<String, String> environmentVariables= new HashMap<String, String>();
+  private RunnerOutput output;
 
   /**
    * Constructor
@@ -36,7 +38,8 @@ public abstract class AbstractRunner {
    * @param  java.io.File executable
    */
   public AbstractRunner(File executable) {
-    this.executable= executable;
+    this.executable = executable;
+    this.output     = new RunnerOutput();
   }
 
   /**
@@ -138,11 +141,10 @@ public abstract class AbstractRunner {
    *
    * @param  java.util.List<String> arguments Executable arguments
    * @param  boolean captureOutput
-   * @return java.util.List<java.lang.String>
+   * @return void
    * @throws net.xp_forge.maven.plugins.xp.runners.RunnerException When execution failed
    */
-  protected List<String> executeCommand(List<String> arguments, boolean captureOutput) throws RunnerException {
-    final List<String> outputLines= new ArrayList<String>();
+  protected void executeCommand(List<String> arguments, boolean captureOutput) throws RunnerException {
 
     // If captureOutput is disabled, send output to $cat and return null
     if (false == captureOutput) {
@@ -158,10 +160,11 @@ public abstract class AbstractRunner {
         throw new RunnerException("Execution failed", ex);
       }
 
-      return null;
+      return;
     }
 
     // Execute command and capture output inside $outputLines
+    this.output.clear();
     try {
       ExecuteUtils.executeCommand(
         this.getExecutable(),
@@ -172,13 +175,10 @@ public abstract class AbstractRunner {
         new LogOutputStream() {
           @Override
           protected void processLine(String line, @SuppressWarnings("unused") int level) {
-            outputLines.add(line);
+            output.addLine(line);
           }
         }
       );
-
-      // Return collected output lines
-      return outputLines;
 
     } catch (ExecutionException ex) {
       throw new RunnerException("Execution failed", ex);
@@ -194,5 +194,14 @@ public abstract class AbstractRunner {
    */
   protected void executeCommand(List<String> arguments) throws RunnerException {
     this.executeCommand(arguments, false);
+  }
+
+  /**
+   * Get runner output
+   *
+   * @return net.xp_forge.maven.plugins.xp.exec.RunnerOutput
+   */
+  public RunnerOutput getOutput() {
+    return this.output;
   }
 }

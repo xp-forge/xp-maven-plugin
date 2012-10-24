@@ -6,7 +6,9 @@
  */
 package net.xp_forge.maven.plugins.xp.exec.input.svn;
 
+import java.io.File;
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 /**
@@ -15,14 +17,41 @@ import java.util.ArrayList;
  */
 public class SvnRunnerInput {
   public String command;
-  public List<String> arguments;
+  public String remoteUrl;
+  public File localDirectory;
+  public String username;
+  public String password;
+  public String message;
+  public boolean force          = false;
+  public boolean nonInteractive = false;
+  public List<String> arguments = new ArrayList<String>();
 
   /**
    * Constructor
    *
+   * @param  java.lang.String command
    */
   public SvnRunnerInput(String command) {
-    this.command   = command;
-    this.arguments = new ArrayList<String>();
+    this.command= command;
+  }
+
+  /**
+   * Add a list of arguments
+   *
+   * @param  java.util.List<java.lang.String> arguments
+   * @return void
+   */
+  public void addArguments(List<String> arguments) {
+    this.arguments.addAll(arguments);
+  }
+
+  /**
+   * Add an array of arguments
+   *
+   * @param  java.lang.String[] arguments
+   * @return void
+   */
+  public void addArguments(String[] arguments) {
+    this.addArguments(Arrays.asList(arguments));
   }
 }

@@ -100,6 +100,18 @@ public final class ArchiveUtils {
    * @throw  org.codehaus.plexus.archiver.ArchiverException
    */
   public static void dumpArtifact(Artifact artifact, File destDirectory, boolean overwrite) throws ArchiverException {
+    ArchiveUtils.dumpArtifact(artifact.getFile(), destDirectory, overwrite);
+  }
+
+  /**
+   * Dump artifact contents in the specified directory
+   *
+   * @param  java.io.File artifact
+   * @param  java.io.File destDirectory
+   * @param  boolean overwrite
+   * @throw  org.codehaus.plexus.archiver.ArchiverException
+   */
+  public static void dumpArtifact(File artifact, File destDirectory, boolean overwrite) throws ArchiverException {
 
     // Create destination directory if not exists
     if (!destDirectory.exists()) {
