@@ -72,7 +72,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
   protected String password;
 
   /**
-   * SVN password
+   * SVN commit message prefix
    *
    * @parameter expression="${xp.deploy.messagePrefix}" default-value="[xp-maven-plugin]"
    */
@@ -121,7 +121,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
     // Get artifact to deploy on SVN
     File artifactFile= this.getArtifactFile();
-    getLog().info("Artifact to deploy [" + artifactFile + "]");
+    getLog().debug("Artifact to deploy [" + artifactFile + "]");
 
     // If not specified, try to guess $svnExecutable
     if (null == this.svnExecutable) {
@@ -133,7 +133,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
       }
     }
 
-    // Check tagBase exists; if not, try to create it
+    // Check base tag exists; if not, try to create it
     String baseTagUrl= this.repositoryUrl + "/" + this.baseTagName;
     if (!this.tagExists(baseTagUrl)) {
       this.createTag(baseTagUrl);
@@ -147,6 +147,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
     // Checkout volatile tag into "${outputDirectory}/.svndeploy"
     File svndeployDirectory= new File(this.outputDirectory, ".svndeploy");
+    getLog().info("Checkout volatile tag [" + volatileTagUrl + "] into [" + svndeployDirectory + "]");
     this.checkoutTag(volatileTagUrl, svndeployDirectory);
 
     // Empty directory after checkout (but keep ".svn" files)
@@ -158,7 +159,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
     // Dump artifact to checkout directory
     File dumpDirectory= new File(svndeployDirectory, this.project.getArtifactId());
-    getLog().debug("Dump artifact [" + artifactFile + "] to [" + dumpDirectory + "]");
+    getLog().info("Dump artifact [" + artifactFile + "] to [" + dumpDirectory + "]");
     ArchiveUtils.dumpArtifact(artifactFile, dumpDirectory, true);
 
     // Delete empty sub-directories from checkout directory
@@ -177,11 +178,12 @@ public class SvnDeployMojo extends AbstractXpMojo {
     }
 
     // Update volatile tag with local changes
-    getLog().info("Update tag [" + volatileTagUrl + "]");
+    getLog().info("Update volatile tag [" + volatileTagUrl + "]");
     this.updateTag(volatileTagUrl, svndeployDirectory);
 
     // Check permanent tag exists; if yes, remove it
     String permanentTagUrl= baseTagUrl + "/" + this.project.getVersion();
+    getLog().info("Create permanent tag [" + permanentTagUrl + "]");
     if (this.tagExists(permanentTagUrl)) {
       this.deleteTag(permanentTagUrl);
     }
@@ -227,8 +229,9 @@ public class SvnDeployMojo extends AbstractXpMojo {
     }
 
     // Use first attached artifact
-    getLog().warn("No primary artifact to deploy, deploying *first* attached artifact instead");
-    return this.attachedArtifacts.get(0).getFile();
+    retVal= this.attachedArtifacts.get(0).getFile();
+    getLog().warn("No primary artifact to deploy, deploying *first* attached artifact instead [" + retVal + "]");
+    return retVal;
   }
 
   /**
@@ -329,7 +332,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void createTag(String remoteUrl) throws MojoExecutionException {
-    getLog().info("Create SVN tag [" + remoteUrl + "]");
+    getLog().debug("Create SVN tag [" + remoteUrl + "]");
 
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("mkdir");
@@ -351,7 +354,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void deleteTag(String remoteUrl) throws MojoExecutionException {
-    getLog().info("Delete SVN tag [" + remoteUrl + "]");
+    getLog().debug("Delete SVN tag [" + remoteUrl + "]");
 
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("delete");
@@ -374,7 +377,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void cloneTag(String srcUrl, String dstUrl) throws MojoExecutionException {
-    getLog().info("Clone SVN tag [" + srcUrl + "] to [" + dstUrl + "]");
+    getLog().debug("Clone SVN tag [" + srcUrl + "] to [" + dstUrl + "]");
 
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("copy");
@@ -529,7 +532,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
     // Early return
     if (false == hasChanges) {
-      getLog().info("Tag is already up-to-date");
+      getLog().debug("Tag is already up-to-date");
       return;
     }
 
