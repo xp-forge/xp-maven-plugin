@@ -39,10 +39,10 @@
         </configuration>
         <executions>
           <execution>
-            <id>svntag-default</id>
+            <id>svn-deploy-default</id>
             <phase>deploy</phase>
             <goals>
-              <goal>svntag</goal>
+              <goal>svn-deploy</goal>
             </goals>
             <configuration>
               <repositoryUrl>svn+ssh://mrosoiu@127.0.0.1/home/mrosoiu/myrepository</repositoryUrl>

@@ -27,14 +27,14 @@ import net.xp_forge.maven.plugins.xp.exec.input.svn.SvnRunnerInput;
  * - ${repositoryUrl}/${baseTagName}/${volatileTagName}
  * - ${repositoryUrl}/${baseTagName}/${project.version}
  *
- * @goal svntag
+ * @goal svn-deploy
  */
-public class SvntagMojo extends AbstractXpMojo {
+public class SvnDeployMojo extends AbstractXpMojo {
 
   /**
    * Location of the deploy repository
    *
-   * @parameter expression="${xp.svntag.respositoryUrl}"
+   * @parameter expression="${xp.deploy.respositoryUrl}"
    * @required
    */
   protected String repositoryUrl;
@@ -42,7 +42,7 @@ public class SvntagMojo extends AbstractXpMojo {
   /**
    * Tag base
    *
-   * @parameter expression="${xp.svntag.baseTagName}" default-value="${project.artifactId}"
+   * @parameter expression="${xp.deploy.baseTagName}" default-value="${project.artifactId}"
    * @required
    */
   protected String baseTagName;
@@ -50,7 +50,7 @@ public class SvntagMojo extends AbstractXpMojo {
   /**
    * Volatile tag name
    *
-   * @parameter expression="${xp.svntag.volatileTagName}" default-value="LATEST"
+   * @parameter expression="${xp.deploy.volatileTagName}" default-value="LATEST"
    * @required
    */
   protected String volatileTagName;
@@ -58,21 +58,21 @@ public class SvntagMojo extends AbstractXpMojo {
   /**
    * SVN username
    *
-   * @parameter expression="${xp.svntag.username}"
+   * @parameter expression="${xp.deploy.username}"
    */
   protected String username;
 
   /**
    * SVN password
    *
-   * @parameter expression="${xp.svntag.password}"
+   * @parameter expression="${xp.deploy.password}"
    */
   protected String password;
 
   /**
    * Location of the "svn" executable. If not specified, will look for in into PATH env variable.
    *
-   * @parameter expression="${xp.svntag.svnExecutable}"
+   * @parameter expression="${xp.deploy.svnExecutable}"
    */
   protected File svnExecutable;
 
@@ -145,9 +145,9 @@ public class SvntagMojo extends AbstractXpMojo {
     getLog().debug("Ensure SVN volatile tag exists [" + volatileTagUrl + "]");
     this.ensureTag(volatileTagUrl);
 
-    // Checkout volatile tag into "${outputDirectory}/.svntag"
+    // Checkout volatile tag into "${outputDirectory}/.svndeploy"
+    File localDirectory= new File(this.outputDirectory, ".svndeploy");
     getLog().info("Checkout volatile tag [" + volatileTagUrl + "] into [" + localDirectory + "]");
-    File localDirectory= new File(this.outputDirectory, ".svntag");
     this.checkoutTag(volatileTagUrl, localDirectory);
 
     // Cleanup checkout directory (but keep ".svn" files)
@@ -198,10 +198,10 @@ public class SvntagMojo extends AbstractXpMojo {
   }
 
   /**
-   * Make sure tagBase exists on the remote SVN server
+   * Check if the specified remoteUrl exists on the SVN server
    *
    * @param  java.lang.String remoteUrl
-   * @return void
+   * @return boolean
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void ensureTag(String remoteUrl) throws MojoExecutionException {

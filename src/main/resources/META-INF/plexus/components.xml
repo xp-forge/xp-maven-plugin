@@ -16,7 +16,7 @@
           <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
           <install>org.apache.maven.plugins:maven-install-plugin:install</install>
           <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
-          <svntag>net.xp-forge.maven.plugins:xp-maven-plugin:svntag</svntag>
+          <svn-deploy>net.xp-forge.maven.plugins:xp-maven-plugin:svn-deploy</svn-deploy>
         </phases>
       </configuration>
     </component>
