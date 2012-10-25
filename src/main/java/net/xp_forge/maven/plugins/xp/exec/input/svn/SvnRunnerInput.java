@@ -36,6 +36,16 @@ public class SvnRunnerInput {
   }
 
   /**
+   * Add an argument
+   *
+   * @param  java.lang.String argument
+   * @return void
+   */
+  public void addArgument(String argument) {
+    this.arguments.add(argument);
+  }
+
+  /**
    * Add a list of arguments
    *
    * @param  java.util.List<java.lang.String> arguments

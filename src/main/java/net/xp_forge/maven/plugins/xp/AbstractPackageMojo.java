@@ -174,6 +174,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Save archive to output file
     try {
       getLog().debug(" - Creating archive [" + outputFile + "]");
+      outputFile.delete();
       this.archiver.createArchive();
     } catch (Exception ex) {
       throw new MojoExecutionException(

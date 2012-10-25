@@ -59,7 +59,7 @@ public class SvnRunner extends AbstractRunner {
     // Add --message parameter
     if (null != this.input.message && !this.input.message.isEmpty()) {
       arguments.add("--message");
-      arguments.add(this.input.message);
+      arguments.add(this.input.message.trim());
     }
 
     // Add --force parameter

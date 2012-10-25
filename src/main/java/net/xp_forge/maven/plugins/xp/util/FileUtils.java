@@ -260,4 +260,45 @@ public final class FileUtils {
       }
     }
   }
+
+  /**
+   * Deletes a non-empty directory
+   *
+   * @param  java.io.File directory
+   * @return void
+   * @throw  java.io.IOException
+   */
+  public static void deleteDirectory(File directory) throws IOException {
+    if (null == directory || !directory.exists()) return;
+
+    // Not a directory
+    if (!directory.isDirectory()) {
+      throw new IOException("[" + directory + "] is not a directory");
+    }
+
+    // List directory contents
+    File[] entries= directory.listFiles();
+    if (null == entries) {
+      throw new IOException("Failed to list contents of directory [" + directory + "]");
+    }
+
+    for (File entry : entries) {
+
+      // Delete directories
+      if (entry.isDirectory()) {
+        FileUtils.deleteDirectory(entry);
+        continue;
+      }
+
+      // Delete files
+      if (false == entry.delete()) {
+        throw new IOException("Unable to delete file [" + entry + "]");
+      }
+    }
+
+    // Delete empty directory
+    if (false == directory.delete()) {
+      throw new IOException("Unable to delete directory [" + directory + "]");
+    }
+  }
 }

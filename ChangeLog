@@ -10,6 +10,8 @@ xp-maven-plugin (3.1.6)
   * change default unittest ini files location to 'src/test/config/unittest'
   * move pth files handling to its own class
   * refactor "package" and "test-package" phases
+  * refactor runners location; add "svn" runner
+  * add "svn-deploy" goal
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 19 Oct 2012
 

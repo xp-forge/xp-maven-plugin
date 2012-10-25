@@ -7,13 +7,15 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
 import net.xp_forge.maven.plugins.xp.exec.RunnerOutput;
@@ -70,6 +72,13 @@ public class SvnDeployMojo extends AbstractXpMojo {
   protected String password;
 
   /**
+   * SVN password
+   *
+   * @parameter expression="${xp.deploy.messagePrefix}" default-value="[xp-maven-plugin]"
+   */
+  protected String messagePrefix;
+
+  /**
    * Location of the "svn" executable. If not specified, will look for in into PATH env variable.
    *
    * @parameter expression="${xp.deploy.svnExecutable}"
@@ -110,19 +119,8 @@ public class SvnDeployMojo extends AbstractXpMojo {
       return;
     }
 
-    // Get artifact to deploy
-    File artifactFile= this.artifact.getFile();
-    if (null == artifactFile || !artifactFile.isFile()) {
-
-      // Primary artifact is mising and cannot find other attached artifact
-      if (this.attachedArtifacts.isEmpty()) {
-        throw new MojoExecutionException("The packaging for this project did not assign a file to the build artifact");
-      }
-
-      // Use attached artifact
-      getLog().warn("No primary artifact to deploy, deploying *first* attached artifact instead");
-      artifactFile= this.attachedArtifacts.get(0).getFile();
-    }
+    // Get artifact to deploy on SVN
+    File artifactFile= this.getArtifactFile();
     getLog().info("Artifact to deploy [" + artifactFile + "]");
 
     // If not specified, try to guess $svnExecutable
@@ -137,26 +135,100 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
     // Check tagBase exists; if not, try to create it
     String baseTagUrl= this.repositoryUrl + "/" + this.baseTagName;
-    getLog().debug("Ensure SVN base tag exists [" + baseTagUrl + "]");
-    this.ensureTag(baseTagUrl);
+    if (!this.tagExists(baseTagUrl)) {
+      this.createTag(baseTagUrl);
+    }
 
     // Check volatile tag exists; if not, try to create it
     String volatileTagUrl= baseTagUrl + "/" + this.volatileTagName;
-    getLog().debug("Ensure SVN volatile tag exists [" + volatileTagUrl + "]");
-    this.ensureTag(volatileTagUrl);
+    if (!this.tagExists(volatileTagUrl)) {
+      this.createTag(volatileTagUrl);
+    }
 
     // Checkout volatile tag into "${outputDirectory}/.svndeploy"
-    File localDirectory= new File(this.outputDirectory, ".svndeploy");
-    getLog().info("Checkout volatile tag [" + volatileTagUrl + "] into [" + localDirectory + "]");
-    this.checkoutTag(volatileTagUrl, localDirectory);
+    File svndeployDirectory= new File(this.outputDirectory, ".svndeploy");
+    this.checkoutTag(volatileTagUrl, svndeployDirectory);
 
-    // Cleanup checkout directory (but keep ".svn" files)
-    getLog().debug("Cleanup SVN checkout directory [" + localDirectory + "]");
-    this.cleanCheckoutDirectory(localDirectory);
+    // Empty directory after checkout (but keep ".svn" files)
+    try {
+      this.emptyCheckoutDirectory(svndeployDirectory);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot empty checkout directory [" + svndeployDirectory + "]", ex);
+    }
 
     // Dump artifact to checkout directory
-    getLog().debug("Dump artifact [" + artifactFile + "] to [" + localDirectory + "]");
-    ArchiveUtils.dumpArtifact(artifactFile, localDirectory, true);
+    File dumpDirectory= new File(svndeployDirectory, this.project.getArtifactId());
+    getLog().debug("Dump artifact [" + artifactFile + "] to [" + dumpDirectory + "]");
+    ArchiveUtils.dumpArtifact(artifactFile, dumpDirectory, true);
+
+    // Delete empty sub-directories from checkout directory
+    try {
+      this.deleteEmptyDirectories(svndeployDirectory);
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot clean checkout directory [" + svndeployDirectory + "]", ex);
+    }
+
+    // Create empty file using version as filename
+    File versionFile= new File(svndeployDirectory, this.project.getVersion());
+    try {
+      FileUtils.setFileContents(versionFile, "");
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot touch file [" + versionFile + "]", ex);
+    }
+
+    // Update volatile tag with local changes
+    getLog().info("Update tag [" + volatileTagUrl + "]");
+    this.updateTag(volatileTagUrl, svndeployDirectory);
+
+    // Check permanent tag exists; if yes, remove it
+    String permanentTagUrl= baseTagUrl + "/" + this.project.getVersion();
+    if (this.tagExists(permanentTagUrl)) {
+      this.deleteTag(permanentTagUrl);
+    }
+
+    // Copy volatile tag to permanent tag
+    this.cloneTag(volatileTagUrl, permanentTagUrl);
+  }
+
+  /**
+   * Add the configured prefix to the specified message
+   *
+   * @param  java.lang.String message
+   * @return java.lang.String
+   */
+  private String prefixMessage(String message) {
+    return String.format(
+      "%s [%s:%s:%s] %s",
+      this.messagePrefix.trim(),
+      this.project.getGroupId(),
+      this.project.getArtifactId(),
+      this.project.getVersion(),
+      message
+    );
+  }
+
+  /**
+   * Get the artifact file that is to be deployed on SVN repository
+   *
+   * @return java.io.File
+   * @throws org.apache.maven.plugin.MojoExecutionException when couldn't find any artifact to deploy
+   */
+  private File getArtifactFile() throws MojoExecutionException {
+
+    // Check primary artifact
+    File retVal= this.artifact.getFile();
+    if (null != retVal && retVal.exists() && retVal.isFile()) {
+      return retVal;
+    }
+
+    // Primary artifact is mising and cannot find other attached artifact
+    if (this.attachedArtifacts.isEmpty()) {
+      throw new MojoExecutionException("The packaging for this project did not assign a file to the build artifact");
+    }
+
+    // Use first attached artifact
+    getLog().warn("No primary artifact to deploy, deploying *first* attached artifact instead");
+    return this.attachedArtifacts.get(0).getFile();
   }
 
   /**
@@ -179,12 +251,18 @@ public class SvnDeployMojo extends AbstractXpMojo {
    * Execute the SVN runner with the specified input
    *
    * @param  net.xp_forge.maven.plugins.xp.exec.input.svn.SvnRunnerInput
+   * @param  java.io.File workingDirectory
    * @return net.xp_forge.maven.plugins.xp.exec.RunnerOutput
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
-  private RunnerOutput executeSvn(SvnRunnerInput input) throws MojoExecutionException {
+  private RunnerOutput executeSvn(SvnRunnerInput input, File workingDirectory) throws MojoExecutionException {
     SvnRunner runner= new SvnRunner(this.svnExecutable, input);
     runner.setLog(getLog());
+
+    // Set runner working directory
+    if (null != workingDirectory) {
+      runner.setWorkingDirectory(workingDirectory);
+    }
 
     // Execute runner
     try {
@@ -198,13 +276,24 @@ public class SvnDeployMojo extends AbstractXpMojo {
   }
 
   /**
+   * Execute the SVN runner with the specified input
+   *
+   * @param  net.xp_forge.maven.plugins.xp.exec.input.svn.SvnRunnerInput
+   * @return net.xp_forge.maven.plugins.xp.exec.RunnerOutput
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private RunnerOutput executeSvn(SvnRunnerInput input) throws MojoExecutionException {
+    return this.executeSvn(input, null);
+  }
+
+  /**
    * Check if the specified remoteUrl exists on the SVN server
    *
    * @param  java.lang.String remoteUrl
    * @return boolean
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
-  private void ensureTag(String remoteUrl) throws MojoExecutionException {
+  private boolean tagExists(String remoteUrl) throws MojoExecutionException {
 
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("list");
@@ -221,13 +310,15 @@ public class SvnDeployMojo extends AbstractXpMojo {
 
       // If output contains 'non-existent in that revision'; tagBase does not exist
       if (runner.getOutput().contains("non-existent in that revision")) {
-        this.createTag(remoteUrl);
-        return;
+        return false;
       }
 
       // Some other error
       throw new MojoExecutionException("Execution of [svn] runner failed: " + runner.getOutput().asString(), ex);
     }
+
+    // Tag exists
+    return true;
   }
 
   /**
@@ -243,7 +334,53 @@ public class SvnDeployMojo extends AbstractXpMojo {
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("mkdir");
     input.remoteUrl = remoteUrl;
-    input.message   = "Create empty tag";
+    input.message   = this.prefixMessage("Create empty tag");
+
+    SvnRunner runner= new SvnRunner(this.svnExecutable, input);
+    runner.setLog(getLog());
+
+    // Execute runner
+    this.executeSvn(input);
+  }
+
+  /**
+   * Delete a tag on the remote SVN server
+   *
+   * @param  java.lang.String remoteUrl
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void deleteTag(String remoteUrl) throws MojoExecutionException {
+    getLog().info("Delete SVN tag [" + remoteUrl + "]");
+
+    // Setup runner input
+    SvnRunnerInput input= this.conjureSvnRunnerInput("delete");
+    input.remoteUrl = remoteUrl;
+    input.message   = this.prefixMessage("Delete tag");
+
+    SvnRunner runner= new SvnRunner(this.svnExecutable, input);
+    runner.setLog(getLog());
+
+    // Execute runner
+    this.executeSvn(input);
+  }
+
+  /**
+   * Copy a tag to a new tag
+   *
+   * @param  java.lang.String srcUrl
+   * @param  java.lang.String dstUrl
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void cloneTag(String srcUrl, String dstUrl) throws MojoExecutionException {
+    getLog().info("Clone SVN tag [" + srcUrl + "] to [" + dstUrl + "]");
+
+    // Setup runner input
+    SvnRunnerInput input= this.conjureSvnRunnerInput("copy");
+    input.remoteUrl = srcUrl;
+    input.addArgument(dstUrl);
+    input.message   = this.prefixMessage("Clone tag");
 
     SvnRunner runner= new SvnRunner(this.svnExecutable, input);
     runner.setLog(getLog());
@@ -263,7 +400,11 @@ public class SvnDeployMojo extends AbstractXpMojo {
   private void checkoutTag(String remoteUrl, File localDirectory) throws MojoExecutionException {
 
     // Cleanup localDirectory
-    localDirectory.delete();
+    try {
+      FileUtils.deleteDirectory(localDirectory);
+    } catch (IOException ex) {
+      // Do nothing
+    }
     localDirectory.mkdirs();
 
     // Setup runner input
@@ -276,29 +417,142 @@ public class SvnDeployMojo extends AbstractXpMojo {
   }
 
   /**
-   * Recursively clean the specified directory of all files and folders, but kepe the ".svn" directories
+   * Recursively empty the specified directory of all files and folders, but keep the ".svn" directories
    *
    * @param  java.io.File directory
    * @return void
    * @throws java.io.IOException
    */
-  private void cleanCheckoutDirectory(File directory) {
-    if (null == directory || !directory.exists() || !directory.isDirectory()) return;
+  private void emptyCheckoutDirectory(File directory) throws IOException {
+    if (null == directory || !directory.isDirectory() || directory.getName().equals(".svn")) return;
 
-    // Cleanup this directory
-    for (File file : directory.listFiles()) {
+    // List directory contents
+    File[] entries= directory.listFiles();
+    if (null == entries) {
+      throw new IOException("Failed to list contents of directory [" + directory + "]");
+    }
+
+    for (File entry : entries) {
+
+      // Skip ".svn" directories
+      if (entry.getName().equals(".svn")) continue;
 
       // Delete files
-      if (file.isFile()) {
-        file.delete();
+      if (entry.isFile()) {
+        if (!entry.delete()) {
+          throw new IOException("Unable to delete file [" + entry + "]");
+        }
         continue;
       }
 
-      // Skip ".svn" directories
-      if (file.getName().equals(".svn")) continue;
-
       // Recursively delete directories
-      this.cleanCheckoutDirectory(file);
+      if (entry.isDirectory()) {
+        this.emptyCheckoutDirectory(entry);
+      }
     }
+  }
+
+  /**
+   * Recursively delete empty directories
+   *
+   * Note: A directory with just a single ".svn" sub-directory is considered empty
+   *
+   * @param  java.io.File directory
+   * @return void
+   * @throws java.io.IOException
+   */
+  private void deleteEmptyDirectories(File directory) throws IOException {
+    if (null == directory || !directory.isDirectory() || directory.getName().equals(".svn")) return;
+
+    // List directory contents
+    File[] entries= directory.listFiles();
+    if (null == entries) {
+      throw new IOException("Failed to list contents of directory [" + directory + "]");
+    }
+
+    boolean isDirectoryEmpty= true;
+    for (File entry : entries) {
+
+      // Skip ".svn" directories
+      if (entry.getName().equals(".svn")) continue;
+      isDirectoryEmpty= false;
+
+      // Recurse
+      if (entry.isDirectory()) {
+        this.deleteEmptyDirectories(entry);
+      }
+    }
+
+    // If directory is empty; remove it
+    if (isDirectoryEmpty) {
+      FileUtils.deleteDirectory(directory);
+    }
+  }
+
+  /**
+   * Update the specified tag with local changes:
+   * - Delete missing files from local checkout
+   * - Add new files from local checkout
+   * - Commit modified files
+   *
+   * @param  java.lang.String remoteUrl
+   * @param  java.io.File localDirectory
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void updateTag(String remoteUrl, File localDirectory) throws MojoExecutionException {
+
+    // Run a "svn st" to see changes
+    getLog().debug("Get list of SVN changes");
+    SvnRunnerInput input= this.conjureSvnRunnerInput("status");
+    RunnerOutput output= this.executeSvn(input, localDirectory);
+
+    // Parse output
+    List<String> addedEntries   = new ArrayList<String>();
+    List<String> deletedEntries = new ArrayList<String>();
+    boolean hasChanges= false;
+    for (String line : output.getLines()) {
+      hasChanges= true;
+
+      // Entry was added
+      if (line.startsWith("?")) {
+        addedEntries.add(line.substring(3).trim());
+        continue;
+      }
+
+      // Entry was deleted
+      if (line.startsWith("!")) {
+        deletedEntries.add(line.substring(3).trim());
+        continue;
+      }
+    }
+
+    // Early return
+    if (false == hasChanges) {
+      getLog().info("Tag is already up-to-date");
+      return;
+    }
+
+    // Add new entries
+    if (!addedEntries.isEmpty()) {
+      getLog().debug("Add new entries to SVN");
+      input= this.conjureSvnRunnerInput("add");
+      input.addArguments(addedEntries);
+      this.executeSvn(input, localDirectory);
+    }
+
+    // Delete old entries
+    if (!deletedEntries.isEmpty()) {
+      getLog().debug("Delete old entries to SVN");
+      input= this.conjureSvnRunnerInput("delete");
+      input.addArguments(deletedEntries);
+      this.executeSvn(input, localDirectory);
+    }
+
+    // Commit changes
+    getLog().debug("Commit changes to SVN");
+    input= this.conjureSvnRunnerInput("commit");
+    input.message= this.prefixMessage("Update tag with latest changes");
+    this.executeSvn(input, localDirectory);
   }
 }
