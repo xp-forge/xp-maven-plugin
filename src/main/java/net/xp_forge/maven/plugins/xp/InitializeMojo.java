@@ -40,6 +40,7 @@ public class InitializeMojo extends AbstractXpMojo {
    *
    */
   public void execute() throws MojoExecutionException {
+    ArchiveUtils.enableLogging(this.getLogger());
 
     // User clearly specified to use already installed XP-Runtime via ${xp.runtime.local}
     if (this.local) {

@@ -112,6 +112,7 @@ public class SvnDeployMojo extends AbstractXpMojo {
    */
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
+    ArchiveUtils.enableLogging(this.getLogger());
 
     // Pom artifacts cannot be deployed to svn
     if (this.packaging.equals("pom")) {

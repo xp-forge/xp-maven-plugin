@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.AbstractArchiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
@@ -39,7 +39,7 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 public abstract class AbstractPackageMojo extends AbstractXpMojo {
   public static final String[] EXCLUDES= {"META-INF/manifest.ini"};
 
-  private Archiver archiver;
+  private AbstractArchiver archiver;
 
   // [project.pth] entries (for [app] packaging)
   private PthFile pth;
@@ -120,6 +120,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    *
    */
   public void execute() throws MojoExecutionException {
+    ArchiveUtils.enableLogging(this.getLogger());
+    FileUtils.setTempDirectory(new File(this.outputDirectory, "package.tmp"));
+
     String classifier        = this.getClassifier();
     File outputFile          = this.getOutputFile();
     String strategy          = this.getStrategy();
@@ -268,10 +271,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     // Pack bootstrap
     try {
-
-      // Set temp directory
-      FileUtils.setTempDirectory(new File(this.outputDirectory, "package.tmp"));
-
       Map<String, String> entries= new HashMap<String, String>();
       entries.put("lang.base.php", "runtime/bootstrap/lang.base.php");
       ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);

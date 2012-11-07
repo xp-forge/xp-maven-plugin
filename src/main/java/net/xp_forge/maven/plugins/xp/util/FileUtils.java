@@ -33,6 +33,19 @@ public final class FileUtils {
   }
 
   /**
+   * Set STATIC temp directory
+   *
+   * @param  java.io.File directory
+   * @return void
+   */
+  public static void setTempDirectory(File directory) {
+    if (!directory.exists()) {
+      directory.mkdirs();
+    }
+    FileUtils.tempDirectory= directory;
+  }
+
+  /**
    * Build an absolute path from the specified relative path
    *
    * @param  java.lang.String str
@@ -174,17 +187,6 @@ public final class FileUtils {
    */
   public static void setFileContents(File file, List<String> lines, String header) throws IOException {
     FileUtils.setFileContents(file, StringUtils.join(lines, String.format("%n")), header);
-  }
-
-  /**
-   *
-   *
-   */
-  public static void setTempDirectory(File directory) {
-    if (!directory.exists()) {
-      directory.mkdirs();
-    }
-    FileUtils.tempDirectory= directory;
   }
 
   /**

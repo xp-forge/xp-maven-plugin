@@ -12,11 +12,13 @@ import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.AbstractArchiver;
+import org.codehaus.plexus.archiver.AbstractUnArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+
+import org.codehaus.plexus.logging.Logger;
 
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.archiver.xar.XarArchiver;
@@ -27,6 +29,7 @@ import net.xp_forge.maven.plugins.xp.archiver.xar.XarUnArchiver;
  *
  */
 public final class ArchiveUtils {
+  private static Logger logger;
 
   /**
    * Utility classes should not have a public or default constructor
@@ -36,23 +39,35 @@ public final class ArchiveUtils {
   }
 
   /**
+   * Set STATIC logger
+   *
+   * @param  org.codehaus.plexus.logging.Logger log
+   * @return void
+   */
+  public static void enableLogging(Logger log) {
+    ArchiveUtils.logger= log;
+  }
+
+  /**
    * Get archiver based on specified file
    *
    * @param  java.io.File file
-   * @return org.codehaus.plexus.archiver.Archiver
+   * @return org.codehaus.plexus.archiver.AbstractArchiver
    */
-  public static Archiver getArchiver(File file) throws IllegalArgumentException {
+  public static AbstractArchiver getArchiver(File file) throws IllegalArgumentException {
     String extension= file.getName().substring(file.getName().lastIndexOf('.') + 1);
 
     if (extension.equals("xar")) {
-      Archiver retVal= new XarArchiver();
+      AbstractArchiver retVal= new XarArchiver();
       retVal.setDestFile(file);
+      retVal.enableLogging(ArchiveUtils.logger);
       return retVal;
     }
 
     if (extension.equals("zip")) {
-      Archiver retVal= new ZipArchiver();
+      AbstractArchiver retVal= new ZipArchiver();
       retVal.setDestFile(file);
+      retVal.enableLogging(ArchiveUtils.logger);
       return retVal;
     }
 
@@ -64,17 +79,21 @@ public final class ArchiveUtils {
    * Get unarchiver for the specified file
    *
    * @param  java.io.File file
-   * @return org.codehaus.plexus.archiver.UnArchiver
+   * @return org.codehaus.plexus.archiver.AbstractUnArchiver
    */
-  public static UnArchiver getUnArchiver(File file) throws IllegalArgumentException {
+  public static AbstractUnArchiver getUnArchiver(File file) throws IllegalArgumentException {
     String extension= file.getName().substring(file.getName().lastIndexOf('.') + 1);
 
     if (extension.equals("xar")) {
-      return new XarUnArchiver(file);
+      AbstractUnArchiver retVal= new XarUnArchiver(file);
+      retVal.enableLogging(ArchiveUtils.logger);
+      return retVal;
     }
 
     if (extension.equals("zip")) {
-      return new ZipUnArchiver(file);
+      AbstractUnArchiver retVal= new ZipUnArchiver(file);
+      retVal.enableLogging(ArchiveUtils.logger);
+      return retVal;
     }
 
     // Invalid extension
@@ -85,9 +104,9 @@ public final class ArchiveUtils {
    * Get unarchiver for the specified Artifact
    *
    * @param  org.apache.maven.artifact.Artifact artifact
-   * @return org.codehaus.plexus.archiver.UnArchiver
+   * @return org.codehaus.plexus.archiver.AbstractUnArchiver
    */
-  public static UnArchiver getUnArchiver(Artifact artifact) throws IllegalArgumentException {
+  public static AbstractUnArchiver getUnArchiver(Artifact artifact) throws IllegalArgumentException {
     return ArchiveUtils.getUnArchiver(artifact.getFile());
   }
 
@@ -119,7 +138,7 @@ public final class ArchiveUtils {
     }
 
     // Dump artifact contents
-    UnArchiver unarchiver= ArchiveUtils.getUnArchiver(artifact);
+    AbstractUnArchiver unarchiver= ArchiveUtils.getUnArchiver(artifact);
     unarchiver.setDestDirectory(destDirectory);
     unarchiver.setOverwrite(overwrite);
     unarchiver.extract();
@@ -132,7 +151,7 @@ public final class ArchiveUtils {
    * @param  org.codehaus.plexus.archiver.Archiver dest
    * @param  java.util.Map<String, String> entries
    */
-  public static void copyArchiveEntries(UnArchiver unArchiver, Archiver archiver, Map<String, String> entries) throws IOException {
+  public static void copyArchiveEntries(AbstractUnArchiver unArchiver, AbstractArchiver archiver, Map<String, String> entries) throws IOException {
 
     // Copy entries
     File tmpDirectory= FileUtils.getTempDirectory();
@@ -156,10 +175,10 @@ public final class ArchiveUtils {
    * Copy entries from one archive to another
    *
    * @param  java.io.File srcFile
-   * @param  org.codehaus.plexus.archiver.Archiver archiver
+   * @param  org.codehaus.plexus.archiver.AbstractArchiver archiver
    * @param  java.util.Map<String, String> entries
    */
-  public static void copyArchiveEntries(File srcFile, Archiver archiver, Map<String, String> entries) throws IOException {
+  public static void copyArchiveEntries(File srcFile, AbstractArchiver archiver, Map<String, String> entries) throws IOException {
     ArchiveUtils.copyArchiveEntries(ArchiveUtils.getUnArchiver(srcFile), archiver, entries);
   }
 
@@ -167,10 +186,10 @@ public final class ArchiveUtils {
    * Copy entries from one archive to another
    *
    * @param  org.apache.maven.artifact.Artifact srcArtifact
-   * @param  org.codehaus.plexus.archiver.Archiver archiver
+   * @param  org.codehaus.plexus.archiver.AbstractArchiver archiver
    * @param  java.util.Map<String, String> entries
    */
-  public static void copyArchiveEntries(Artifact srcArtifact, Archiver archiver, Map<String, String> entries) throws IOException {
+  public static void copyArchiveEntries(Artifact srcArtifact, AbstractArchiver archiver, Map<String, String> entries) throws IOException {
     ArchiveUtils.copyArchiveEntries(srcArtifact.getFile(), archiver, entries);
   }
 }
