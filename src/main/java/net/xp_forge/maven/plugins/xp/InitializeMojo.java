@@ -25,6 +25,8 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
 import net.xp_forge.maven.plugins.xp.io.IniFile;
+import net.xp_forge.maven.plugins.xp.logging.LogLogger;
+
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
@@ -39,8 +41,9 @@ public class InitializeMojo extends AbstractXpMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws MojoExecutionException {
-    ArchiveUtils.enableLogging(this.getLogger());
+    ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // User clearly specified to use already installed XP-Runtime via ${xp.runtime.local}
     if (this.local) {

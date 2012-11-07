@@ -59,6 +59,7 @@ public class RunMojo extends AbstractXpMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
 

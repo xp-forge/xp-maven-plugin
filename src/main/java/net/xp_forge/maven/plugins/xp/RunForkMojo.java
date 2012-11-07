@@ -21,6 +21,7 @@ public class RunForkMojo extends org.apache.maven.plugin.AbstractMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws MojoExecutionException {
 
     // Nothing to do. I'm here just to fork the "run" lifecycle

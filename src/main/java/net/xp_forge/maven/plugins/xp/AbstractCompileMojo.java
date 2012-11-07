@@ -126,6 +126,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws MojoExecutionException {
 
     // Skip tests alltogether?

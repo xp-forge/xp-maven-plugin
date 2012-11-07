@@ -21,15 +21,11 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
-
 /**
  * Base class for all MOJO's
  *
  */
-public abstract class AbstractXpMojo extends AbstractMojo implements LogEnabled {
+public abstract class AbstractXpMojo extends AbstractMojo {
   public static final String LINE_SEPARATOR= "------------------------------------------------------------------------";
   public static final String CREATED_BY_NOTICE= "This file was automatically created by xp-maven-plugin";
 
@@ -85,13 +81,6 @@ public abstract class AbstractXpMojo extends AbstractMojo implements LogEnabled 
   protected MavenProjectHelper projectHelper;
 
   /**
-   * Plexus logger
-   *
-   * @component
-   */
-  private Logger logger;
-
-  /**
    * Maven resource filtering
    *
    * @component role="org.apache.maven.shared.filtering.MavenResourcesFiltering" role-hint="default"
@@ -141,7 +130,6 @@ public abstract class AbstractXpMojo extends AbstractMojo implements LogEnabled 
    * Classifier to add to the generated artifact
    *
    * @parameter expression="${project.classifier}"
-   * @readonly
    */
   protected String classifier;
 
@@ -180,31 +168,6 @@ public abstract class AbstractXpMojo extends AbstractMojo implements LogEnabled 
    * @parameter expression="${xp.runtime.php}"
    */
   protected File php;
-
-  /**
-   * Implement LogEnable interface
-   *
-   * @param  org.codehaus.plexus.logging.Logger logger
-   * @return void
-   */
-  public void enableLogging(Logger logger) {
-    this.logger= logger;
-  }
-
-  /**
-   * Getter for logger
-   *
-   * @return org.codehaus.plexus.logging.Logger
-   */
-  protected Logger getLogger() {
-
-    // Attach Logger if not already set
-    if (null == this.logger) {
-      this.logger= new ConsoleLogger(Logger.LEVEL_INFO, "console");
-    }
-
-    return this.logger;
-  }
 
   /**
    * Helper function to find a project dependency

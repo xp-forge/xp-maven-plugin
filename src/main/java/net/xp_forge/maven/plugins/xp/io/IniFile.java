@@ -29,13 +29,6 @@ public class IniFile {
   private Map<String, Properties> properties;
   private String comment;
 
-  enum ParseState {
-    NORMAL,
-    ESCAPE,
-    ESC_CRNL,
-    COMMENT
-  }
-
   /**
    * Constructor
    *
@@ -367,5 +360,12 @@ public class IniFile {
     public void remove() {
       throw new UnsupportedOperationException("Can't change underlying enumeration");
     }
+  }
+
+  enum ParseState {
+    NORMAL,
+    ESCAPE,
+    ESC_CRNL,
+    COMMENT
   }
 }

@@ -18,6 +18,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
+import net.xp_forge.maven.plugins.xp.logging.LogLogger;
 import net.xp_forge.maven.plugins.xp.exec.RunnerOutput;
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
 import net.xp_forge.maven.plugins.xp.exec.runners.svn.SvnRunner;
@@ -110,9 +111,10 @@ public class SvnDeployMojo extends AbstractXpMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
-    ArchiveUtils.enableLogging(this.getLogger());
+    ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // Pom artifacts cannot be deployed to svn
     if (this.packaging.equals("pom")) {

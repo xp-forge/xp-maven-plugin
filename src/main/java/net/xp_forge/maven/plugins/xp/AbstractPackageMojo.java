@@ -26,10 +26,12 @@ import org.codehaus.plexus.archiver.AbstractArchiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
+import net.xp_forge.maven.plugins.xp.io.IniFile;
 import net.xp_forge.maven.plugins.xp.io.PthFile;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
-import net.xp_forge.maven.plugins.xp.io.IniFile;
+import net.xp_forge.maven.plugins.xp.logging.LogLogger;
+
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
@@ -120,7 +122,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    *
    */
   public void execute() throws MojoExecutionException {
-    ArchiveUtils.enableLogging(this.getLogger());
+    ArchiveUtils.enableLogging(new LogLogger(getLog()));
     FileUtils.setTempDirectory(new File(this.outputDirectory, "package.tmp"));
 
     String classifier        = this.getClassifier();
