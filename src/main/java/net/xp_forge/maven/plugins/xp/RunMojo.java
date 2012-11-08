@@ -37,7 +37,7 @@ public class RunMojo extends AbstractXpMojo {
    *
    * The -cp argument for the xp runner
    *
-   * @parameter expression="${xp.run.classpaths}"
+   * @parameter
    */
   protected List<String> classpaths;
 

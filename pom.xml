@@ -35,10 +35,11 @@
   <!-- Environment Settings -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <mavenVersion>2.2.1</mavenVersion>
   </properties>
+
+  <!-- Prerequisites -->
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>2.2.1</maven>
   </prerequisites>
 
   <!-- Build Settings -->
@@ -88,22 +89,22 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${mavenVersion}</version>
+      <version>${project.prerequisites.maven}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>${mavenVersion}</version>
+      <version>${project.prerequisites.maven}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
+      <version>${project.prerequisites.maven}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>${mavenVersion}</version>
+      <version>${project.prerequisites.maven}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>

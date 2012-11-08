@@ -23,7 +23,7 @@ import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.MavenResourceUtils;
 
 /**
- * Wrapper around the XP-Framework "XccRunner;" runner
+ * Wrapper around the XP-Framework "XccRunner" runner
  *
  */
 public abstract class AbstractCompileMojo extends AbstractXpMojo {
@@ -42,7 +42,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    *
    * The -cp argument for the xcc compiler
    *
-   * @parameter expression="${xp.compile.classpaths}"
+   * @parameter
    */
   protected List<String> classpaths;
 
@@ -51,7 +51,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    *
    * The -sp argument for the xcc compiler
    *
-   * @parameter expression="${xp.compile.sourcepaths}"
+   * @parameter
    */
   protected List<String> sourcepaths;
 
@@ -69,7 +69,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
    *
    * The -p argument for the xcc compiler
    *
-   * @parameter expression="${xp.compile.profiles}"
+   * @parameter
    */
   protected List<String> profiles;
 

@@ -47,9 +47,7 @@ public class TestCompileMojo extends AbstractCompileMojo {
    * The source directories containing the sources to be compiled
    * Default value: [src/test/xp]
    *
-   * @parameter expression="${project.testCompileSourceRoots}"
-   * @required
-   * @readonly
+   * @parameter
    */
   private List<String> testCompileSourceRoots;
 
@@ -81,6 +79,9 @@ public class TestCompileMojo extends AbstractCompileMojo {
    */
   @Override
   protected List<String> getCompileSourceRoots() {
+    if (null == this.testCompileSourceRoots) {
+      this.testCompileSourceRoots= this.project.getTestCompileSourceRoots();
+    }
     return this.testCompileSourceRoots;
   }
 
@@ -97,6 +98,7 @@ public class TestCompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected File getClassesDirectory() {
     return this.testClassesDirectory;
   }

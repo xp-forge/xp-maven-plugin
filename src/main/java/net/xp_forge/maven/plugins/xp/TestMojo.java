@@ -44,7 +44,7 @@ public class TestMojo extends AbstractXpMojo {
    *
    * The -cp argument for the unittest runner
    *
-   * @parameter expression="${xp.test.classpaths}"
+   * @parameter
    */
   protected List<String> classpaths;
 
@@ -53,7 +53,7 @@ public class TestMojo extends AbstractXpMojo {
    *
    * The -a argument for the unittest runner
    *
-   * @parameter expression="${xp.test.testArguments}"
+   * @parameter
    */
   protected List<String> testArguments;
 

@@ -39,9 +39,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * The source directories containing the sources to be compiled
    * Default value: [src/main/xp]
    *
-   * @parameter expression="${project.compileSourceRoots}"
-   * @required
-   * @readonly
+   * @parameter
    */
   private List<String> compileSourceRoots;
 
@@ -73,6 +71,9 @@ public class CompileMojo extends AbstractCompileMojo {
    */
   @Override
   protected List<String> getCompileSourceRoots() {
+    if (null == this.compileSourceRoots) {
+      this.compileSourceRoots= this.project.getCompileSourceRoots();
+    }
     return this.compileSourceRoots;
   }
 
@@ -89,6 +90,7 @@ public class CompileMojo extends AbstractCompileMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   protected File getClassesDirectory() {
     return this.classesDirectory;
   }
