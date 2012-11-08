@@ -23,37 +23,53 @@ The plugin can handle projects with sources written both in XP (.xp) and PHP (*.
 Check the "examples" directory for the "lib-common" and "app-hello" dummy projects.
 
     [app-hello]
-    |- pom.xml                                      # Maven2 project configuration file
-    `- src                                          # Sourcecode, by Maven conventions
-       |- main
-       |  |- resources                              # Various project resources
+    |- ChangeLog
+    |- README.txt
+    |- LICENSE.txt
+    |- pom.xml                                      # Maven project configuration file
+    |
+    `- [src]                                        # Sourcecode, by Maven conventions
+       |- [main]
+       |  |- [etc]                                  # For web application, here are the configuration files
+       |  |  |- web.ini
+       |  |  `- ...
+       |  |
+       |  |- [php]                                  # Source files (**/*.class.php)
+       |  |  `- ...
+       |  |
+       |  |- [resources]                            # Various project resources (stuff used via ClassLoader::getResource())
        |  |  |- resource.ini
        |  |  `- ...
-       |  |- xp                                     # Source files (**/*.xp)
-       |  |  `- org
-       |  |     `- company
-       |  |        `- app
-       |  |           `- hello
-       |  |              |- Hello.xp
-       |  |              `- ...
-       |  `- php                                    # Source files (**/*.class.php)
+       |  |
+       |  |- [xp]
+       |  |  `- [org/company/app/hello]             # Source files (**/*.xp)
+       |  |     |- Hello.xp
+       |  |     `- ...
+       |  |
+       |  |- [webapp]                               # For web application, here is the document root
+       |  |  |- [image]
+       |  |  |- [css]
+       |  |  `- [js]
+       |  |
+       |  `- [xsl]
+       |     |- layout.xsl
        |     `- ...
-       `- test                                      # Project tests
-          |- config                                 # Various project test resources
-          |  `- unittest                            # Configuration files for unittesting
+       |
+       |
+       `- [test]                                    # Project tests
+          |- [config]
+          |  `- [unittest]                          # Configuration files for unittesting
           |     |- test1.ini
           |     |- test2.ini
           |     `- ...
-          |- xp                                     # Test source files (**/*Test.xp)
-          |  `- org
-          |     `- company
-          |        `- app
-          |           `- hello
-          |             `- unittest
-          |                |- HelloTest.xp
-          |                `- ...
-          `- php                                    # Test source files (**/*Test.class.php)
-             `- ...
+          |
+          |- [php]                                  # Test source files (**/*Test.class.php)
+          |  `- ...
+          |
+          `- [xp]                                   # Test source files (**/*Test.xp)
+             `- [org/company/app/hello/unittest]
+                |- HelloTest.xp
+                `- ...
 
 Example pom.xml file
 -----------------------------------------------------------------------
