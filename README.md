@@ -27,8 +27,6 @@ Check the "examples" directory for the "lib-common" and "app-hello" dummy projec
     `- src                                          # Sourcecode, by Maven conventions
        |- main
        |  |- resources                              # Various project resources
-       |  |  |- META-INF
-       |  |  |  `- manifest.ini                     # XAR Manifest file
        |  |  |- resource.ini
        |  |  `- ...
        |  |- xp                                     # Source files (**/*.xp)
@@ -41,12 +39,11 @@ Check the "examples" directory for the "lib-common" and "app-hello" dummy projec
        |  `- php                                    # Source files (**/*.class.php)
        |     `- ...
        `- test                                      # Project tests
-          |- resources                              # Various project test resources
-          |  `- etc
-          |     `- unittest                         # Configuration files for unittesting
-          |        |- test1.ini
-          |        |- test2.ini
-          |        `- ...
+          |- config                                 # Various project test resources
+          |  `- unittest                            # Configuration files for unittesting
+          |     |- test1.ini
+          |     |- test2.ini
+          |     `- ...
           |- xp                                     # Test source files (**/*Test.xp)
           |  `- org
           |     `- company
@@ -79,7 +76,7 @@ Example pom.xml file
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.8</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -110,12 +107,12 @@ xp-maven-plugin will honour the Maven skip test property and will not compile no
 
 If this option is TRUE, xp-maven-plugin will use the locally installed XP-Framework runners by looking in the the `PATH` environment variable. If it cannot find the XP-runers (xcc, unittest, etc.), an exception will be thrown.
 
-Information on how to install XP-framework on your machine can be found here:
+Information on how to install XP-Framework on your machine can be found here:
 - https://github.com/xp-framework/xp-framework/wiki/setup.framework
 
-If this option is FALSE, you don't need to have XP-framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:compiler` dependency defined in `pom.xml`
+If this option is FALSE, you don't need to have XP-Framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:compiler` dependency defined in `pom.xml`
 
-xp-maven-plugin will download the needed XP-artifacts from repository (Maven central or as configured) and will create a local XP-runtime environment in the `target/.runtime` directory.
+xp-maven-plugin will download the needed XP-artifacts from repository (Maven central or as configured) and will create a local XP runtime environment in the `target/.runtime` directory.
 
 
 ### ${xp.runtime.timezone} ###
@@ -139,32 +136,11 @@ This option is used only when `${xp.runtime.local}` is set to TRUE. It contains 
 This options sets `xcc` runner verbosity on or off (-v flag)
 
 
-### ${xp.compile.classpaths} ###
-- string[], default NULL
-- applies to the compile phase
-
-This options adds more classpaths to `xcc` runner (-cp flag)
-
-
-### ${xp.compile.sourcepaths} ###
-- string[], default NULL
-- applies to the compile phase
-
-This options adds more sourcepaths to `xcc` runner (-sp flag)
-
-
 ### ${xp.compile.emitter} ###
 - string, default NULL
 - applies to the compile phase
 
 This options sets `xcc` runner emitter (-e flag)
-
-
-### ${xp.compile.profiles} ###
-- string[], default ['default']
-- applies to the compile phase
-
-This options sets `xcc` runner profiles (-p flag)
 
 
 ### ${xp.test.verbose} ###
@@ -174,25 +150,11 @@ This options sets `xcc` runner profiles (-p flag)
 This options sets `unittest` runner verbosity on or off (-v flag)
 
 
-### ${xp.test.classpaths} ###
-- string[], default NULL
-- applies to the compile phase
-
-This options adds more classpaths to `unittest` runner (-cp flag)
-
-
 ### ${xp.test.iniDirectory} ###
-- file, default /target/test-classes/etc/unittest
+- file, default /src/test/config/unittest
 - applies to the test phase
 
 This options specifies where unittest [*.ini] files are located
-
-
-### ${xp.test.iniDirectories} ###
-- file, default NULL
-- applies to the test phase
-
-This options specifies the location for additional directories to be scanned for [*.ini] files
 
 
 ### ${xp.package.strategy} ###
@@ -225,6 +187,13 @@ This options specifies if project dependencies (excluding XP-artifacts) are to b
 This option is used only when `${xp.runtime.strategy}` is set to 'app' and specifies if XP-artifacts (core & tools) and the XP-runners should also be packed inside the generated artifact. Bootstrap will be packed inside /runtime/bootstrap and XP-artifacts will be packed inside /runtime/lib directory
 
 
+### ${xp.package.mainClass} ###
+- string, default NULL
+- applies to the package phase
+
+This option sets the mainClass property in the auto-generated 'META-INF/manifest.ini' file. Usefull used you want to start your application using `xp -xar artifact.xar`
+
+
 Build a project
 -----------------------------------------------------------------------
 
@@ -242,8 +211,6 @@ This will:
 6. Compile test XP source files from "src/test/xp" to "target/test-classes"
 7. Run tests (if any)
 8. Assemble the XAR package with the compiled sources into "target/my-project-1.0.xar"
-9. Assemble the uber-XAR package with the compiled sources and all dependencies into
-   "target/my-project-1.0-uber.xar" (only if run with -Dxp.xar.merge)
 
 
 Dependencies
