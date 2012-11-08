@@ -1,3 +1,17 @@
+xp-maven-plugin (3.1.8)
+
+  * Refactor plexus Logger by adding the LogLogger wrapper class
+  * Fix "Class 'java.util.List' cannot be instantiated" in Maven2
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 08 Nov 2012
+
+
+xp-maven-plugin (3.1.7)
+
+  * Fix plexus Logger not-set issue -> NullPointerException
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Wed, 07 Nov 2012
+
 xp-maven-plugin (3.1.6)
 
   * move all operation from phase "validate" to phase "initialize"
