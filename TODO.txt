@@ -1,2 +1,10 @@
 Maven XP-Framework plugin TODO
 =======================================================================
+1. 'xp:sources' goal to pack project sources (exclude target and SCM files)
+   - see maven-source-plugin
+
+2. 'xp:apidoc' goal to generate and pack docs
+   - see maven-javadoc-plugin
+
+3. 'xp:ignite' goal to download dependencies in the '.lib' directory and
+   generate 'project.pth' in project root
