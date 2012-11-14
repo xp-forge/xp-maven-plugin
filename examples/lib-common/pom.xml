@@ -32,31 +32,12 @@
       <plugin>
         <groupId>net.xp-forge.maven.plugins</groupId>
         <artifactId>xp-maven-plugin</artifactId>
-        <version>3.1.8-SNAPSHOT</version>
+        <version>3.1.9-SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
           <classifier>patch</classifier>
         </configuration>
-        <executions>
-          <execution>
-            <id>svn-deploy-default</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>svn-deploy</goal>
-            </goals>
-            <configuration>
-              <repositoryUrl>svn+ssh://mrosoiu@127.0.0.1/home/mrosoiu/myrepository</repositoryUrl>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <repository>
-    <id>fictive-repository</id>
-    <url>file:///tmp/</url>
-    </repository>
-  </distributionManagement>
 </project>

@@ -70,7 +70,22 @@ public class PthFile {
    * @return void
    */
   public void addFileEntry(File file) {
-    this.addEntry(file.getAbsolutePath());
+    this.addFileEntry(file, false);
+  }
+
+  /**
+   * Add a new "patch" entry to this pth file
+   *
+   * @param  java.io.File file
+   * @param  boolean isPatch
+   * @return void
+   */
+  public void addFileEntry(File file, boolean isPatch) {
+    if (isPatch) {
+      this.addEntry("!" + file.getAbsolutePath());
+    } else {
+      this.addEntry(file.getAbsolutePath());
+    }
   }
 
   /**

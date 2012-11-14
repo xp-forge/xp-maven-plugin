@@ -5,6 +5,3 @@ Maven XP-Framework plugin TODO
 
 2. 'xp:apidoc' goal to generate and pack docs
    - see maven-javadoc-plugin
-
-3. 'xp:ignite' goal to download dependencies in the '.lib' directory and
-   generate 'project.pth' in project root
