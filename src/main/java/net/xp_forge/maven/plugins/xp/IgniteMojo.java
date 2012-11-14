@@ -23,7 +23,7 @@ import net.xp_forge.maven.plugins.xp.logging.LogLogger;
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
 /**
- * Download project dependencies locally to ${basedir}/.lib and create ${basedir}/ignite.pth
+ * Download project dependencies locally to ${basedir}/lib and create ${basedir}/ignite.pth
  *
  * @goal ignite
  * @requiresDependencyResolution test
