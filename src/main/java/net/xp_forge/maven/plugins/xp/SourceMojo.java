@@ -39,8 +39,6 @@ public class SourceMojo extends AbstractXpMojo {
    * - zip
    * - xar
    *
-   * If not set, ${project.packaging} will be used
-   *
    * @parameter expression="${xp.source.format}" default-value="xar"
    * @required
    */
