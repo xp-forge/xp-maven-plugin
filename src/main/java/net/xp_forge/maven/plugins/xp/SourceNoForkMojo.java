@@ -39,6 +39,13 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 public class SourceNoForkMojo extends AbstractXpMojo {
 
   /**
+   * Skip this goal by configuration
+   *
+   * @parameter expression="${xp.source.skip}" default-value="false"
+   */
+  private boolean skip;
+
+  /**
    * Specify what archiver to use. There are 2 options:
    * - zip
    * - xar
@@ -86,6 +93,12 @@ public class SourceNoForkMojo extends AbstractXpMojo {
   @SuppressWarnings("unchecked")
   public void execute() throws MojoExecutionException {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
+
+    // Skip source packing
+    if (this.skip) {
+      getLog().info("Not packing sources (xp.source.skip)");
+      return;
+    }
 
     // Debug info
     getLog().info("Format   [" + this.format + "]");
