@@ -16,11 +16,15 @@ import net.xp_forge.maven.plugins.xp.exec.runners.xp.XpRunner;
 import net.xp_forge.maven.plugins.xp.exec.input.xp.XpRunnerInput;
 
 /**
- * Run XP code. This goal functions the same as the "run" goal but does not fork
- * the build and is suitable for attaching to the build lifecycle.
+ * Run XP code
+ *
+ * This goal functions the same as the "run" goal but does not fork
+ * the build and is suitable for attaching to the build lifecycle
  *
  * @goal run-no-fork
+ * @phase compile
  * @requiresDependencyResolution runtime
+ * @since 3.1.9
  */
 public class RunNoForkMojo extends AbstractXpMojo {
 
@@ -45,7 +49,7 @@ public class RunNoForkMojo extends AbstractXpMojo {
   /**
    * Define name of class to run
    *
-   * @parameter expression="${xp.run.classname}"
+   * @parameter expression="${xp.run.class}"
    */
   protected String className;
 
@@ -55,6 +59,17 @@ public class RunNoForkMojo extends AbstractXpMojo {
    * @parameter expression="${xp.run.code}"
    */
   protected String code;
+
+  /**
+   * Get location of XP-Runners
+   *
+   * For a non-forked lifecycle, this variable is set in the "initialize" phase
+   *
+   * @return java.io.File
+   */
+  protected File getRunnersDirectory() {
+    return this.runnersDirectory;
+  }
 
   /**
    * {@inheritDoc}
@@ -67,7 +82,7 @@ public class RunNoForkMojo extends AbstractXpMojo {
     // Debug info
     getLog().debug("Classes directory [" + this.classesDirectory + "]");
     getLog().debug("Classpaths        [" + (null == this.classpaths ? "NULL" : this.classpaths) + "]");
-    getLog().debug("ClassName         [" + (null == this.className ? "NULL" : this.className) + "]");
+    getLog().debug("Class             [" + (null == this.className ? "NULL" : this.className) + "]");
     getLog().debug("Code              [" + (null == this.code ? "NULL" : this.code) + "]");
 
     // Prepare unittest input
@@ -88,7 +103,7 @@ public class RunNoForkMojo extends AbstractXpMojo {
     input.code= this.code;
 
     // Configure "xp" runner
-    File executable= new File(this.runnersDirectory, "xp");
+    File executable= new File(this.getRunnersDirectory(), "xp");
     XpRunner runner= new XpRunner(executable, input);
     runner.setLog(getLog());
 

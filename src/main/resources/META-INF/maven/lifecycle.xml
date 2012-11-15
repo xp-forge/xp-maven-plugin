@@ -66,21 +66,4 @@
       </phase>
     </phases>
   </lifecycle>
-
-  <!-- Run lifecycle -->
-  <lifecycle>
-    <id>run</id>
-    <phases>
-      <phase>
-        <id>process-classes</id>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </phase>
-    </phases>
-  </lifecycle>
 </lifecycles>

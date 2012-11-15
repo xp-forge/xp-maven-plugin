@@ -6,24 +6,47 @@
  */
 package net.xp_forge.maven.plugins.xp;
 
+import java.io.File;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import net.xp_forge.maven.plugins.xp.RunNoForkMojo;
+
 /**
- * Run XP code. This goal forks a "run" livecycle.
+ * Run XP code
  *
- * @goal run-fork
- * @execute lifecycle="run" phase="process-classes"
+ * This goal forks the build lifecycle
+ *
+ * @goal run
+ * @phase compile
+ * @execute lifecycle="xar" phase="compile"
  * @requiresDependencyResolution runtime
+ * @requiresDirectInvocation
+ * @since 3.1.9
  */
-public class RunMojo extends org.apache.maven.plugin.AbstractMojo {
+public class RunMojo extends RunNoForkMojo {
 
   /**
-   * {@inheritDoc}
+   * The paralel Maven project that was forked before the "xp:run" goal was executed
    *
+   * We need this to get the ${xp.runtime.runners.directory} property set by the "xp:initialize" goal
+   *
+   * @parameter default-value="${executedProject}"
+   * @required
+   * @readonly
    */
-  @Override
-  public void execute() throws MojoExecutionException {
+  protected MavenProject executedProject;
 
-    // Nothing to do. I'm here just to fork the "run" lifecycle
+  /**
+   * Get location of XP-Runners
+   *
+   * For a forked lifecycle, get the value from the executed project
+   *
+   * @return java.io.File
+   * @see    net.xp_forge.maven.plugins.xp.InitializeMojo::execute()
+   */
+  protected File getRunnersDirectory() {
+    return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners.directory"));
   }
 }

@@ -53,7 +53,7 @@ public class XpRunner extends AbstractClasspathRunner {
         arguments.add(" " + this.input.code);
 
     } else {
-        throw new RunnerException("Neither className nor code given");
+        throw new RunnerException("Neither class nor code given");
     }
 
     // Execute command
