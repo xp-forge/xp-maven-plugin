@@ -1,3 +1,11 @@
+xp-maven-plugin (3.1.9)
+
+  * Add "xp:ignite" goal to setup local workspace
+  * Add "xp:source" goal to pack project sources
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 15 Nov 2012
+
+
 xp-maven-plugin (3.1.8)
 
   * Refactor plexus Logger by adding the LogLogger wrapper class
