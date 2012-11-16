@@ -9,18 +9,16 @@ package net.xp_forge.maven.plugins.xp;
 import java.io.File;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.RunNoForkMojo;
 
 /**
  * Run XP code
  *
- * This goal forks the build lifecycle
+ * This goal forks the build lifecycle upto an including the "compile" phase
  *
  * @goal run
- * @phase compile
- * @execute lifecycle="xar" phase="compile"
+ * @execute phase="compile"
  * @requiresDependencyResolution runtime
  * @requiresDirectInvocation
  * @since 3.1.9
@@ -41,7 +39,7 @@ public class RunMojo extends RunNoForkMojo {
   /**
    * Get location of XP-Runners
    *
-   * For a forked lifecycle, get the value from the executed project
+   * For a forked lifecycle, get the property value from ${executedProject}
    *
    * @return java.io.File
    * @see    net.xp_forge.maven.plugins.xp.InitializeMojo::execute()

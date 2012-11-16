@@ -1,10 +1,12 @@
-xp-maven-plugin (3.1.9)
+xp-maven-plugin (3.2.0)
 
   * Add "xp:ignite" goal to setup local workspace
   * Add "xp:source" goal to pack project sources
   * Unify forked/non-forked custom goals (xp:run/xp:run-no-fork and xp:source and xp:source-no-fork)
   * Remove the "run" lifecycle as "xp:run" now forks the "xar" lifecycle
   * Add ${xp.source.skip} to skip source packing
+  * Add ${xp.deploy.skip} to skip deploying to SVN
+  * Refactor "xp:svn-deploy" and "xp:svn-deploy-no-fork"
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 15 Nov 2012
 

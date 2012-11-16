@@ -6,18 +6,15 @@
  */
 package net.xp_forge.maven.plugins.xp;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import net.xp_forge.maven.plugins.xp.SourceNoForkMojo;
 
 /**
  * Pack project sources
  *
- * This goal forks the build lifecycle
+ * This goal forks the build lifecycle upto and including the "generate-sources" phase
  *
  * @goal source
- * @phase package
- * @execute lifecycle="xar" phase="generate-sources"
+ * @execute phase="generate-sources"
  * @requiresDirectInvocation
  * @since 3.1.9
  */
