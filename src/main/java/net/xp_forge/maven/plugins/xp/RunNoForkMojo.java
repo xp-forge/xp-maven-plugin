@@ -24,7 +24,7 @@ import net.xp_forge.maven.plugins.xp.exec.input.xp.XpRunnerInput;
  * @goal run-no-fork
  * @phase compile
  * @requiresDependencyResolution runtime
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class RunNoForkMojo extends AbstractXpMojo {
 

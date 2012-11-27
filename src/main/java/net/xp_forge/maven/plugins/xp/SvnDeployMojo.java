@@ -21,7 +21,7 @@ import net.xp_forge.maven.plugins.xp.SvnDeployNoForkMojo;
  * @goal svn-deploy
  * @execute phase="package"
  * @requiresDirectInvocation
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class SvnDeployMojo extends SvnDeployNoForkMojo {
 

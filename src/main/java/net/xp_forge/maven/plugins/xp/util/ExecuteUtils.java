@@ -254,31 +254,45 @@ public final class ExecuteUtils {
   }
 
   /**
+   * Save the specified resource to the specified target directory
+   *
+   * @param  java.lang.String resName
+   * @param  java.io.File outputFile
+   * @return void
+   * @throws java.io.IOException when I/O errors occur
+   */
+  public static void saveResource(String resName, File outputFile) throws IOException {
+    InputStream resStream= ExecuteUtils.class.getResourceAsStream(resName);
+
+    // Save to file
+    if (null == resStream) {
+      throw new IOException("Cannot find resource [" + resName + "]");
+    }
+    FileUtils.setFileContents(outputFile, resStream);
+  }
+
+  /**
    * Save the specified runner (stored as resource) to the specified target directory
    *
-   * @param  java.lang.String runner
+   * @param  java.lang.String runner E.g.: xp, xpcli, unittest, etc.
    * @param  java.io.File targetDir
    * @return java.io.File
    * @throws java.io.IOException when I/O errors occur
    * @see    net.xp_forge.maven.plugins.xp.util.ExecuteUtils.RUNNERS_RESOURCE_PATH
    */
   public static File saveRunner(String runner, File targetDir) throws IOException {
+
+    // Get runner resource name
     String osName    = ExecuteUtils.getOsName();
     String extension = ExecuteUtils.getExecutableExtension();
+    String resName   = ExecuteUtils.RUNNERS_RESOURCE_PATH + "/" + osName + "/" + runner + extension;
 
-    // Get resource
-    String resName        = ExecuteUtils.RUNNERS_RESOURCE_PATH + "/" + osName + "/" + runner + extension;
-    InputStream resStream = ExecuteUtils.class.getResourceAsStream(resName);
+    // Extract runner resource
+    File outputFile= new File(targetDir, runner + extension);
+    ExecuteUtils.saveResource(resName, outputFile);
+    outputFile.setExecutable(true);
 
-    // Save to file
-    File retVal= new File(targetDir, runner + extension);
-    if (null == resStream) {
-      throw new IOException("Cannot find [" + runner + "] runner resource [" + resName + "]");
-    }
-    FileUtils.setFileContents(retVal, resStream);
-    retVal.setExecutable(true);
-
-    return retVal;
+    return outputFile;
   }
 
   /**

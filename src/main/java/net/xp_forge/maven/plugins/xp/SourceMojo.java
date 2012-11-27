@@ -16,7 +16,7 @@ import net.xp_forge.maven.plugins.xp.SourceNoForkMojo;
  * @goal source
  * @execute phase="generate-sources"
  * @requiresDirectInvocation
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class SourceMojo extends SourceNoForkMojo {
   // Nothing to do: I'm here just to fork the build lifecycle

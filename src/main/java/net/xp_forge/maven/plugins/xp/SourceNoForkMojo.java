@@ -34,7 +34,7 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
  *
  * @goal source-no-fork
  * @phase package
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class SourceNoForkMojo extends AbstractXpMojo {
 

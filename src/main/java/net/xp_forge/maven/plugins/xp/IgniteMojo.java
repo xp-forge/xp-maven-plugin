@@ -27,7 +27,7 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
  *
  * @goal ignite
  * @requiresDependencyResolution test
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class IgniteMojo extends AbstractXpMojo {
 

@@ -10,20 +10,19 @@ import java.io.File;
 
 import org.apache.maven.project.MavenProject;
 
-import net.xp_forge.maven.plugins.xp.RunNoForkMojo;
+import net.xp_forge.maven.plugins.xp.SourceNoForkMojo;
 
 /**
- * Run XP code
+ * Generate and pack project API documentation
  *
- * This goal forks the build lifecycle upto an including the "compile" phase
+ * This goal forks the build lifecycle upto and including the "generate-sources" phase
  *
- * @goal run
- * @execute phase="compile"
- * @requiresDependencyResolution runtime
+ * @goal apidoc
+ * @execute phase="generate-sources"
  * @requiresDirectInvocation
  * @since 3.2.0
  */
-public class RunMojo extends RunNoForkMojo {
+public class ApidocMojo extends ApidocNoForkMojo {
 
   /**
    * The paralel Maven project that was forked before the "xp:run" goal was executed

@@ -35,7 +35,7 @@ import net.xp_forge.maven.plugins.xp.exec.input.svn.SvnRunnerInput;
  *
  * @goal svn-deploy-no-fork
  * @phase deploy
- * @since 3.1.9
+ * @since 3.2.0
  */
 public class SvnDeployNoForkMojo extends AbstractXpMojo {
 
