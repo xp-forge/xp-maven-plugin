@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
 import net.xp_forge.maven.plugins.xp.exec.input.xp.DocletRunnerInput;
 
@@ -48,9 +46,16 @@ public class DocletRunner extends AbstractClasspathRunner {
     this.setClasspath(this.input.classpaths, arguments);
 
     // Add sourcepath (-sp)
-    if (!this.input.sourcepaths.isEmpty()) {
+    if (null != this.input.sourcepaths && !this.input.sourcepaths.isEmpty()) {
+      StringBuffer buff= new StringBuffer();
+      Iterator it= this.input.sourcepaths.iterator();
+      while (it.hasNext()) {
+        buff.append(((File)it.next()).getAbsolutePath());
+        if (it.hasNext()) buff.append(",");
+      }
+
       arguments.add("-sp");
-      arguments.add(StringUtils.join(this.input.sourcepaths, File.pathSeparator));
+      arguments.add(buff.toString());
     }
 
     // Add doclet class

@@ -86,6 +86,24 @@ public class SourceNoForkMojo extends AbstractXpMojo {
   protected String finalName;
 
   /**
+   * Get skip setting
+   *
+   * @return boolean
+   */
+  protected boolean isSkip() {
+    return this.skip;
+  }
+
+  /**
+   * Get attach setting
+   *
+   * @return boolean
+   */
+  protected boolean isAttach() {
+    return this.attach;
+  }
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -95,7 +113,7 @@ public class SourceNoForkMojo extends AbstractXpMojo {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // Skip source packing
-    if (this.skip) {
+    if (this.isSkip()) {
       getLog().info("Not packing sources (xp.source.skip)");
       return;
     }
@@ -104,7 +122,7 @@ public class SourceNoForkMojo extends AbstractXpMojo {
     getLog().info("Format   [" + this.format + "]");
     getLog().info("Includes [" + (null == this.includes ? "n/a" : this.includes) + "]");
     getLog().info("Excludes [" + (null == this.excludes ? "n/a" : this.excludes) + "]");
-    getLog().info("Attach   [" + (this.attach ? "yes" : "no") + "]");
+    getLog().info("Attach   [" + (this.isAttach() ? "yes" : "no") + "]");
 
     // Get output file
     File outputFile= this.getOutputFile();
@@ -154,7 +172,7 @@ public class SourceNoForkMojo extends AbstractXpMojo {
     }
 
     // Attach generated archive as project artifact
-    if (this.attach) {
+    if (this.isAttach()) {
       this.projectHelper.attachArtifact(this.project, this.format, "sources", outputFile);
     }
   }

@@ -100,6 +100,24 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
   }
 
   /**
+   * Get skip setting
+   *
+   * @return boolean
+   */
+  protected boolean isSkip() {
+    return this.skip;
+  }
+
+  /**
+   * Get attach setting
+   *
+   * @return boolean
+   */
+  protected boolean isAttach() {
+    return this.attach;
+  }
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -109,7 +127,7 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // Skip apidoc
-    if (this.skip) {
+    if (this.isSkip()) {
       getLog().info("Not generating apidoc (xp.apidoc.skip)");
       return;
     }
@@ -118,7 +136,7 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     getLog().info("Format      [" + this.format + "]");
     getLog().info("Sourcepaths [" + (null == this.sourcepaths ? "n/a" : this.sourcepaths) + "]");
     getLog().info("Names       [" + (null == this.names ? "n/a" : this.names) + "]");
-    getLog().info("Attach      [" + (this.attach ? "yes" : "no") + "]");
+    getLog().info("Attach      [" + (this.isAttach() ? "yes" : "no") + "]");
 
     // Get output file
     File outputFile= this.getOutputFile();
@@ -152,13 +170,25 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
       }
     }
 
-    // Add names
-    if (null == this.names) {
-      input.addName(this.project.getGroupId() + ".**");
-    } else {
-      for (String name : this.names) {
-        input.addName(name);
+    // No names configured, try to calculate them
+    if (null == this.names || this.names.isEmpty()) {
+      try {
+        this.names= this.calculateNamesFromDirectoryStructure(input.sourcepaths);
+      } catch (IOException ex) {
+        throw new MojoExecutionException("Cannot calculate names from directory structure", ex);
       }
+
+      // Check no names found
+      if (this.names.isEmpty()) {
+        throw new MojoExecutionException(
+          "No names found from directory structure; you may want to specify them yourself via ${names} configuration"
+        );
+      }
+      getLog().info("Calculated names [" + this.names + "]");
+    }
+
+    for (String name : this.names) {
+      input.addName(name);
     }
 
     // Prepare output directory
@@ -209,7 +239,7 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     }
 
     // Attach generated archive as project artifact
-    if (this.attach) {
+    if (this.isAttach()) {
       this.projectHelper.attachArtifact(this.project, this.format, "apidoc", outputFile);
     }
   }
@@ -224,5 +254,82 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
       this.outputDirectory,
       this.finalName + "-apidoc." + this.format
     );
+  }
+
+  /**
+   * Try to detect all exposed names (namespaces) from the directory layout
+   *
+   *
+   * @param  java.util.List<java.io.File> directories
+   * @return java.util.List<java.lang.String>
+   * @throws java.io.IOException when cannot read the contents of the directories
+   */
+  private List<String> calculateNamesFromDirectoryStructure(List<File> directories) throws IOException {
+    List<String> retVal= new ArrayList<String>();
+    for (File directory : directories) {
+      retVal.addAll(this.calculateNamesFromDirectoryStructure(directory));
+    }
+    return retVal;
+  }
+
+  /**
+   * Try to detect all exposed names (namespaces) from the directory layout
+   *
+   *
+   * @param  java.io.File directory E.g. /path/to/src/main/php
+   * @return java.util.List<java.lang.String>
+   * @throws java.io.IOException when cannot read the contents of the directory
+   */
+  private List<String> calculateNamesFromDirectoryStructure(File directory) throws IOException {
+    return this.calculateNamesFromDirectoryStructure(directory, "");
+  }
+
+  /**
+   * Try to detect all exposed names (namespaces) from the directory layout
+   *
+   *
+   * @param  java.io.File directory E.g. /path/to/src/main/php
+   * @param  java.lang.String prefix E.g. "org.company"
+   * @return java.util.List<java.lang.String>
+   * @throws java.io.IOException when cannot read the contents of the directory
+   */
+  private List<String> calculateNamesFromDirectoryStructure(File directory, String prefix) throws IOException {
+
+    // Init list of found names
+    List<String> retVal= new ArrayList<String>();
+
+    // Sanity check
+    if (null == directory || !directory.exists()) return retVal;
+
+    // Not a directory
+    if (!directory.isDirectory()) {
+      throw new IllegalArgumentException("[" + directory + "] is not a directory");
+    }
+
+    // List directory contents
+    File[] entries= directory.listFiles();
+    if (null == entries) {
+      throw new IOException("Failed to list contents of directory [" + directory + "]");
+    }
+
+    // Analyze directory contents
+    for (File entry : entries) {
+      String entryName= entry.getName();
+
+      // At least one *class* file found; don't go any deeper
+      if (!entry.isDirectory() && (entryName.endsWith(".class.php") || entryName.endsWith(".xp"))) {
+        retVal.clear();
+        retVal.add(prefix + "**");
+        return retVal;
+      }
+
+      // Delve deeper
+      if (entry.isDirectory()) {
+        retVal.addAll(this.calculateNamesFromDirectoryStructure(entry, prefix + entryName + "."));
+      }
+    }
+
+    // Return all collected names
+    return retVal;
   }
 }

@@ -46,4 +46,26 @@ public class ApidocMojo extends ApidocNoForkMojo {
   protected File getRunnersDirectory() {
     return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners.directory"));
   }
+
+  /**
+   * Get skip setting
+   *
+   * For a forked lifecycle, this is always false
+   *
+   * @return boolean
+   */
+  protected boolean isSkip() {
+    return false;
+  }
+
+  /**
+   * Get attach setting
+   *
+   * For a forked lifecycle, this is always false
+   *
+   * @return boolean
+   */
+  protected boolean isAttach() {
+    return false;
+  }
 }

@@ -43,7 +43,7 @@ import java.util.ArrayList;
 public class DocletRunnerInput extends AbstractClasspathRunnerInput {
   public String              docletClass;
   public Map<String, String> docletOptions;
-  public List<String>        sourcepaths;
+  public List<File>          sourcepaths;
   public List<String>        names;
 
   /**
@@ -55,7 +55,7 @@ public class DocletRunnerInput extends AbstractClasspathRunnerInput {
     super();
     this.docletClass   = docletClass;
     this.docletOptions = new HashMap<String, String>();
-    this.sourcepaths   = new ArrayList<String>();
+    this.sourcepaths   = new ArrayList<File>();
     this.names         = new ArrayList<String>();
   }
 
@@ -78,23 +78,6 @@ public class DocletRunnerInput extends AbstractClasspathRunnerInput {
   /**
    * Setter for sourcepaths
    *
-   * @param  java.util.String sourcepath Sourcepath to add
-   * @return void
-   */
-  public void addSourcepath(String sourcepath) {
-
-    // Check path not added twice
-    for (String sp : this.sourcepaths) {
-      if (sp.equals(sourcepath)) return;
-    }
-
-    // Add to list
-    this.sourcepaths.add(sourcepath);
-  }
-
-  /**
-   * Setter for sourcepaths
-   *
    * @param  java.io.File sourcepath Sourcepath to add
    * @return void
    */
@@ -103,8 +86,14 @@ public class DocletRunnerInput extends AbstractClasspathRunnerInput {
     // Invalid path
     if (!sourcepath.exists()) return;
 
+    // Check path not added twice
+    String sourcepathPath= sourcepath.getAbsolutePath();
+    for (File sp : this.sourcepaths) {
+      if (sp.getAbsolutePath().equals(sourcepathPath)) return;
+    }
+
     // Add to list
-    this.addSourcepath(sourcepath.getAbsolutePath());
+    this.sourcepaths.add(sourcepath);
   }
 
   /**
