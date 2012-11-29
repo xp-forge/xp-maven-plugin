@@ -27,6 +27,7 @@ public class SourceMojo extends SourceNoForkMojo {
    *
    * @return boolean
    */
+  @Override
   protected boolean isSkip() {
     return false;
   }
@@ -38,6 +39,7 @@ public class SourceMojo extends SourceNoForkMojo {
    *
    * @return boolean
    */
+  @Override
   protected boolean isAttach() {
     return false;
   }

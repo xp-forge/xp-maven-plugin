@@ -37,11 +37,24 @@ public class SvnDeployMojo extends SvnDeployNoForkMojo {
   protected MavenProject executedProject;
 
   /**
+   * Get skip setting
+   *
+   * For a forked lifecycle, this is always false
+   *
+   * @return boolean
+   */
+  @Override
+  protected boolean isSkip() {
+    return false;
+  }
+
+  /**
    * Get project main artifact
    *
    * For a forked lifecycle, get the artifact from ${executedProject}
    *
    */
+  @Override
   protected Artifact getProjectArtifact() {
     return this.executedProject.getArtifact();
   }
@@ -52,6 +65,7 @@ public class SvnDeployMojo extends SvnDeployNoForkMojo {
    * For a forked lifecycle, get the attached artifacts from ${executedProject}
    *
    */
+  @Override
   protected List<Artifact> getProjectAttachedArtifacts() {
     return this.executedProject.getAttachedArtifacts();
   }

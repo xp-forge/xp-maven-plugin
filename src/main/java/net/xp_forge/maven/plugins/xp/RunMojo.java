@@ -44,6 +44,7 @@ public class RunMojo extends RunNoForkMojo {
    * @return java.io.File
    * @see    net.xp_forge.maven.plugins.xp.InitializeMojo::execute()
    */
+  @Override
   protected File getRunnersDirectory() {
     return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners.directory"));
   }
