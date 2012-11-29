@@ -120,6 +120,15 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
   private List<Artifact> attachedArtifacts;
 
   /**
+   * Get skip setting
+   *
+   * @return boolean
+   */
+  protected boolean isSkip() {
+    return this.skip;
+  }
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -129,14 +138,14 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // Skip svn deploy
-    if (this.skip) {
+    if (this.isSkip()) {
       getLog().info("Not deploying to SVN (xp.deploy.skip)");
       return;
     }
 
     // Pom artifacts cannot be deployed to svn
     if (this.packaging.equals("pom")) {
-      getLog().warn("Cannot deploy [pom] artifacts to SVN repository; silently skipping");
+      getLog().info("Cannot deploy [pom] artifacts to SVN repository; silently skipping");
       return;
     }
 
