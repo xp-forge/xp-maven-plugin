@@ -30,11 +30,15 @@ import net.xp_forge.maven.plugins.xp.exec.input.xp.DocletRunnerInput;
 /**
  * Generate and pack project API documentation
  *
+ * Important: the [doclet] runner cannot (yet) generate API documentation
+ * from *.xp sources
+ *
  * This goal functions the same as the "apidoc-no-fork" goal but does not fork
  * the build and is suitable for attaching to the build lifecycle
  *
  * @goal apidoc-no-fork
  * @phase package
+ * @requiresDependencyResolution compile
  * @since 3.2.0
  */
 public class ApidocNoForkMojo extends AbstractXpMojo {
@@ -132,6 +136,12 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
       return;
     }
 
+    // Pom artifacts dont have API docs
+    if (this.project.getPackaging().equals("pom")) {
+      getLog().info("Cannot generate apidoc for [pom] projects; silently skipping");
+      return;
+    }
+
     // Debug info
     getLog().info("Format      [" + this.format + "]");
     getLog().info("Sourcepaths [" + (null == this.sourcepaths ? "n/a" : this.sourcepaths) + "]");
@@ -143,7 +153,7 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     getLog().debug("Output file [" + outputFile + "]");
 
     // Extract doclet.xar from resources
-    File docletFile= new File(this.outputDirectory, ".doclet" + File.separator + "doclet.xar");
+    File docletFile= new File(this.outputDirectory, ".runtime" + File.separator + "doclet" + File.separator + "doclet.xar");
     try {
       getLog().debug(" - Extracting doclet.xar from resources");
       ExecuteUtils.saveResource("/net/xp_forge/doclet/doclet.xar", docletFile);
@@ -159,15 +169,23 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     input.addClasspath(this.getArtifacts(false));
     input.addClasspath(docletFile);
 
-    // Add default sourcepaths (src/main/php, src/main/xp)
+    // Add default sourcepaths (src/main/php)
     input.addSourcepath(new File(this.basedir, "src" + File.separator + "main" + File.separator + "php"));
-    input.addSourcepath(new File(this.basedir, "src" + File.separator + "main" + File.separator + "xp"));
+
+    // ATM, the [doclet] runner cannot handle *.xp files ;skipping
+    //input.addSourcepath(new File(this.basedir, "src" + File.separator + "main" + File.separator + "xp"));
 
     // Add user-defined sourcepaths
     if (null != this.sourcepaths) {
       for (File sourcepath : this.sourcepaths) {
         input.addSourcepath(sourcepath);
       }
+    }
+
+    // Check no sourcepaths found (E.g.: XSL-only projects); early return
+    if (input.sourcepaths.isEmpty()) {
+      getLog().warn("No sourcepaths found this project; silently skipping");
+      return;
     }
 
     // No names configured, try to calculate them
@@ -191,6 +209,27 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
       input.addName(name);
     }
 
+    // Special case: self-bootstrap for loading XP-Framework itself
+    // A bit hackish atm
+    if (
+        this.project.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
+        (
+          this.project.getArtifactId().equals(CORE_ARTIFACT_ID) ||
+          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID)
+        )
+      ) {
+
+      // Locate parent project
+      File parentProjectDirectory= this.basedir.getParentFile();
+
+      // Add classpaths
+      input.addClasspath(new File(parentProjectDirectory, "core/src/main/php"));
+      input.addSourcepath(new File(parentProjectDirectory, "core/src/main/php"));
+    }
+
+    // Add project dependecies as sourcepaths
+    input.addSourcepath(this.getArtifacts(true));
+
     // Prepare output directory
     File apidocDirectory= new File(this.outputDirectory, "apidoc");
     apidocDirectory.mkdirs();
@@ -206,8 +245,8 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     DocletRunner runner= new DocletRunner(executable, input);
     runner.setLog(getLog());
 
-    // Set runner working directory
-    runner.setWorkingDirectory(this.basedir);
+    // Set runner working directory to [/target]
+    runner.setWorkingDirectory(this.outputDirectory);
 
     // Execute runner
     try {

@@ -20,6 +20,7 @@ import net.xp_forge.maven.plugins.xp.SourceNoForkMojo;
  * @goal apidoc
  * @execute phase="generate-sources"
  * @requiresDirectInvocation
+ * @requiresDependencyResolution compile
  * @since 3.2.0
  */
 public class ApidocMojo extends ApidocNoForkMojo {
@@ -43,6 +44,7 @@ public class ApidocMojo extends ApidocNoForkMojo {
    * @return java.io.File
    * @see    net.xp_forge.maven.plugins.xp.InitializeMojo::execute()
    */
+  @Override
   protected File getRunnersDirectory() {
     return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners.directory"));
   }
@@ -54,6 +56,7 @@ public class ApidocMojo extends ApidocNoForkMojo {
    *
    * @return boolean
    */
+  @Override
   protected boolean isSkip() {
     return false;
   }
@@ -65,6 +68,7 @@ public class ApidocMojo extends ApidocNoForkMojo {
    *
    * @return boolean
    */
+  @Override
   protected boolean isAttach() {
     return false;
   }

@@ -43,7 +43,8 @@ public class DocletRunner extends AbstractClasspathRunner {
     List<String> arguments= new ArrayList<String>();
 
     // Configure classpath (via project.pth)
-    this.setClasspath(this.input.classpaths, arguments);
+    File pthFile= new File(this.getWorkingDirectory(), "project.pth");
+    this.setClasspath(this.input.classpaths, pthFile);
 
     // Add sourcepath (-sp)
     if (null != this.input.sourcepaths && !this.input.sourcepaths.isEmpty()) {
@@ -51,7 +52,7 @@ public class DocletRunner extends AbstractClasspathRunner {
       Iterator it= this.input.sourcepaths.iterator();
       while (it.hasNext()) {
         buff.append(((File)it.next()).getAbsolutePath());
-        if (it.hasNext()) buff.append(",");
+        if (it.hasNext()) buff.append(File.pathSeparator);
       }
 
       arguments.add("-sp");

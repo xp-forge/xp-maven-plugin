@@ -8,9 +8,12 @@ package net.xp_forge.maven.plugins.xp.exec.input.xp;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
+
+import org.apache.maven.artifact.Artifact;
 
 /**
  * Command line doclet runner
@@ -94,6 +97,23 @@ public class DocletRunnerInput extends AbstractClasspathRunnerInput {
 
     // Add to list
     this.sourcepaths.add(sourcepath);
+  }
+
+  /**
+   * Setter for sourcepaths
+   *
+   * @param  java.util.Set<org.apache.maven.artifact.Artifact> artifacts
+   * @return void
+   */
+  public void addSourcepath(Set<Artifact> artifacts) {
+    for (Artifact artifact : artifacts) {
+
+      // Skip non-xar artifacts
+      if (!artifact.getType().equals("xar")) continue;
+
+      // Add to classpath
+      this.addSourcepath(artifact.getFile());
+    }
   }
 
   /**
