@@ -58,7 +58,7 @@ public class InitializeMojo extends AbstractXpMojo {
           this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID)
         )
       ) {
-      this.setupRuntimeFromResources(new File(this.outputDirectory, ".runtime"));
+      this.setupRuntimeFromThisProject(new File(this.outputDirectory, ".runtime"));
 
     // Setup XP-Runtime using project dependencies
     } else {
@@ -91,6 +91,8 @@ public class InitializeMojo extends AbstractXpMojo {
     } catch (FileNotFoundException ex) {
       throw new MojoExecutionException("Cannot find XP-Framework. Please install it from http://xp-framework.net/", ex);
     }
+
+
   }
 
   /**
@@ -116,26 +118,39 @@ public class InitializeMojo extends AbstractXpMojo {
   }
 
   /**
-   * Prepare our own XP-Runtime into specified directory using project resources
+   * Prepare our own XP-Runtime into specified directory using *this* project sources
+   *
+   * Note: only used if this project is net.xp-framework:core or net.xp-framework:tools
    *
    * @param  java.io.File targetDirectory
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
-  private void setupRuntimeFromResources(File targetDirectory) throws MojoExecutionException {
-    getLog().debug("Preparing XP-Runtime from project resources into [" + targetDirectory + "]");
+  private void setupRuntimeFromThisProject(File targetDirectory) throws MojoExecutionException {
+    getLog().debug("Preparing XP-Runtime from this project sources into [" + targetDirectory + "]");
 
     // Configure directories
     File bootstrapDirectory = new File(targetDirectory, "bootstrap");
-    this.runnersDirectory= new File(targetDirectory, "runners");
+    File toolsDirectory     = new File(bootstrapDirectory, TOOLS_ARTIFACT_ID);
+    this.runnersDirectory   = new File(targetDirectory, "runners");
 
-    // Setup bootstrap from dependencies
-    this.setupBootstrapFromResources(bootstrapDirectory);
+    // Copy [lang.base.php]
+    try {
+      FileUtils.copyFile(
+        new File(this.basedir.getParentFile(), "core/src/main/php/lang.base.php"),
+        new File(bootstrapDirectory, "lang.base.php")
+      );
+    } catch (IOException ex) {
+      throw new MojoExecutionException("Cannot copy bootstrap files to [" + bootstrapDirectory + "]", ex);
+    }
+
+    // Locate parent project
+    File parentProjectDirectory= this.basedir.getParentFile();
 
     // Setup use_xp
     this.use_xp = bootstrapDirectory.getAbsolutePath();
     this.use_xp+= File.pathSeparator;
-    this.use_xp+= new File(this.basedir.getParentFile(), "tools").getAbsolutePath();
+    this.use_xp+= new File(parentProjectDirectory, "tools").getAbsolutePath();
 
     // Setup XP-Runners
     this.setupRunners(this.runnersDirectory, this.use_xp);
@@ -192,28 +207,6 @@ public class InitializeMojo extends AbstractXpMojo {
       pth.dump(pthFile);
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot write [" + pthFile + "]", ex);
-    }
-  }
-
-  /**
-   * Prepare XP-Bootstrap using project resources into specified directory
-   *
-   * @param  java.io.File targetDirectory
-   * @return void
-   * @throws org.apache.maven.plugin.MojoExecutionException
-   */
-  private void setupBootstrapFromResources(File targetDirectory) throws MojoExecutionException {
-    getLog().debug("- Preparing XP-Bootstrap from project resources into [" + targetDirectory + "]");
-
-    try {
-
-      // Copy [lang.base.php]
-      FileUtils.copyFile(
-        new File(this.basedir.getParentFile(), "core/src/main/php/lang.base.php"),
-        new File(targetDirectory, "lang.base.php")
-      );
-    } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot copy bootstrap files to [" + targetDirectory + "]", ex);
     }
   }
 
