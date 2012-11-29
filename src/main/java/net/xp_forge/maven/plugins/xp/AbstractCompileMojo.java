@@ -147,7 +147,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
     // Cleanup source roots
     List<String> compileSourceRoots= FileUtils.filterEmptyDirectories(this.getCompileSourceRoots());
     if (compileSourceRoots.isEmpty()) {
-      getLog().info("There are no sources to compile");
+      getLog().info("There are no [*.xp] sources to compile");
 
     } else {
 
