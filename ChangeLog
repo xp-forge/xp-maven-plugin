@@ -1,5 +1,6 @@
 xp-maven-plugin (3.2.0)
 
+  * Use bug-free Windows runners (https://github.com/xp-framework/xp-runners/pull/7)
   * Add "xp:apidoc" goal to generate and pack project API documentation
   * Add "xp:ignite" goal to setup local workspace
   * Add "xp:source" goal to pack project sources
