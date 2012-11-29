@@ -118,6 +118,12 @@ public class SourceNoForkMojo extends AbstractXpMojo {
       return;
     }
 
+    // Pom artifacts don't have sources artifact
+    if (this.project.getPackaging().equals("pom")) {
+      getLog().info("Cannot generate sources for [pom] projects; silently skipping");
+      return;
+    }
+
     // Debug info
     getLog().info("Format   [" + this.format + "]");
     getLog().info("Includes [" + (null == this.includes ? "n/a" : this.includes) + "]");
