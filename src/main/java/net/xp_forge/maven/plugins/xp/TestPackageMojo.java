@@ -13,6 +13,7 @@ import java.util.List;
  * Package classes and resources
  *
  * @goal test-package
+ * @phase package
  * @requiresProject
  * @requiresDependencyResolution test
  */
