@@ -28,7 +28,7 @@ public class ApidocMojo extends ApidocNoForkMojo {
   /**
    * The paralel Maven project that was forked before the "xp:run" goal was executed
    *
-   * We need this to get the ${xp.runtime.runners.directory} property set by the "xp:initialize" goal
+   * We need this to get the ${xp.runtime.runners} property set by the "xp:initialize" goal
    *
    * @parameter default-value="${executedProject}"
    * @required
@@ -46,7 +46,7 @@ public class ApidocMojo extends ApidocNoForkMojo {
    */
   @Override
   protected File getRunnersDirectory() {
-    return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners.directory"));
+    return new File(this.executedProject.getProperties().getProperty("xp.runtime.runners"));
   }
 
   /**

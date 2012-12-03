@@ -13,8 +13,11 @@ import java.io.IOException;
 import java.io.FileInputStream;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Enumeration;
 
@@ -180,6 +183,64 @@ public class IniFile {
   }
 
   /**
+   * Pack Strings array to String
+   *
+   * @param  java.util.List<java.lang.String> list
+   * @return java.lang.String
+   */
+  private String packListToString(List<String> list) {
+
+    // Sanity check
+    if (null == list) return null;
+
+    // Init string
+    StringBuffer buff= new StringBuffer();
+    buff.append("Array[");
+
+    Iterator it= list.iterator();
+    while (it.hasNext()) {
+      buff.append((String)it.next());
+      if (it.hasNext()) buff.append("•");
+    }
+
+    // Return array
+    buff.append("]");
+    return buff.toString();
+  }
+
+  /**
+   * Check if the provided String contains a packed list
+   *
+   * @param  java.lang.String str
+   * @return boolean
+   */
+  private boolean isPackedList(String str) {
+    return (str.startsWith("Array[") && str.endsWith("]"));
+  }
+
+  /**
+   * Unpack String to Strings array
+   *
+   * @param  java.lang.String str
+   * @return java.util.List<java.lang.String>
+   */
+  private List<String> unpackStringToList(String str) {
+
+    // Sanity check
+    if (null == str) return null;
+
+    // String is not packed
+    if (!this.isPackedList(str)) {
+      List<String> retVal= new ArrayList<String>();
+      retVal.add(str);
+      return retVal;
+    }
+
+    // Explode
+    return Arrays.asList(str.substring(6, str.length() - 1).split("•"));
+  }
+
+  /**
    * Get global property by name
    *
    * @param  java.lang.String name
@@ -198,6 +259,17 @@ public class IniFile {
    */
   public void setProperty(String name, String value) {
     this.globalProperties.setProperty(name, value);
+  }
+
+  /**
+   * Set global property
+   *
+   * @param  java.lang.String name
+   * @param  java.util.List<java.lang.String> values
+   * @return void
+   */
+  public void setProperty(String name, List<String> values) {
+    this.setProperty(name, this.packListToString(values));
   }
 
   /**
@@ -241,6 +313,20 @@ public class IniFile {
       this.properties.put(section, p);
     }
     p.setProperty(name, value);
+  }
+
+  /**
+   * Set property value for specified section and name
+   *
+   * Note: Creates section if not existing
+   *
+   * @param  java.lang.String section
+   * @param  java.lang.String name
+   * @param  java.util.List<java.lang.String> values
+   * @return void
+   */
+  public void setProperty(String section, String name, List<String> values) {
+    this.setProperty(section, name, this.packListToString(values));
   }
 
   /**
@@ -289,8 +375,10 @@ public class IniFile {
     Iterator<String> props= this.properties();
     while (props.hasNext()) {
       String name= props.next();
-      out.printf("%s=%s", name, IniFile.dumpEscape(this.getProperty(name)));
-      out.println();
+      for (String val : this.unpackStringToList(this.getProperty(name))) {
+        out.printf("%s=%s", name, IniFile.dumpEscape(val));
+        out.println();
+      }
     }
 
     // Sections
@@ -303,8 +391,10 @@ public class IniFile {
       props= this.properties(section);
       while (props.hasNext()) {
         String name= props.next();
-        out.printf("%s=%s", name, IniFile.dumpEscape(this.getProperty(section, name)));
-        out.println();
+        for (String val : this.unpackStringToList(this.getProperty(section, name))) {
+          out.printf("%s=%s", name, IniFile.dumpEscape(val));
+          out.println();
+        }
       }
     }
 

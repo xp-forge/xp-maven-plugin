@@ -151,7 +151,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    * Directory where XP-Runners are located. If not set, runners will be
    * extracted from resources to "${project.build.directory}/.runtime/runners"
    *
-   * @parameter expression="${xp.runtime.runners.directory}"
+   * @parameter expression="${xp.runtime.runners}"
    */
   protected File runnersDirectory;
 
@@ -168,6 +168,13 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    * @parameter expression="${xp.runtime.php}"
    */
   protected File php;
+
+  /**
+   * PHP extensions to load
+   *
+   * @parameter
+   */
+  protected List<String> extensions;
 
   /**
    * Helper function to find a project dependency

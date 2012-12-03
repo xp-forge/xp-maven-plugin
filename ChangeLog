@@ -1,3 +1,11 @@
+xp-maven-plugin (3.2.1)
+
+  * Fix broken xar lifecycle mappings (lifecycle.xml and components.xml)
+  * Add support for loading PHP extensions via [xp.ini]
+  * Rename ${xp.runtime.runners.directory} to ${xp.runtime.runners}
+
+ -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 3 Dec 2012
+
 xp-maven-plugin (3.2.0)
 
   * Use bug-free Windows runners (https://github.com/xp-framework/xp-runners/pull/7)
@@ -11,7 +19,6 @@ xp-maven-plugin (3.2.0)
   * Refactor "xp:svn-deploy" and "xp:svn-deploy-no-fork"
 
  -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 15 Nov 2012
-
 
 xp-maven-plugin (3.1.8)
 

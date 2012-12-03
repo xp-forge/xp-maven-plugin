@@ -1,19 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <component-set>
   <components>
+
+    <!--
+     ! Mappings to default lifecycle
+     !
+     !-->
     <component>
       <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
       <role-hint>xar</role-hint>
       <implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
       <configuration>
-        <phases>
-          <initialize>net.xp-forge.maven.plugins:xp-maven-plugin:initialize</initialize>
-          <compile>net.xp-forge.maven.plugins:xp-maven-plugin:compile</compile>
-          <test-compile>net.xp-forge.maven.plugins:xp-maven-plugin:test-compile</test-compile>
-          <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
-          <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
-          <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
-          <svn-deploy>net.xp-forge.maven.plugins:xp-maven-plugin:svn-deploy</svn-deploy>
-        </phases>
+        <lifecycles>
+          <lifecycle>
+            <id>default</id>
+            <!-- START SNIPPET: xar-lifecycle -->
+            <phases>
+              <initialize>net.xp-forge.maven.plugins:xp-maven-plugin:initialize</initialize>
+              <process-resources>org.apache.maven.plugins:maven-resources-plugin:resources</process-resources>
+              <process-test-resources>org.apache.maven.plugins:maven-resources-plugin:testResources</process-test-resources>
+              <compile>net.xp-forge.maven.plugins:xp-maven-plugin:compile</compile>
+              <test-compile>net.xp-forge.maven.plugins:xp-maven-plugin:test-compile</test-compile>
+              <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
+              <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
+              <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
+              <install>org.apache.maven.plugins:maven-install-plugin:install</install>
+              <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+              <svn-deploy>net.xp-forge.maven.plugins:xp-maven-plugin:svn-deploy</svn-deploy>
+            </phases>
+            <!-- END SNIPPET: xar-lifecycle -->
+          </lifecycle>
+        </lifecycles>
+      </configuration>
+    </component>
+
+    <!--
+     ! Artifact handler
+     !
+     !-->
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>xar</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>xar</type>
+        <extension>xar</extension>
+        <includesDependencies>true</includesDependencies>
+        <language>php</language>
+        <addedToClasspath>true</addedToClasspath>
       </configuration>
     </component>
   </components>
