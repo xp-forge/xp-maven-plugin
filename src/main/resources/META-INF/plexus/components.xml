@@ -30,6 +30,14 @@
             </phases>
             <!-- END SNIPPET: xar-lifecycle -->
           </lifecycle>
+          <lifecycle>
+            <id>clean</id>
+            <!-- START SNIPPET: xar-lifecycle -->
+            <phases>
+              <clean>org.apache.maven.plugins:maven-clean-plugin:clean</clean>
+            </phases>
+            <!-- END SNIPPET: xar-lifecycle -->
+          </lifecycle>
         </lifecycles>
       </configuration>
     </component>

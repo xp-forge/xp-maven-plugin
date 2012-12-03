@@ -383,7 +383,7 @@ public class InitializeMojo extends AbstractXpMojo {
 
     // Setup runner
     PhpRunnerInput input= new PhpRunnerInput();
-    input.code= "foreach (get_loaded_extensions() as $ext) echo $ext.\"\\n\"";
+    input.code= "foreach (get_loaded_extensions() as $ext) echo $ext.'•'";
 
     PhpRunner runner= new PhpRunner(this.php, input);
     runner.setLog(getLog());
@@ -396,7 +396,7 @@ public class InitializeMojo extends AbstractXpMojo {
     }
 
     // Return runner output
-    return Arrays.asList(runner.getOutput().asString().trim().split("\n"));
+    return Arrays.asList(runner.getOutput().asString().trim().split("•"));
   }
 
   /**
