@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.ArrayList;
 
+import org.apache.commons.exec.OS;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -366,7 +367,11 @@ public class InitializeMojo extends AbstractXpMojo {
       }
 
       // Add to list
-      extensionsToLoad.add(extension);
+      if (OS.isFamilyWindows()) {
+        extensionsToLoad.add("php_" + extension + ".dll");
+      } else {
+        extensionsToLoad.add(extension + ".so");
+      }
     }
 
     // Overwrite value
