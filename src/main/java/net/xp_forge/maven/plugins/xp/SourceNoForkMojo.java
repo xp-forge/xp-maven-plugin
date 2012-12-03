@@ -124,15 +124,15 @@ public class SourceNoForkMojo extends AbstractXpMojo {
       return;
     }
 
-    // Debug info
-    getLog().info("Format   [" + this.format + "]");
-    getLog().info("Includes [" + (null == this.includes ? "n/a" : this.includes) + "]");
-    getLog().info("Excludes [" + (null == this.excludes ? "n/a" : this.excludes) + "]");
-    getLog().info("Attach   [" + (this.isAttach() ? "yes" : "no") + "]");
-
     // Get output file
     File outputFile= this.getOutputFile();
-    getLog().debug("Output file [" + outputFile + "]");
+
+    // Debug info
+    getLog().info("Output file [" + outputFile + "]");
+    getLog().info("Format      [" + this.format + "]");
+    getLog().info("Includes    [" + (null == this.includes ? "n/a" : this.includes) + "]");
+    getLog().info("Excludes    [" + (null == this.excludes ? "n/a" : this.excludes) + "]");
+    getLog().info("Attach      [" + (this.isAttach() ? "yes" : "no") + "]");
 
     // Load archiver
     AbstractArchiver archiver= ArchiveUtils.getArchiver(outputFile);

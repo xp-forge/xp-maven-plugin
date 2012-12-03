@@ -142,15 +142,15 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
       return;
     }
 
+    // Get output file
+    File outputFile= this.getOutputFile();
+
     // Debug info
+    getLog().info("Output file [" + outputFile + "]");
     getLog().info("Format      [" + this.format + "]");
     getLog().info("Sourcepaths [" + (null == this.sourcepaths ? "n/a" : this.sourcepaths) + "]");
     getLog().info("Names       [" + (null == this.names ? "n/a" : this.names) + "]");
     getLog().info("Attach      [" + (this.isAttach() ? "yes" : "no") + "]");
-
-    // Get output file
-    File outputFile= this.getOutputFile();
-    getLog().debug("Output file [" + outputFile + "]");
 
     // Extract doclet.xar from resources
     File docletFile= new File(this.outputDirectory, ".runtime" + File.separator + "doclet" + File.separator + "doclet.xar");
