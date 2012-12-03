@@ -19,6 +19,7 @@ public class InifileFilter implements FileFilter {
    * {@inheritDoc}
    *
    */
+  @Override
   public boolean accept(File file) {
     return file.getName().endsWith(".ini") && file.exists() && file.isFile();
   }

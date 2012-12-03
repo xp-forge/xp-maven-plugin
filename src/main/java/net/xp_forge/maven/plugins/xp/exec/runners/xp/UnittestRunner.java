@@ -35,6 +35,7 @@ public class UnittestRunner extends AbstractClasspathRunner {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws RunnerException {
 
     // Build arguments

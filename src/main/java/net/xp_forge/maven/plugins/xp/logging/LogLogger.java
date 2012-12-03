@@ -39,6 +39,7 @@ public final class LogLogger implements Logger {
    * {@inheritDoc}
    *
    */
+  @Override
   public boolean isDebugEnabled() {
     return this.log.isDebugEnabled();
   }

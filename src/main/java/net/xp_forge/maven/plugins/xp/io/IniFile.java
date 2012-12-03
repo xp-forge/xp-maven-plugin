@@ -431,6 +431,7 @@ public class IniFile {
      * {@inheritDoc}
      *
      */
+    @Override
     public boolean hasNext() {
       return this.e.hasMoreElements();
     }
@@ -439,6 +440,7 @@ public class IniFile {
      * {@inheritDoc}
      *
      */
+    @Override
     public E next() {
       return this.e.nextElement();
     }
@@ -447,6 +449,7 @@ public class IniFile {
      * {@inheritDoc}
      *
      */
+    @Override
     public void remove() {
       throw new UnsupportedOperationException("Can't change underlying enumeration");
     }

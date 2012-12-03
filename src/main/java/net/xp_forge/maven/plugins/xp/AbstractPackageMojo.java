@@ -121,6 +121,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * {@inheritDoc}
    *
    */
+  @Override
   public void execute() throws MojoExecutionException {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
     FileUtils.setTempDirectory(new File(this.outputDirectory, "package.tmp"));
