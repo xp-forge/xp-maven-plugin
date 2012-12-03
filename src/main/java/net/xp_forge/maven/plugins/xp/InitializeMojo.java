@@ -42,6 +42,8 @@ import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
  * @requiresDependencyResolution compile
  */
 public class InitializeMojo extends AbstractXpMojo {
+  public static final String[] WINDOWS_EXTENSIONS= {"com_dotnet"};
+  public static final String[] UNIX_EXTENSIONS= {"pcntl", "posix"};
 
   /**
    * {@inheritDoc}
@@ -360,8 +362,11 @@ public class InitializeMojo extends AbstractXpMojo {
       // Check already loaded; nothing to do
       if (loadedExtensions.contains(extension)) continue;
 
-      // Ignore "com_dotnet" (as of PHP 5.3.15 / 5.4.5) extension on non-Windows environments
-      if (!OS.isFamilyWindows() && extension.equals("com_dotnet")) continue;
+      // Ignore Windows-only extension on Un*x environments
+      if (!OS.isFamilyWindows() && Arrays.asList(InitializeMojo.WINDOWS_EXTENSIONS).contains(extension)) continue;
+
+      // Ignore Un*x-only extension on Windows environments
+      if (OS.isFamilyWindows() && Arrays.asList(InitializeMojo.UNIX_EXTENSIONS).contains(extension)) continue;
 
       // Check extension is not available
       if (!availableExtensions.contains(extension)) {
@@ -391,7 +396,7 @@ public class InitializeMojo extends AbstractXpMojo {
 
     // Setup runner
     PhpRunnerInput input= new PhpRunnerInput();
-    input.code= "foreach (get_loaded_extensions() as $ext) echo $ext.'•'";
+    input.code= "foreach (get_loaded_extensions() as $ext) echo strtolower($ext).'•'";
 
     PhpRunner runner= new PhpRunner(this.php, input);
     runner.setLog(getLog());
