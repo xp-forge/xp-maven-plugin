@@ -360,6 +360,9 @@ public class InitializeMojo extends AbstractXpMojo {
       // Check already loaded; nothing to do
       if (loadedExtensions.contains(extension)) continue;
 
+      // Ignore "com_dotnet" (as of PHP 5.3.15 / 5.4.5) extension on non-Windows environments
+      if (!OS.isFamilyWindows() && extension.equals("com_dotnet")) continue;
+
       // Check extension is not available
       if (!availableExtensions.contains(extension)) {
         getLog().warn("Required PHP extension [" + extension + "] could not be loaded; ignored");
