@@ -1,153 +1,150 @@
-xp-maven-plugin (3.2.2)
+Version 3.2.2, released ????-??-??
+----------------------------------
 
-  * Handle Windows-only and Un*x-only PHP extensions
+- Handle Windows-only and Un*x-only PHP extensions
+- Reformat ChangeLog
+  (mrosoiu)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 3 Dec 2012
-
-xp-maven-plugin (3.2.1)
-
-  * Fix broken xar lifecycle mappings (lifecycle.xml and components.xml)
-  * Add support for loading PHP extensions via [xp.ini]
-  * Rename ${xp.runtime.runners.directory} to ${xp.runtime.runners}
-
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Mon, 3 Dec 2012
-
-xp-maven-plugin (3.2.0)
-
-  * Use bug-free Windows runners (https://github.com/xp-framework/xp-runners/pull/7)
-  * Add "xp:apidoc" goal to generate and pack project API documentation
-  * Add "xp:ignite" goal to setup local workspace
-  * Add "xp:source" goal to pack project sources
-  * Unify forked/non-forked custom goals (xp:run/xp:run-no-fork and xp:source and xp:source-no-fork)
-  * Remove the "run" lifecycle as "xp:run" now forks the "xar" lifecycle
-  * Add ${xp.source.skip} to skip source packing
-  * Add ${xp.deploy.skip} to skip deploying to SVN
-  * Refactor "xp:svn-deploy" and "xp:svn-deploy-no-fork"
-
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 15 Nov 2012
-
-xp-maven-plugin (3.1.8)
-
-  * Refactor plexus Logger by adding the LogLogger wrapper class
-  * Fix "Class 'java.util.List' cannot be instantiated" in Maven2
-
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 08 Nov 2012
+- Set USE_XP env variable to overwrite classpath defined in ~/.xp/xp.ini - see issue #4
+  (mrosoiu, kiesel)
 
 
-xp-maven-plugin (3.1.7)
+Version 3.2.1, released 2012-12-03
+----------------------------------
+- Fix broken xar lifecycle mappings (lifecycle.xml and components.xml)
+- Rename ${xp.runtime.runners.directory} to ${xp.runtime.runners}
+  (mrosoiu)
 
-  * Fix plexus Logger not-set issue -> NullPointerException
+- Add support for loading PHP extensions via [xp.ini] - see issue #4
+  (mrosoiu, kiesel)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Wed, 07 Nov 2012
 
-xp-maven-plugin (3.1.6)
+Version 3.2.0, released 2012-11-15
+----------------------------------
+- Add "xp:apidoc" goal to generate and pack project API documentation
+- Add "xp:ignite" goal to setup local workspace
+- Add "xp:source" goal to pack project sources
+- Unify forked/non-forked custom goals (xp:run/xp:run-no-fork and xp:source and xp:source-no-fork)
+- Remove the "run" lifecycle as "xp:run" now forks the "xar" lifecycle
+- Add ${xp.source.skip} to skip source packing
+- Add ${xp.deploy.skip} to skip deploying to SVN
+- Refactor "xp:svn-deploy" and "xp:svn-deploy-no-fork"
+  (mrosoiu)
 
-  * move all operation from phase "validate" to phase "initialize"
-  * use new XP-Runners
-  * update project name to "XP-Framework Maven plugin"
-  * include on-the-fly generated "META-INF/manifest.ini" in output artifact
-  * use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
-  * update examples in "examples" directory
-  * application directories (webapp, config, xsl) now copied to ${outputDirectory} during the "compile" phase
-  * change default unittest ini files location to 'src/test/config/unittest'
-  * move pth files handling to its own class
-  * refactor "package" and "test-package" phases
-  * refactor runners location; add "svn" runner
-  * add "svn-deploy" goal
+- Use bug-free Windows runners - see https://github.com/xp-framework/xp-runners/pull/7
+  (mrosoiu, kiesel)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Fri, 19 Oct 2012
 
-xp-maven-plugin (3.1.5)
+Version 3.1.8, released 2012-11-08
+----------------------------------
+- Refactor plexus Logger by adding the LogLogger wrapper class
+- Fix "Class 'java.util.List' cannot be instantiated" in Maven2
+  (mrosoiu)
 
-  * use Maven output when displaying unittest results
-  * remove ${xp.package.format} and replace it with ${project.packaging}
-  * create just one pth file (project.pth) for "lib" ${xp.package.strategy}
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 25 Sep 2012
+Version 3.1.7, released 2012-11-07
+----------------------------------
+- Fix plexus Logger not-set issue -> NullPointerException
+  (mrosoiu)
 
-xp-maven-plugin (3.1.4)
 
-  * fix the "test-package" goal
+Version 3.1.6, released 2012-10-19
+----------------------------------
+- Move all operation from phase "validate" to phase "initialize"
+- Use new XP-Runners
+- Update project name to "XP-Framework Maven plugin"
+- Include on-the-fly generated "META-INF/manifest.ini" in output artifact
+- Use org.codehaus.plexus.archiver.Archiver.addFileSet() instead of the deprecated addDirectory()
+- Update examples in "examples" directory
+- Application directories (webapp, config, xsl) now copied to ${outputDirectory} during the "compile" phase
+- Change default unittest ini files location to 'src/test/config/unittest'
+- Move pth files handling to its own class
+- Refactor "package" and "test-package" phases
+- Refactor runners location; add "svn" runner
+- Add "svn-deploy" goal
+  (mrosoiu)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Thu, 20 Sep 2012
 
-xp-maven-plugin (3.1.3)
+Version 3.1.5, released 2012-09-25
+----------------------------------
+- Use Maven output when displaying unittest results
+- Remove ${xp.package.format} and replace it with ${project.packaging}
+- Create just one pth file (project.pth) for "lib" ${xp.package.strategy}
+  (mrosoiu)
 
-  * change artifact id from 'net.xp-framework:language' to 'net.xp-framework:compiler'
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 18 Sep 2012
+Version 3.1.4, released 2012-09-20
+----------------------------------
+- Fix the "test-package" goal
+  (mrosoiu)
 
-xp-maven-plugin (3.1.2)
 
-  * change default unittest ini files location to 'src/test/ini'
-  * add ${project.classifier} property to specify project classifier
+Version 3.1.3, released 2012-09-18
+----------------------------------
+- Change artifact id from 'net.xp-framework:language' to 'net.xp-framework:compiler'
+  (mrosoiu)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 18 Sep 2012
 
-xp-maven-plugin (3.1.1)
+Version 3.1.2, released 2012-09-18
+----------------------------------
+- Change default unittest ini files location to 'src/test/ini'
+- Add ${project.classifier} property to specify project classifier
+  (mrosoiu)
 
-  * fix bootstrap when building XP-Framework itself
-    - add ${xp.compile.phpIncludePattern} and ${xp.compile.testPhpIncludePattern}
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 24 Jul 2012
+Version 3.1.1, released 2012-07-24
+----------------------------------
+- Fix bootstrap when building XP-Framework itself
+- Add ${xp.compile.phpIncludePattern} and ${xp.compile.testPhpIncludePattern}
+  (mrosoiu)
 
-xp-maven-plugin (3.1.0)
 
-  * add support for using isolated enviroment (use specific XP version)
-    - setup classpath via .pth files not via -cp parameter
-    - bootstraping via project dependencies
-    - bootstraping via project resources (to build XP-Framework itself)
-    - use separate classpath (project.pth) for each target: compile, test, xp
+Version 3.1.0, released 2012-07-24
+----------------------------------
+- Setup classpath via .pth files not via -cp parameter
+- Bootstraping via project dependencies
+- Bootstraping via project resources (to build XP-Framework itself)
+- Use separate classpath (project.pth) for each target: compile, test, xp
+- Add support to build full applications zip
+  - Use java-xarlib instead of the "xar" XP-Runner to manipulate XAR archives
+  - Add support for reading/creating ZIP artifacts
+  - Add ${xp.package.*} flags to control the packaging phase
+  (mrosoiu)
 
-  * add support to build full applications zip
-    - use java-xarlib instead of the "xar" XP-Runner to manipulate XAR archives
-    - add support for reading/creating ZIP artifacts
-    - add ${xp.package.*} flags to control the packaging phase
+- Rename namespace from "net.xp_forge.maven.plugins.xpframework" to "net.xp_forge.maven.plugins.xp"
+- Rename @parameters to ${xp.*.*}
+- Add support for building XP-Framework using its own resources
+- Add support for !patch dependencies
+- Fix some Sonar warnings
+  (mrosoiu)
 
-  * naming cleanup
-    - rename namespace from "net.xp_forge.maven.plugins.xpframework" to "net.xp_forge.maven.plugins.xp"
-    - rename @parameters to ${xp.*.*}
 
-  * add support for building XP-Framework using its own resources
-  * add support for !patch dependencies
-  * fix some Sonar warnings
+Version 3.1.0, released 2012-06-26
+----------------------------------
+- Change <artifactId> from "maven-xpframework-plugin" to "xp-maven-plugin"
+  (mrosoiu)
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 24 Jul 2012
 
-xp-maven-plugin (3.0.0)
+Version 2.0.0, released 2012-02-10
+----------------------------------
+- Change <groupId> from "org.apache.maven.plugins" to "net.xp-forge.maven.plugins"
+- Use Sonatype OSS <parent> POM
+- Add sources and javadoc artifacts
+  (mrosoiu)
 
-  * update pom.xml:
-    - change <artifactId> from "maven-xpframework-plugin" to "xp-maven-plugin"
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 26 Jun 2012
+Version 1.1.0, released 2012-02-06
+----------------------------------
+- Fix coding style issues
+- Fix environment variables names: all names are in uppercase now
+- Add Maven archetypes: XP-Language library, XP standard library
+  (mrosoiu)
 
-maven-xpframework-plugin (2.0.0)
+- Add goal for running XP code
+  (kiesel)
 
-  * update pom.xml:
-    - change <groupId> from "org.apache.maven.plugins" to "net.xp-forge.maven.plugins"
-    - use Sonatype OSS <parent> POM
-    - add sources and javadoc artifacts
 
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 10 Jan 2012
-
-maven-xpframework-plugin (1.1.0)
-
-  * fix coding style issues
-  * fix environment variables names:
-    - all names are in uppercase now
-
-  * add Maven archetypes:
-    - XP-Language library
-    - XP standard library
-
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Tue, 10 Jan 2012
-
-  * add support for running XP code
-
- -- Alex Kiesel <alex@kiesel.name> Mon, 6 Feb 2012
-
-maven-xpframework-plugin (1.0.0)
-
-  * initial release
-
- -- Marius Rosoiu <marius.rosoiu@1and1.ro> Wed, 10 Aug 2011
+Version 1.0.0, released 2011-08-10
+----------------------------------
+- Initial release
+  (mrosoiu)
