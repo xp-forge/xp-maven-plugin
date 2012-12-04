@@ -368,6 +368,9 @@ public class InitializeMojo extends AbstractXpMojo {
       // Ignore Un*x-only extension on Windows environments
       if (OS.isFamilyWindows() && Arrays.asList(InitializeMojo.UNIX_EXTENSIONS).contains(extension)) continue;
 
+      // Hack: gd extension on Windows is contained inside php_gd2.dll
+      if (OS.isFamilyWindows() && extension.equals("gd")) extension= "gd2";
+
       // Check extension is not available
       if (!availableExtensions.contains(extension)) {
         getLog().warn("Required PHP extension [" + extension + "] could not be loaded; ignored");
