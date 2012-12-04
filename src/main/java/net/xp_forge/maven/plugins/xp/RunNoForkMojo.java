@@ -111,7 +111,9 @@ public class RunNoForkMojo extends AbstractXpMojo {
     runner.setWorkingDirectory(this.outputDirectory);
 
     // Set USE_XP environment variable
-    runner.setEnvironmentVariable("USE_XP", this.use_xp);
+    if (null != this.use_xp) {
+      runner.setEnvironmentVariable("USE_XP", this.use_xp);
+    }
 
     // Execute runner
     try {
