@@ -1,6 +1,9 @@
-Version 3.2.2, released ????-??-??
+Version 3.2.3, released ????-??-??
 ----------------------------------
 
+
+Version 3.2.2, released 2012-12-04
+----------------------------------
 - Handle Windows-only and Un*x-only PHP extensions
 - Reformat ChangeLog
   (mrosoiu)
