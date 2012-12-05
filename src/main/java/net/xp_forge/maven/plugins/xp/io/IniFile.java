@@ -46,7 +46,7 @@ public class IniFile {
    *
    * @param  java.io.File file
    * @return void
-   * @throw  java.io.IOException
+   * @throws java.io.IOException
    */
   public void load(File file) throws IOException {
     this.load(new FileInputStream(file));
@@ -67,7 +67,7 @@ public class IniFile {
    *
    * @param  java.io.InputStream in
    * @return void
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public void load(InputStream in) throws IOException {
     byte[] buffer = new byte[IniFile.BUFF_SIZE];

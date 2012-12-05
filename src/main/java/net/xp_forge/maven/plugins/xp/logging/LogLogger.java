@@ -22,7 +22,7 @@ public final class LogLogger implements Logger {
    * Constructor
    *
    * @param  org.apache.maven.plugin.logging.Log l
-   * @throw  lang.IllegalArgumentException when an null Log instance is passed
+   * @throws lang.IllegalArgumentException when an null Log instance is passed
    */
   public LogLogger(Log logger) {
 

@@ -148,7 +148,7 @@ public class XarUnArchiver extends AbstractUnArchiver {
    *
    * @param  java.io.File file
    * @param  java.io.InputStream is
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   private void setFileContents(File file, InputStream is) throws IOException {
 

@@ -248,7 +248,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * - Include bootstrap files into "runtime/bootstrap"
    * - Include XP-artifacts into "runtime/lib"
    *
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void includeRuntime() throws MojoExecutionException {
     getLog().info("Including XP-runtime");
@@ -294,7 +294,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * Include project dependencies into "lib"
    *
    * @return void
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void includeDependencies() throws MojoExecutionException {
     getLog().info("Including dependencies");
@@ -324,7 +324,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * Merge project dependencies into archive root
    *
    * @return void
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void mergeDependencies() throws MojoExecutionException {
     getLog().info("Merging dependencies");
@@ -362,7 +362,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Pack library resources ("xsl") into archive root
    *
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void packLibraryResources() throws MojoExecutionException {
     getLog().info("Including library resources");
@@ -380,7 +380,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Pack application resources ("doc_root", "etc", "xsl") into archive root
    *
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void packApplicationResources() throws MojoExecutionException {
     getLog().info("Including application resources");
@@ -405,7 +405,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Pack on-the-fly created [project.pth]
    *
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void packProjectPth() throws MojoExecutionException {
     getLog().info("Packing on-the-fly created [project.pth] to archive");
@@ -424,7 +424,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Pack on-thle-fly created [META-INF/manifest.ini]
    *
-   * @throw  org.apache.maven.plugin.MojoExecutionException
+   * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private void packManifest() throws MojoExecutionException {
     getLog().info("Packing on-the-fly created [manifest.ini] to archive");

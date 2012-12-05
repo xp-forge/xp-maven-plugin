@@ -101,7 +101,7 @@ public final class FileUtils {
    *
    * @param  java.io.File file
    * @param  java.io.InputStream is
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, InputStream is) throws IOException {
 
@@ -144,7 +144,7 @@ public final class FileUtils {
    *
    * @param  java.io.File file
    * @param  java.lang.String text
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, String text) throws IOException {
     FileUtils.setFileContents(file, new StringBufferInputStream(text));
@@ -156,7 +156,7 @@ public final class FileUtils {
    * @param  java.io.File file
    * @param  java.lang.String text
    * @param  java.lang.String header
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, String text, String header) throws IOException {
     FileUtils.setFileContents(file, new StringBufferInputStream(
@@ -169,7 +169,7 @@ public final class FileUtils {
    *
    * @param  java.io.File file
    * @param  java.util.List<java.lang.String> lines
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, List<String> lines) throws IOException {
     FileUtils.setFileContents(file, new StringBufferInputStream(
@@ -183,7 +183,7 @@ public final class FileUtils {
    * @param  java.io.File file
    * @param  java.util.List<java.lang.String> lines
    * @param  java.lang.String header
-   * @throw  java.io.IOException when I/O errors occur
+   * @throws java.io.IOException when I/O errors occur
    */
   public static void setFileContents(File file, List<String> lines, String header) throws IOException {
     FileUtils.setFileContents(file, StringUtils.join(lines, String.format("%n")), header);
@@ -193,7 +193,7 @@ public final class FileUtils {
    * Create a temporary directory
    *
    * @return java.io.File
-   * @throw  java.io.IOException
+   * @throws java.io.IOException
    */
   public static File getTempDirectory() throws IOException {
 
@@ -214,7 +214,7 @@ public final class FileUtils {
    * @param  java.io.File srcFile
    * @param  java.io.File destFile
    * @return void
-   * @throw  java.io.IOException
+   * @throws java.io.IOException
    */
   public static void copyFile(File srcFile, File destFile) throws IOException {
 
@@ -268,7 +268,7 @@ public final class FileUtils {
    *
    * @param  java.io.File directory
    * @return void
-   * @throw  java.io.IOException
+   * @throws java.io.IOException
    */
   public static void deleteDirectory(File directory) throws IOException {
     if (null == directory || !directory.exists()) return;
