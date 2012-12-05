@@ -157,6 +157,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Package library
     if (strategy.equals("lib")) {
       this.packClasses(null);
+      this.packLibraryResources();
       if (packDependencies) this.mergeDependencies();
 
     // Package application
@@ -359,7 +360,25 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   }
 
   /**
-   * Pack application resources: "doc_root", "etc", "xsl" into archive root
+   * Pack library resources ("xsl") into archive root
+   *
+   * @throw  org.apache.maven.plugin.MojoExecutionException
+   */
+  private void packLibraryResources() throws MojoExecutionException {
+    getLog().info("Including library resources");
+
+    File xslDir= new File(this.outputDirectory, "xsl");
+    if (xslDir.exists()) {
+      getLog().debug(" - Add directory [" + xslDir + "] to [/]");
+      DefaultFileSet fileSet= new DefaultFileSet();
+      fileSet.setDirectory(xslDir);
+      fileSet.setExcludes(AbstractPackageMojo.EXCLUDES);
+      this.archiver.addFileSet(fileSet);
+    }
+  }
+
+  /**
+   * Pack application resources ("doc_root", "etc", "xsl") into archive root
    *
    * @throw  org.apache.maven.plugin.MojoExecutionException
    */
