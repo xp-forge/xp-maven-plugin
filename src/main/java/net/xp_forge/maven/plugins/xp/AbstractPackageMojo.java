@@ -265,24 +265,24 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     }
 
     // Pack XP-artifacts
-    getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [runtime/lib]");
-    this.archiver.addFile(coreArtifact.getFile(), "runtime/lib/" + coreArtifact.getFile().getName());
-    this.pth.addEntry("runtime/lib/" + coreArtifact.getFile().getName());
+    getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [libs/runtime]");
+    this.archiver.addFile(coreArtifact.getFile(), "libs/runtime/" + coreArtifact.getFile().getName());
+    this.pth.addEntry("libs/runtime/" + coreArtifact.getFile().getName());
 
-    getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [runtime/lib]");
-    this.archiver.addFile(toolsArtifact.getFile(), "runtime/lib/" + toolsArtifact.getFile().getName());
-    this.pth.addEntry("runtime/lib/" + toolsArtifact.getFile().getName());
+    getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [libs/runtime]");
+    this.archiver.addFile(toolsArtifact.getFile(), "libs/runtime/" + toolsArtifact.getFile().getName());
+    this.pth.addEntry("libs/runtime/" + toolsArtifact.getFile().getName());
 
     // Pack bootstrap
     try {
       Map<String, String> entries= new HashMap<String, String>();
-      entries.put("lang.base.php", "runtime/bootstrap/lang.base.php");
+      entries.put("lang.base.php", "libs/bootstrap/lang.base.php");
       ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
 
       entries.clear();
-      entries.put("tools/class.php", "runtime/bootstrap/tools/class.php");
-      entries.put("tools/web.php", "runtime/bootstrap/tools/web.php");
-      entries.put("tools/xar.php", "runtime/bootstrap/tools/xar.php");
+      entries.put("tools/class.php", "libs/bootstrap/tools/class.php");
+      entries.put("tools/web.php", "libs/bootstrap/tools/web.php");
+      entries.put("tools/xar.php", "libs/bootstrap/tools/xar.php");
       ArchiveUtils.copyArchiveEntries(toolsArtifact, this.archiver, entries);
 
     } catch (IOException ex) {

@@ -1,5 +1,7 @@
 Version 3.2.5, released ????-??-??
 ----------------------------------
+- Move XP-Framework artifacts to "libs/runtime" in the gnerated artifact
+- Move XP-Framework bootstrap to "libs/bootstrap" in the gnerated artifact
 - Move "patch" artifacts at the top of the "*.pth" entries list rather than using the "!" marker
 - Add "target/xsl" directory to classpath when running tests; if exists
   (mrosoiu)
