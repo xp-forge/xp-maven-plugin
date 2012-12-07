@@ -113,6 +113,12 @@ public class TestMojo extends AbstractXpMojo {
     // Add testClassesDirectory to classpath
     input.addClasspath(this.testClassesDirectory);
 
+    // Add xsl directory to classpath; if present
+    File xslDirectory= new File(this.outputDirectory, "xsl");
+    if (xslDirectory.exists()) {
+      input.addClasspath(xslDirectory);
+    }
+
     // Add arguments
     if (null != this.testArguments) {
       for (String testArgument : this.testArguments) {
