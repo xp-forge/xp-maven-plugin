@@ -265,24 +265,24 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     }
 
     // Pack XP-artifacts
-    getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [libs/runtime]");
-    this.archiver.addFile(coreArtifact.getFile(), "libs/runtime/" + coreArtifact.getFile().getName());
-    this.pth.addEntry("libs/runtime/" + coreArtifact.getFile().getName());
+    getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [lib/runtime]");
+    this.archiver.addFile(coreArtifact.getFile(), "lib/runtime/" + coreArtifact.getFile().getName());
+    this.pth.addEntry("lib/runtime/" + coreArtifact.getFile().getName());
 
-    getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [libs/runtime]");
-    this.archiver.addFile(toolsArtifact.getFile(), "libs/runtime/" + toolsArtifact.getFile().getName());
-    this.pth.addEntry("libs/runtime/" + toolsArtifact.getFile().getName());
+    getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [lib/runtime]");
+    this.archiver.addFile(toolsArtifact.getFile(), "lib/runtime/" + toolsArtifact.getFile().getName());
+    this.pth.addEntry("lib/runtime/" + toolsArtifact.getFile().getName());
 
     // Pack bootstrap
     try {
       Map<String, String> entries= new HashMap<String, String>();
-      entries.put("lang.base.php", "libs/bootstrap/lang.base.php");
+      entries.put("lang.base.php", "lib/bootstrap/lang.base.php");
       ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
 
       entries.clear();
-      entries.put("tools/class.php", "libs/bootstrap/tools/class.php");
-      entries.put("tools/web.php", "libs/bootstrap/tools/web.php");
-      entries.put("tools/xar.php", "libs/bootstrap/tools/xar.php");
+      entries.put("tools/class.php", "lib/bootstrap/tools/class.php");
+      entries.put("tools/web.php", "lib/bootstrap/tools/web.php");
+      entries.put("tools/xar.php", "lib/bootstrap/tools/xar.php");
       ArchiveUtils.copyArchiveEntries(toolsArtifact, this.archiver, entries);
 
     } catch (IOException ex) {
@@ -308,15 +308,15 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
       // Include patch
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        getLog().info(" + Add patch [" + artifact.getFile() + "] to [libs/patch]");
-        this.archiver.addFile(artifact.getFile(), "libs/patch/" + artifact.getFile().getName());
-        this.pth.addEntry("libs/patch/" + artifact.getFile().getName(), true);
+        getLog().info(" + Add patch [" + artifact.getFile() + "] to [lib/patch]");
+        this.archiver.addFile(artifact.getFile(), "lib/patch/" + artifact.getFile().getName());
+        this.pth.addEntry("lib/patch/" + artifact.getFile().getName(), true);
 
       // Include dependency
       } else {
-        getLog().info(" + Add dependency [" + artifact.getFile() + "] to [libs/]");
-        this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
-        this.pth.addEntry("libs/" + artifact.getFile().getName(), false);
+        getLog().info(" + Add dependency [" + artifact.getFile() + "] to [lib/]");
+        this.archiver.addFile(artifact.getFile(), "lib/" + artifact.getFile().getName());
+        this.pth.addEntry("lib/" + artifact.getFile().getName(), false);
       }
     }
   }
