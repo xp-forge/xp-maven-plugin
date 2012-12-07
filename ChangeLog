@@ -1,8 +1,15 @@
-Version 3.2.3, released ????-??-??
+Version 3.2.4, released 2012-12-07
+----------------------------------
+- Fix xar artifact description: it does not include dependencies
+  (mrosoiu)
+
+
+Version 3.2.3, released 2012-12-06
 ----------------------------------
 - Don't set USE_XP env variable when this.use_xp == null
 - Pack lib resources (src/main/xsl) to artifact archive root (/)
   (mrosoiu)
+
 
 Version 3.2.2, released 2012-12-04
 ----------------------------------
