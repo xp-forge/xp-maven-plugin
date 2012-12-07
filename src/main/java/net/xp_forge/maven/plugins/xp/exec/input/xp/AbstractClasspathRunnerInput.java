@@ -37,6 +37,8 @@ public class AbstractClasspathRunnerInput {
    * @return void
    */
   public void addClasspath(Set<Artifact> artifacts) {
+    if (null == artifacts) return;
+
     for (Artifact artifact : artifacts) {
 
       // Skip non-xar artifacts
@@ -44,9 +46,9 @@ public class AbstractClasspathRunnerInput {
 
       // Add to classpath
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        this.addClasspath("!" + artifact.getFile().getAbsolutePath());
+        this.addClasspath(artifact.getFile().getAbsolutePath(), true);
       } else {
-        this.addClasspath(artifact.getFile());
+        this.addClasspath(artifact.getFile(), false);
       }
     }
   }
@@ -68,31 +70,57 @@ public class AbstractClasspathRunnerInput {
    * Setter for classpaths
    *
    * @param  java.lang.String classpath
+   * @param  boolean isPatch
    * @return void
    */
-  public void addClasspath(String classpath) {
+  public void addClasspath(String classpath, boolean isPatch) {
+    if (null == classpath) return;
 
     // Check classpath not added twice
     for (String cp : this.classpaths) {
-      if (cp.equals(classpath)) {
-        return;
-      }
+      if (cp.equals(classpath)) return;
     }
 
     // Add to list
-    this.classpaths.add(classpath);
+    if (isPatch) {
+      this.classpaths.add(0, classpath);
+    } else {
+      this.classpaths.add(classpath);
+    }
+  }
+
+  /**
+   * Setter for classpaths
+   *
+   * @param  java.lang.String classpath
+   * @return void
+   */
+  public void addClasspath(String classpath) {
+    this.addClasspath(classpath, false);
   }
 
   /**
    * Setter for classpaths
    *
    * @param  java.io.File file Archive to add to classpath
+   * @param  boolean isPatch
+   * @return void
+   */
+  public void addClasspath(File file, boolean isPatch) {
+    if (null == file || !file.exists()) return;
+
+    // Add to list
+    this.addClasspath(file.getAbsolutePath(), isPatch);
+  }
+
+  /**
+   * Setter for classpaths
+   *
+   * @param  java.io.File file Archive to add to classpath
+   * @param  boolean isPatch
    * @return void
    */
   public void addClasspath(File file) {
-    if (!file.exists()) return;
-
-    // Add to list
-    this.addClasspath(file.getAbsolutePath());
+    this.addClasspath(file, false);
   }
 }

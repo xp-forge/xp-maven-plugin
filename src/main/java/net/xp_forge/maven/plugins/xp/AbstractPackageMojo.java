@@ -304,18 +304,19 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       if (!artifact.getType().equals("xar")) {
         getLog().info(" - Ignore non-xar dependency [" + artifact.getFile() + "]");
         continue;
-
-      } else {
-        getLog().info(" + Add dependency [" + artifact.getFile() + "]");
       }
 
-      getLog().debug(" - Add file [" + artifact.getFile() + "] to [libs/]");
-      this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
-
+      // Include patch
       if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        this.pth.addEntry("!libs/" + artifact.getFile().getName());
+        getLog().info(" + Add patch [" + artifact.getFile() + "] to [libs/patch]");
+        this.archiver.addFile(artifact.getFile(), "libs/patch/" + artifact.getFile().getName());
+        this.pth.addEntry("libs/patch/" + artifact.getFile().getName(), true);
+
+      // Include dependency
       } else {
-        this.pth.addEntry("libs/" + artifact.getFile().getName());
+        getLog().info(" + Add dependency [" + artifact.getFile() + "] to [libs/]");
+        this.archiver.addFile(artifact.getFile(), "libs/" + artifact.getFile().getName());
+        this.pth.addEntry("libs/" + artifact.getFile().getName(), false);
       }
     }
   }

@@ -1,5 +1,6 @@
 Version 3.2.5, released ????-??-??
 ----------------------------------
+- Move "patch" artifacts at the top of the "*.pth" entries list rather than using the "!" marker
 - Add "target/xsl" directory to classpath when running tests; if exists
   (mrosoiu)
 

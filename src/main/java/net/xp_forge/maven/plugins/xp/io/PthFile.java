@@ -47,12 +47,29 @@ public class PthFile {
    * @return void
    */
   public void addEntry(String entry) {
+    this.addEntry(entry, false);
+  }
+
+
+  /**
+   * Add a new entry to this pth file
+   *
+   * @param  java.lang.String entry
+   * @param  boolean isPatch
+   * @return void
+   */
+  public void addEntry(String entry, boolean isPatch) {
     if (this.entries.contains(entry)) return;
-    this.entries.add(entry);
+
+    if (isPatch) {
+      this.entries.add(0, entry);
+    } else {
+      this.entries.add(entry);
+    }
   }
 
   /**
-   * Add a new entries to this pth file
+   * Add new entries to this pth file
    *
    * @param  java.util.List<java.lang.String> entries
    * @return void
@@ -64,7 +81,7 @@ public class PthFile {
   }
 
   /**
-   * Add a new entry to this pth file
+   * Add a new file entry to this pth file
    *
    * @param  java.io.File file
    * @return void
@@ -74,22 +91,18 @@ public class PthFile {
   }
 
   /**
-   * Add a new "patch" entry to this pth file
+   * Add a new file entry to this pth file
    *
    * @param  java.io.File file
    * @param  boolean isPatch
    * @return void
    */
   public void addFileEntry(File file, boolean isPatch) {
-    if (isPatch) {
-      this.addEntry("!" + file.getAbsolutePath());
-    } else {
-      this.addEntry(file.getAbsolutePath());
-    }
+    this.addEntry(file.getAbsolutePath(), isPatch);
   }
 
   /**
-   * Add a new entries to this pth file
+   * Add new file entries to this pth file
    *
    * @param  java.util.List<java.io.File> files
    * @return void
@@ -101,7 +114,7 @@ public class PthFile {
   }
 
   /**
-   * Add a new entry to this pth file. Non xar artifacts will be ignored.
+   * Add new artifact entry to this pth file. Non xar artifacts will be ignored.
    *
    * @param  org.apache.maven.artifact.Artifact artifact
    * @return void
@@ -118,7 +131,7 @@ public class PthFile {
   }
 
   /**
-   * Add a new entries to this pth file
+   * Add new artifact entries to this pth file
    *
    * @param  java.util.List<org.apache.maven.artifact.Artifact> artifacts
    * @return void
