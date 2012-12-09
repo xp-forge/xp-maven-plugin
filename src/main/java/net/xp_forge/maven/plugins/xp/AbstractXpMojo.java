@@ -57,6 +57,15 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   protected MavenProject project;
 
   /**
+   * The parallel Maven project that was forked
+   *
+   * @parameter default-value="${executedProject}"
+   * @required
+   * @readonly
+   */
+  protected MavenProject executedProject;
+
+  /**
    * The projects in the reactor
    *
    * @parameter expression="${reactorProjects}"
@@ -127,11 +136,26 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   protected File testClassesDirectory;
 
   /**
+   * The directory containing generated integration test classes of the project being tested
+   * This will be included at the beginning of the test classpath
+   *
+   * @parameter expression="${project.build.itOutputDirectory}" default-value="${project.build.directory}/it-classes"
+   */
+  protected File itClassesDirectory;
+
+  /**
    * Classifier to add to the generated artifact
    *
    * @parameter expression="${project.classifier}"
    */
   protected String classifier;
+
+  /**
+   * @parameter default-value="${project.packaging}"
+   * @required
+   * @readonly
+   */
+  protected String packaging;
 
   /**
    * Whether to use local XP-Framework install or to use bootstrap in [/target]. Default [false].
@@ -175,6 +199,15 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    * @parameter
    */
   protected List<String> extensions;
+
+  /**
+   * Returns executed project
+   *
+   * @return org.apache.maven.project.MavenProject
+   */
+  protected MavenProject getExecutedProject() {
+    return (null == this.executedProject ? this.project : this.executedProject);
+  }
 
   /**
    * Helper function to find a project dependency
@@ -246,5 +279,40 @@ public abstract class AbstractXpMojo extends AbstractMojo {
     }
 
     return retVal;
+  }
+
+  /**
+   * Get the main artifact that was attached to this project during the "package" phase
+   *
+   * @return org.apache.maven.artifact.Artifact null if no artifact was attached to this project
+   */
+  protected Artifact getMainArtifact() {
+    Artifact retVal= null;
+
+    // Get project
+    MavenProject project= this.getExecutedProject();
+
+    // If project has no classifier, return main artifact
+    if (null == this.classifier || this.classifier.isEmpty()) {
+      retVal= project.getArtifact();
+
+    // Get attached artifact with the specified classifier
+    } else {
+      List<Artifact> attachedArtifacts= project.getAttachedArtifacts();
+      for (Artifact artifact : attachedArtifacts) {
+        if (null != artifact.getClassifier() && artifact.getClassifier().equals(this.classifier)) {
+          retVal= artifact;
+        }
+      }
+    }
+
+    // Main artifact found
+    if (null != retVal && null != retVal.getFile()) {
+      return retVal;
+    }
+
+    // Main artifact not found
+    getLog().warn("The packaging for this project did not assign a file to the build artifact");
+    return null;
   }
 }

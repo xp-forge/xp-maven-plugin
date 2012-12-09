@@ -99,27 +99,6 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
   protected File svnExecutable;
 
   /**
-   * @parameter default-value="${project.packaging}"
-   * @required
-   * @readonly
-   */
-  private String packaging;
-
-  /**
-   * @parameter default-value="${project.artifact}"
-   * @required
-   * @readonly
-   */
-  private Artifact artifact;
-
-  /**
-   * @parameter default-value="${project.attachedArtifacts}
-   * @required
-   * @readonly
-   */
-  private List<Artifact> attachedArtifacts;
-
-  /**
    * Get skip setting
    *
    * @return boolean
@@ -150,8 +129,11 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     }
 
     // Get artifact to deploy on SVN
-    File artifactFile= this.getArtifactFile();
-    getLog().debug("Artifact to deploy [" + artifactFile + "]");
+    Artifact artifact= this.getMainArtifact();
+    if (null == artifact) {
+      throw new MojoExecutionException("Found no artifact to deploy");
+    } 
+    getLog().debug("Artifact to deploy [" + artifact.getFile() + "]");
 
     // If not specified, try to guess $svnExecutable
     if (null == this.svnExecutable) {
@@ -189,8 +171,8 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
 
     // Dump artifact to checkout directory
     File dumpDirectory= new File(svndeployDirectory, this.project.getArtifactId());
-    getLog().info("Dump artifact [" + artifactFile + "] to [" + dumpDirectory + "]");
-    ArchiveUtils.dumpArtifact(artifactFile, dumpDirectory, true);
+    getLog().info("Dump artifact [" + artifact.getFile() + "] to [" + dumpDirectory + "]");
+    ArchiveUtils.dumpArtifact(artifact.getFile(), dumpDirectory, true);
 
     // Delete empty sub-directories from checkout directory
     try {
@@ -237,36 +219,6 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
       this.project.getVersion(),
       message
     );
-  }
-
-  /**
-   * Get the artifact file that is to be deployed on SVN repository
-   *
-   * @return java.io.File
-   * @throws org.apache.maven.plugin.MojoExecutionException when couldn't find any artifact to deploy
-   */
-  private File getArtifactFile() throws MojoExecutionException {
-    File retVal;
-
-    // Check primary artifact
-    Artifact projectArtifact= this.getProjectArtifact();
-    if (null != projectArtifact) {
-      retVal= projectArtifact.getFile();
-      if (null != retVal && retVal.exists() && retVal.isFile()) {
-        return retVal;
-      }
-    }
-
-    // Primary artifact is mising and cannot find other attached artifact
-    List<Artifact> projectAttachedArtifacts= this.getProjectAttachedArtifacts();
-    if (null == projectAttachedArtifacts || projectAttachedArtifacts.isEmpty()) {
-      throw new MojoExecutionException("The packaging for this project did not assign a file to the build artifact");
-    }
-
-    // Use first attached artifact
-    retVal= projectAttachedArtifacts.get(0).getFile();
-    getLog().warn("No primary artifact to deploy, deploying *first* attached artifact instead [" + retVal + "]");
-    return retVal;
   }
 
   /**
@@ -592,25 +544,5 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     input= this.conjureSvnRunnerInput("commit");
     input.message= this.prefixMessage("Update tag with latest changes");
     this.executeSvn(input, localDirectory);
-  }
-
-  /**
-   * Get project main artifact
-   *
-   * For a non-forked lifecycle, this variable is set in the "package" phase
-   *
-   */
-  protected Artifact getProjectArtifact() {
-    return this.artifact;
-  }
-
-  /**
-   * Get project attached artifacts
-   *
-   * For a non-forked lifecycle, this variable is set in the "package" phase
-   *
-   */
-  protected List<Artifact> getProjectAttachedArtifacts() {
-    return this.attachedArtifacts;
   }
 }

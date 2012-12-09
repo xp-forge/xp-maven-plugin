@@ -1,5 +1,7 @@
 Version 3.2.5, released ????-??-??
 ----------------------------------
+- Add support for running integrations tests from "src/it"
+  - Add "integration-test-compile" and "integration-test" phases
 - Rename "libs" to "lib" in the generated artifact
 - Move XP-Framework artifacts to "libs/runtime" in the generated artifact
 - Move XP-Framework bootstrap to "libs/bootstrap" in the generated artifact

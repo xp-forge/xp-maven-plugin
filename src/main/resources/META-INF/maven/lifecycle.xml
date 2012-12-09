@@ -85,6 +85,26 @@
         </executions>
       </phase>
       <phase>
+        <id>pre-integration-test</id>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </phase>
+      <phase>
+        <id>integration-test</id>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </phase>
+      <phase>
         <id>install</id>
         <executions>
           <execution>

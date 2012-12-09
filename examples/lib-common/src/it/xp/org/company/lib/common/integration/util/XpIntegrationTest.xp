@@ -1,13 +1,13 @@
-package org.company.lib.common.unittest.util;
+package org.company.lib.common.integration.util;
 
 import unittest.TestCase;
 import org.company.lib.common.util.Greeting;
 
 /**
- * Unit tests for org.company.lib.common.util.Greeting
+ * Integration tests for org.company.lib.common.util.Greeting
  *
  */
-public class GreetingTest extends TestCase {
+public class XpIntegrationTest extends TestCase {
 
   /**
    * Test constructor

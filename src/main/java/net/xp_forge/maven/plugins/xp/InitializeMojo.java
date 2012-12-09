@@ -532,5 +532,10 @@ public class InitializeMojo extends AbstractXpMojo {
         this.project.addTestCompileSourceRoot(newRoot);
       }
     }
+
+    // Set ${project.itSourceDirectory}
+    xpDirectory= this.basedir.getAbsolutePath() + File.separator + "src" + File.separator + "it" + File.separator + "xp";
+    getLog().debug("Set ${project.itSourceDirectory} to [" + xpDirectory + "]");
+    this.project.getProperties().setProperty("project.itSourceDirectory", xpDirectory);
   }
 }

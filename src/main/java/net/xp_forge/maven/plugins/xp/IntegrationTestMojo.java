@@ -9,6 +9,7 @@ package net.xp_forge.maven.plugins.xp;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
@@ -16,17 +17,17 @@ import net.xp_forge.maven.plugins.xp.exec.runners.xp.UnittestRunner;
 import net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput;
 
 /**
- * Run unit tests
+ * Run integration tests
  *
- * @goal test
+ * @goal integration-test
  * @requiresDependencyResolution test
  */
-public class TestMojo extends AbstractXpMojo {
+public class IntegrationTestMojo extends AbstractXpMojo {
 
   /**
-   * Its use is NOT RECOMMENDED, but quite convenient on occasion
+   * Skip integration tests
    *
-   * @parameter expression="${maven.test.skip}" default-value="false"
+   * @parameter expression="${maven.it.skip}" default-value="false"
    */
   private boolean skip;
 
@@ -60,7 +61,7 @@ public class TestMojo extends AbstractXpMojo {
   /**
    * Directory to scan for [*.ini] files
    *
-   * @parameter expression="${xp.test.iniDirectory}" default-value="${basedir}/src/test/config/unittest"
+   * @parameter expression="${xp.it.iniDirectory}" default-value="${basedir}/src/it/config/unittest"
    */
   protected File iniDirectory;
 
@@ -81,14 +82,27 @@ public class TestMojo extends AbstractXpMojo {
 
     // Skip tests alltogether?
     if (this.skip) {
-      getLog().info("Not running unit tests (maven.test.skip)");
+      getLog().info("Not running integration tests (maven.it.skip)");
+      return;
+    }
+
+    // Can't test "pom" projects
+    if (this.packaging.equals("pom")) {
+      getLog().info("Not running integration tests for [pom] projects");
+      return;
+    }
+
+    // Get main artifact that is to be tested
+    Artifact artifact= this.getMainArtifact();
+    if (null == artifact) {
+      getLog().warn("Not running integration tests as no main artifact was found");
       return;
     }
 
     // Debug info
     getLog().info("Running tests from [" + this.iniDirectory + "]");
     getLog().debug("Additional directories [" + (null == this.iniDirectories ? "NULL" : this.iniDirectories) + "]");
-    getLog().debug("Classes directory      [" + this.classesDirectory + "]");
+    getLog().debug("Tested artifact        [" + artifact.getFile() + "]");
     getLog().debug("Test classes directory [" + this.testClassesDirectory + "]");
     getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths) + "]");
     getLog().debug("Test arguments         [" + (null == this.testArguments ? "NULL" : this.testArguments) + "]");
@@ -103,21 +117,11 @@ public class TestMojo extends AbstractXpMojo {
     // Add custom classpaths
     input.addClasspath(this.classpaths);
 
-    // Add classesDirectory to classpath
-    if (null != this.classifier && this.classifier.equals("patch")) {
-      input.addClasspath("!" + this.classesDirectory);
-    } else {
-      input.addClasspath(this.classesDirectory);
-    }
+    // Add artifact to classpath
+    input.addClasspath(artifact);
 
-    // Add testClassesDirectory to classpath
-    input.addClasspath(this.testClassesDirectory);
-
-    // Add xsl directory to classpath; if present
-    File xslDirectory= new File(this.outputDirectory, "xsl");
-    if (xslDirectory.exists()) {
-      input.addClasspath(xslDirectory);
-    }
+    // Add itClassesDirectory to classpath
+    input.addClasspath(this.itClassesDirectory);
 
     // Add arguments
     if (null != this.testArguments) {

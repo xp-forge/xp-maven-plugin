@@ -135,6 +135,12 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
       return;
     }
 
+    // Can't compile "pom" projects
+    if (this.packaging.equals("pom")) {
+      getLog().info("There are no sources to compile for [pom] projects");
+      return;
+    }
+
     // Copy raw PHP files
     List<String> phpSourceRoots= this.getPhpSourceRoots();
     this.copyPhpSources(phpSourceRoots, this.getClassesDirectory(), this.getPhpIncludePattern());

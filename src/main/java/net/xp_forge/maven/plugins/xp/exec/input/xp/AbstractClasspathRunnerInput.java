@@ -40,16 +40,27 @@ public class AbstractClasspathRunnerInput {
     if (null == artifacts) return;
 
     for (Artifact artifact : artifacts) {
+      this.addClasspath(artifact);
+    }
+  }
 
-      // Skip non-xar artifacts
-      if (!artifact.getType().equals("xar")) continue;
+  /**
+   * Setter for classpaths
+   *
+   * @param  org.apache.maven.artifact.Artifact artifact
+   * @return void
+   */
+  public void addClasspath(Artifact artifact) {
+    if (null == artifact) return;
 
-      // Add to classpath
-      if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-        this.addClasspath(artifact.getFile().getAbsolutePath(), true);
-      } else {
-        this.addClasspath(artifact.getFile(), false);
-      }
+    // Skip non-xar artifacts
+    if (!artifact.getType().equals("xar")) return;
+
+    // Add to classpath
+    if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
+      this.addClasspath(artifact.getFile().getAbsolutePath(), true);
+    } else {
+      this.addClasspath(artifact.getFile(), false);
     }
   }
 

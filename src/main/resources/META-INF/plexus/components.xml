@@ -24,6 +24,8 @@
               <test>net.xp-forge.maven.plugins:xp-maven-plugin:test</test>
               <package>net.xp-forge.maven.plugins:xp-maven-plugin:package</package>
               <test-package>net.xp-forge.maven.plugins:xp-maven-plugin:test-package</test-package>
+              <pre-integration-test>net.xp-forge.maven.plugins:xp-maven-plugin:integration-test-compile</pre-integration-test>
+              <integration-test>net.xp-forge.maven.plugins:xp-maven-plugin:integration-test</integration-test>
               <install>org.apache.maven.plugins:maven-install-plugin:install</install>
               <deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
               <svn-deploy>net.xp-forge.maven.plugins:xp-maven-plugin:svn-deploy</svn-deploy>
