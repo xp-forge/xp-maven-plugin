@@ -1,5 +1,7 @@
 Version 3.2.5, released ????-??-??
 ----------------------------------
+- Add ${xp.svn-deploy.legacyVolatileTagName} property to alter the value of ${xp.svn-deploy.volatileTagName}
+- Rename "svn-deploy" goal's properties to ${xp.svn-deploy.xxx}
 - Add support for running integrations tests from "src/it"
   - Add "integration-test-compile" and "integration-test" phases
 - Rename "libs" to "lib" in the generated artifact

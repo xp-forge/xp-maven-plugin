@@ -42,14 +42,16 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
   /**
    * Skip deploy to SVN
    *
-   * @parameter expression="${xp.deploy.skip}" default-value="false"
+   * @parameter expression="${xp.svn-deploy.skip}" default-value="false"
    */
   private boolean skip;
 
   /**
    * Location of the deploy repository
    *
-   * @parameter expression="${xp.deploy.repositoryUrl}"
+   * E.g.: http://svn.company.org/deploy
+   *
+   * @parameter expression="${xp.svn-deploy.repositoryUrl}"
    * @required
    */
   protected String repositoryUrl;
@@ -57,7 +59,7 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
   /**
    * Tag base
    *
-   * @parameter expression="${xp.deploy.baseTagName}" default-value="${project.artifactId}"
+   * @parameter expression="${xp.svn-deploy.baseTagName}" default-value="${project.artifactId}"
    * @required
    */
   protected String baseTagName;
@@ -65,36 +67,45 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
   /**
    * Volatile tag name
    *
-   * @parameter expression="${xp.deploy.volatileTagName}" default-value="LATEST"
+   * @parameter expression="${xp.svn-deploy.volatileTagName}" default-value="LATEST"
    * @required
    */
   protected String volatileTagName;
 
   /**
+   * Prepend uppercase(${project.artifactId}) to volatile tag name
+   *
+   * E.g.: LIB-COMMON_LATEST
+   *
+   * @parameter expression="${xp.svn-deploy.legacyVolatileTagName}" default-value="false"
+   * @since 3.2.5
+   */
+  protected boolean legacyVolatileTagName;
+  /**
    * SVN username
    *
-   * @parameter expression="${xp.deploy.username}"
+   * @parameter expression="${xp.svn-deploy.username}"
    */
   protected String username;
 
   /**
    * SVN password
    *
-   * @parameter expression="${xp.deploy.password}"
+   * @parameter expression="${xp.svn-deploy.password}"
    */
   protected String password;
 
   /**
    * SVN commit message prefix
    *
-   * @parameter expression="${xp.deploy.messagePrefix}" default-value="[xp-maven-plugin]"
+   * @parameter expression="${xp.svn-deploy.messagePrefix}" default-value="[xp-maven-plugin]"
    */
   protected String messagePrefix;
 
   /**
    * Location of the "svn" executable. If not specified, will look for in into PATH env variable.
    *
-   * @parameter expression="${xp.deploy.svnExecutable}"
+   * @parameter expression="${xp.svn-deploy.svnExecutable}"
    */
   protected File svnExecutable;
 
@@ -118,7 +129,7 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
 
     // Skip svn deploy
     if (this.isSkip()) {
-      getLog().info("Not deploying to SVN (xp.deploy.skip)");
+      getLog().info("Not deploying to SVN (xp.svn-deploy.skip)");
       return;
     }
 
@@ -127,6 +138,20 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
       getLog().info("Cannot deploy [pom] artifacts to SVN repository; silently skipping");
       return;
     }
+
+    String baseTagUrl      = (this.repositoryUrl.replaceAll("/+$", "") + "/" + this.baseTagName).replaceAll("/+$", "");
+    String volatileTagName = this.getVolatileTagName();
+    String volatileTagUrl  = baseTagUrl + "/" + volatileTagName;
+    String permanentTagUrl = baseTagUrl + "/" + this.project.getVersion();
+
+    getLog().info("Repository URL            [" + this.repositoryUrl + "]");
+    getLog().info("Base tag name             [" + this.baseTagName + "]");
+    getLog().info("Base tag URL              [" + baseTagUrl + "]");
+    getLog().info("Volatile tag name         [" + volatileTagName + "]");
+    getLog().info("Legacy volatile tag name  [" + (this.legacyVolatileTagName ? "Yes" : "No") + "]");
+    getLog().info("Volatile tag URL          [" + volatileTagUrl + "]");
+    getLog().info("Permanent tag URL         [" + permanentTagUrl + "]");
+    getLog().info("Commit message prefix     [" + this.messagePrefix + "]");
 
     // Get artifact to deploy on SVN
     Artifact artifact= this.getMainArtifact();
@@ -146,13 +171,11 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     }
 
     // Check base tag exists; if not, try to create it
-    String baseTagUrl= this.repositoryUrl + "/" + this.baseTagName;
     if (!this.tagExists(baseTagUrl)) {
       this.createTag(baseTagUrl);
     }
 
     // Check volatile tag exists; if not, try to create it
-    String volatileTagUrl= baseTagUrl + "/" + this.volatileTagName;
     if (!this.tagExists(volatileTagUrl)) {
       this.createTag(volatileTagUrl);
     }
@@ -194,7 +217,6 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     this.updateTag(volatileTagUrl, svndeployDirectory);
 
     // Check permanent tag exists; if yes, remove it
-    String permanentTagUrl= baseTagUrl + "/" + this.project.getVersion();
     getLog().info("Create permanent tag [" + permanentTagUrl + "]");
     if (this.tagExists(permanentTagUrl)) {
       this.deleteTag(permanentTagUrl);
@@ -544,5 +566,19 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
     input= this.conjureSvnRunnerInput("commit");
     input.message= this.prefixMessage("Update tag with latest changes");
     this.executeSvn(input, localDirectory);
+  }
+
+  /**
+   * Get volatile tag name
+   *
+   * @return java.lang.String
+   */
+  private String getVolatileTagName() {
+    if (!this.legacyVolatileTagName) {
+      return this.volatileTagName;
+    }
+
+    // Legacy volatile tag name (E.g.: LIB-COMMON_RELEASE)
+    return this.project.getArtifactId().toUpperCase() + "_" + this.volatileTagName;
   }
 }
