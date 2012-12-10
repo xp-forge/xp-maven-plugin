@@ -1,4 +1,8 @@
-Version 3.2.5, released ????-??-??
+Version 3.2.6, released ????-??-??
+----------------------------------
+
+
+Version 3.2.5, released 2012-12-10
 ----------------------------------
 - Add ${xp.svn-deploy.legacyVolatileTagName} property to alter the value of ${xp.svn-deploy.volatileTagName}
 - Rename "svn-deploy" goal's properties to ${xp.svn-deploy.xxx}
