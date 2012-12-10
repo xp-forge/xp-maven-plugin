@@ -21,6 +21,7 @@ import org.apache.maven.artifact.Artifact;
 public class PthFile {
   private List<String> entries;
   private String comment;
+  private boolean useBang= true;
 
   /**
    * Constructor
@@ -38,6 +39,16 @@ public class PthFile {
    */
   public void setComment(String comment) {
     this.comment= comment;
+  }
+
+  /**
+   * Whether to use the bang (exclamation mark) in front of "patch" entries
+   *
+   * @param  boolean bang
+   * @return void
+   */
+  public void useBang(boolean bang) {
+    this.useBang= bang;
   }
 
   /**
@@ -62,7 +73,7 @@ public class PthFile {
     if (this.entries.contains(entry)) return;
 
     if (isPatch) {
-      this.entries.add(0, entry);
+      this.entries.add(0, (this.useBang ? "!" : "") + entry);
     } else {
       this.entries.add(entry);
     }
@@ -123,11 +134,8 @@ public class PthFile {
     if (!artifact.getType().equals("xar")) return;
 
     // Add to list
-    if (null != artifact.getClassifier() && artifact.getClassifier().equals("patch")) {
-      this.addEntry("!" + artifact.getFile().getAbsolutePath());
-    } else {
-      this.addFileEntry(artifact.getFile());
-    }
+    boolean isPatch= (null != artifact.getClassifier() && artifact.getClassifier().equals("patch"));
+    this.addFileEntry(artifact.getFile(), isPatch);
   }
 
   /**

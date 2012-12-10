@@ -94,7 +94,7 @@ public class AbstractClasspathRunnerInput {
 
     // Add to list
     if (isPatch) {
-      this.classpaths.add(0, classpath);
+      this.classpaths.add(0, "!" + classpath);
     } else {
       this.classpaths.add(classpath);
     }

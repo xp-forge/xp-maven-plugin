@@ -152,6 +152,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     // Init [project.pth] entries
     this.pth= new PthFile();
+    this.pth.useBang(false);
     this.pth.addEntry("classes");
 
     // Package library
