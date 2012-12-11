@@ -153,7 +153,6 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Init [project.pth] entries
     this.pth= new PthFile();
     this.pth.useBang(false);
-    this.pth.addEntry("classes");
 
     // Package library
     if (strategy.equals("lib")) {
@@ -253,6 +252,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    */
   private void includeRuntime() throws MojoExecutionException {
     getLog().info("Including XP-runtime");
+
+    // Add bootstrap to pth entries
+    this.pth.addEntry("lib/bootstrap");
 
     // Locate CORE_ARTIFACT_ID and TOOLS_ARTIFACT_ID artifacts
     Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
@@ -411,6 +413,10 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    */
   private void packProjectPth() throws MojoExecutionException {
     getLog().info("Packing on-the-fly created [project.pth] to archive");
+
+    // Add project sources as last pth entry
+    this.pth.addEntry("classes");
+
     File pthFile= new File(this.outputDirectory, "project.pth-package");
     try {
       this.pth.setComment(CREATED_BY_NOTICE);

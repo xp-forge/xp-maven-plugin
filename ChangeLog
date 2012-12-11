@@ -1,5 +1,7 @@
 Version 3.2.6, released ????-??-??
 ----------------------------------
+- Bugfix: When packing apps, add "lib/bootstrap" entry to the on-the-fly generated "project.pth"
+  (mrosoiu)
 
 
 Version 3.2.5, released 2012-12-10
