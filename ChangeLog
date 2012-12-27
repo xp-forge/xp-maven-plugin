@@ -1,7 +1,8 @@
 Version 3.2.7, released ????-??-??
 ----------------------------------
 - Include "strategy" entry in on-the-fly generated "manifest.ini" during the "package" phase
-  (mrosoiu)
+- Relocate "xp:ignite" downloaded deps to "/lib/ignite" to avoid conflicts with other possible existing libs
+    (mrosoiu)
 
 
 Version 3.2.6, released 2012-12-10

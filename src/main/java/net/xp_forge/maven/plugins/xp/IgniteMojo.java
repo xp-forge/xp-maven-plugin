@@ -34,7 +34,7 @@ public class IgniteMojo extends AbstractXpMojo {
   /**
    * Where to store dependencies artifacts
    *
-   * @parameter expression="${xp.ignite.libDirectory}" default-value="${basedir}/lib"
+   * @parameter expression="${xp.ignite.libDirectory}" default-value="${basedir}/lib/ignite"
    */
   protected File libDirectory;
 
