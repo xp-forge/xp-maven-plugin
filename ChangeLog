@@ -1,5 +1,7 @@
 Version 3.2.7, released ????-??-??
 ----------------------------------
+- Include "strategy" entry in on-the-fly generated "manifest.ini" during the "package" phase
+  (mrosoiu)
 
 
 Version 3.2.6, released 2012-12-10

@@ -455,6 +455,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     ini.setProperty("archive", "created-by", this.getMachineInfo());
     ini.setProperty("archive", "created-on", this.getCurrentTimestamp());
     ini.setProperty("archive", "format", this.getFormat());
+    ini.setProperty("archive", "strategy", this.getStrategy());
 
     // Add main-class; if the case
     if (null != this.getMainClass()) {
