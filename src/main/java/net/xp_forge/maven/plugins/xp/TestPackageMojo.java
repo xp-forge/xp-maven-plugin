@@ -85,6 +85,15 @@ public class TestPackageMojo extends AbstractPackageMojo {
    *
    */
   @Override
+  protected boolean getPackVendorLibs() {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
   protected List<File> getAppDirectories() {
     return null;
   }
@@ -105,14 +114,5 @@ public class TestPackageMojo extends AbstractPackageMojo {
   @Override
   protected boolean isSkip() {
     return this.skip;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   */
-  @Override
-  protected List<File> getVendorLibraries() {
-    return null;
   }
 }

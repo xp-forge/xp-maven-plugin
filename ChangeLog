@@ -4,6 +4,7 @@ Version 3.2.7, released ????-??-??
 - Relocate "xp:ignite" downloaded deps to "/lib/ignite" to avoid conflicts with other possible existing libs
 - Add vendor libraries to classpath when running tests
 - Include vendor libraries in generated artifact for "app" packing strategy
+- Add ${xp.package.packVendorLibs} to skip packing vendor libs
   (mrosoiu)
 
 

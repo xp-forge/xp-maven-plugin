@@ -55,13 +55,21 @@ public class PackageMojo extends AbstractPackageMojo {
   /**
    * Specify if XP-artifacts (core & tools) and the XP-runners should also be packed
    *
-   * Bootstrap will be packed inside /runtime/bootstrap
-   * XP-artifacts will be packed inside /runtime/lib
+   * Bootstrap will be packed inside /lib/bootstrap
+   * XP-artifacts will be packed inside /lib/runtime
    *
    * @parameter expression="${xp.package.packRuntime}" default-value="false"
    * @required
    */
   protected boolean packRuntime;
+
+  /**
+   * Specify if vendor libraries (inside ${xp.vendorLibDirectory}) should also be packed
+   *
+   * @parameter expression="${xp.package.packVendorLibs}" default-value="true"
+   * @required
+   */
+  protected boolean packVendorLibs;
 
   /**
    * Specify main class for this artifact. used when calling [xp -xar artifact.xar]
@@ -127,6 +135,15 @@ public class PackageMojo extends AbstractPackageMojo {
   @Override
   protected boolean getPackRuntime() {
     return this.packRuntime;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean getPackVendorLibs() {
+    return this.packVendorLibs;
   }
 
   /**

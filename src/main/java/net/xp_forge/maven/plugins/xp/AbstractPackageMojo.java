@@ -97,6 +97,13 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   protected abstract boolean getPackRuntime();
 
   /**
+   * Get packVendorLibs
+   *
+   * @return boolean
+   */
+  protected abstract boolean getPackVendorLibs();
+
+  /**
    * Get application directories (from ${outputdir})
    *
    * @return java.util.List<java.io.File>
@@ -132,6 +139,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     String format            = this.getFormat();
     boolean packDependencies = this.getPackDependencies();
     boolean packRuntime      = this.getPackRuntime();
+    boolean packVendorLibs   = this.getPackVendorLibs();
 
     getLog().info("Classes directory  [" + this.getClassesDirectory() + "]");
     getLog().info("Output file        [" + outputFile + "]");
@@ -140,6 +148,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     getLog().info("Packaging strategy [" + strategy + "]");
     getLog().info("Pack runtime       [" + (packRuntime ? "yes" : "no") + "]");
     getLog().info("Pack dependencies  [" + (packDependencies ? "yes" : "no") + "]");
+    getLog().info("Pack vendor libs   [" + (packVendorLibs ? "yes" : "no") + "]");
 
     // Check ${maven.test.skip} is active and we're trying to package the "tests" artifact
     if (this.isSkip()) {
@@ -166,7 +175,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       if (packDependencies) this.includeDependencies();
       this.packClasses("classes/");
       this.packApplicationResources();
-      this.includeVendorLibraries();
+      if (packVendorLibs) this.includeVendorLibs();
       this.packProjectPth();
 
     // Invalid packing strategy
@@ -331,11 +340,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
    * @return void
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
-  private void includeVendorLibraries() throws MojoExecutionException {
+  private void includeVendorLibs() throws MojoExecutionException {
     getLog().info("Including vendor libraries");
 
     // Get vendor libraries list
-    List<File> vendorLibs= this.getVendorLibraries();
+    List<File> vendorLibs= this.getVendorLibs();
     if (null == vendorLibs) return;
 
     // Add to archive

@@ -104,7 +104,7 @@ public class TestMojo extends AbstractXpMojo {
     input.addClasspath(this.classpaths);
 
     // Add vendor libs to classpath
-    List<File> vendorLibs= this.getVendorLibraries();
+    List<File> vendorLibs= this.getVendorLibs();
     if (null == vendorLibs) {
       getLog().debug("No vendor libraries found");
 

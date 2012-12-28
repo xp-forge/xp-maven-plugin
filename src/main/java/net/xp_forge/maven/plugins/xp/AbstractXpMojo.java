@@ -294,7 +294,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    *
    * @return java.util.List<java.io.File> null if no vendor libs found
    */
-  protected List<File> getVendorLibraries() {
+  protected List<File> getVendorLibs() {
 
     // Sanity check
     if (null == this.vendorLibDir || !this.vendorLibDir.exists() || !this.vendorLibDir.isDirectory()) return null;
