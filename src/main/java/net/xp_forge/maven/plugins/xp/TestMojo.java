@@ -103,6 +103,19 @@ public class TestMojo extends AbstractXpMojo {
     // Add custom classpaths
     input.addClasspath(this.classpaths);
 
+    // Add vendor libs to classpath
+    List<File> vendorLibs= this.getVendorLibraries();
+    if (null == vendorLibs) {
+      getLog().debug("No vendor libraries found");
+
+    } else {
+      getLog().debug("Found vendor libraries:");
+      for (File vendorLib : vendorLibs) {
+        getLog().debug("- " + vendorLib);
+        input.addClasspath(vendorLib);
+      }
+    }
+
     // Add classesDirectory to classpath
     if (null != this.classifier && this.classifier.equals("patch")) {
       input.addClasspath("!" + this.classesDirectory);

@@ -2,7 +2,9 @@ Version 3.2.7, released ????-??-??
 ----------------------------------
 - Include "strategy" entry in on-the-fly generated "manifest.ini" during the "package" phase
 - Relocate "xp:ignite" downloaded deps to "/lib/ignite" to avoid conflicts with other possible existing libs
-    (mrosoiu)
+- Add vendor libraries to classpath when running tests
+- Include vendor libraries in generated artifact for "app" packing strategy
+  (mrosoiu)
 
 
 Version 3.2.6, released 2012-12-10

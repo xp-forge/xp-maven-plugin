@@ -162,10 +162,11 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
 
     // Package application
     } else if (strategy.equals("app")) {
-      this.packClasses("classes/");
-      this.packApplicationResources();
       if (packRuntime) this.includeRuntime();
       if (packDependencies) this.includeDependencies();
+      this.packClasses("classes/");
+      this.packApplicationResources();
+      this.includeVendorLibraries();
       this.packProjectPth();
 
     // Invalid packing strategy
@@ -245,8 +246,8 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   /**
    * Include XP-runtime
    *
-   * - Include bootstrap files into "runtime/bootstrap"
-   * - Include XP-artifacts into "runtime/lib"
+   * - Include bootstrap files into "lib/bootstrap"
+   * - Include XP-artifacts into "lib/runtime"
    *
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
@@ -321,6 +322,27 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
         this.archiver.addFile(artifact.getFile(), "lib/" + artifact.getFile().getName());
         this.pth.addEntry("lib/" + artifact.getFile().getName(), false);
       }
+    }
+  }
+
+  /**
+   * Include vendor libraries into "lib/vendor"
+   *
+   * @return void
+   * @throws org.apache.maven.plugin.MojoExecutionException
+   */
+  private void includeVendorLibraries() throws MojoExecutionException {
+    getLog().info("Including vendor libraries");
+
+    // Get vendor libraries list
+    List<File> vendorLibs= this.getVendorLibraries();
+    if (null == vendorLibs) return;
+
+    // Add to archive
+    for (File vendorLib : vendorLibs) {
+      getLog().info(" + Add vendor library [" + vendorLib + "] to [lib/vendor/]");
+      this.archiver.addFile(vendorLib, "lib/vendor/" + vendorLib.getName());
+      this.pth.addEntry("lib/vendor/" + vendorLib.getName(), false);
     }
   }
 

@@ -106,4 +106,13 @@ public class TestPackageMojo extends AbstractPackageMojo {
   protected boolean isSkip() {
     return this.skip;
   }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected List<File> getVendorLibraries() {
+    return null;
+  }
 }

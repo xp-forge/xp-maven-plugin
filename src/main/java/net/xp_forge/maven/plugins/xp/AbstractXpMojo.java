@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.artifact.Artifact;
@@ -142,6 +143,13 @@ public abstract class AbstractXpMojo extends AbstractMojo {
    * @parameter expression="${project.build.itOutputDirectory}" default-value="${project.build.directory}/it-classes"
    */
   protected File itClassesDirectory;
+
+  /**
+   * Vendor libraries directory (dependencies that are cannot be found by Maven in any repository)
+   *
+   * @parameter expression="${xp.vendorLibDirectory}" default-value="${basedir}/lib"
+   */
+  protected File vendorLibDir;
 
   /**
    * Classifier to add to the generated artifact
@@ -279,6 +287,41 @@ public abstract class AbstractXpMojo extends AbstractMojo {
     }
 
     return retVal;
+  }
+
+  /**
+   * Return list of vendor libraries (${basedir}/lib/*.xar)
+   *
+   * @return java.util.List<java.io.File> null if no vendor libs found
+   */
+  protected List<File> getVendorLibraries() {
+
+    // Sanity check
+    if (null == this.vendorLibDir || !this.vendorLibDir.exists() || !this.vendorLibDir.isDirectory()) return null;
+
+    // List directory contents
+    File[] libFiles= this.vendorLibDir.listFiles();
+    if (null == libFiles) {
+      getLog().warn("Failed to list contents of vendor libs directory [" + this.vendorLibDir + "]");
+      return null;
+    }
+
+    List<File> retVal= new ArrayList<File>();
+    for (File libFile : libFiles) {
+
+      // Skip directories
+      if (libFile.isDirectory()) continue;
+
+      // Skip non-xar files
+      String extension= libFile.getName().substring(libFile.getName().lastIndexOf('.') + 1);
+      if (!extension.equals("xar")) continue;
+
+      // Add to list
+      retVal.add(libFile);
+    }
+
+    // Return collected list
+    return (retVal.isEmpty() ? null : retVal);
   }
 
   /**
