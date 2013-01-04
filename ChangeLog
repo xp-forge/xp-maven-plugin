@@ -1,4 +1,4 @@
-Version 3.2.7, released ????-??-??
+Version 3.2.8, released ????-??-??
 ----------------------------------
 - Bugfix: Select the correct artifact handler based of the artifact format (xar or zip)
   (mrosoiu)
