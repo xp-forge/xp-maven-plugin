@@ -45,7 +45,7 @@
     </component>
 
     <!--
-     ! Artifact handler
+     ! Artifact handlers
      !
      !-->
     <component>
@@ -55,6 +55,18 @@
       <configuration>
         <type>xar</type>
         <extension>xar</extension>
+        <includesDependencies>false</includesDependencies>
+        <language>php</language>
+        <addedToClasspath>true</addedToClasspath>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>zip</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+      <configuration>
+        <type>zip</type>
+        <extension>zip</extension>
         <includesDependencies>false</includesDependencies>
         <language>php</language>
         <addedToClasspath>true</addedToClasspath>

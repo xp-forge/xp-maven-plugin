@@ -1,5 +1,11 @@
 Version 3.2.7, released ????-??-??
 ----------------------------------
+- Bugfix: Select the correct artifact handler based of the artifact format (xar or zip)
+  (mrosoiu)
+
+
+Version 3.2.7, released 2013-01-04
+----------------------------------
 - Include "strategy" entry in on-the-fly generated "manifest.ini" during the "package" phase
 - Relocate "xp:ignite" downloaded deps to "/lib/ignite" to avoid conflicts with other possible existing libs
 - Add vendor libraries to classpath when running tests

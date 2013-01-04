@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import org.codehaus.plexus.archiver.AbstractArchiver;
@@ -204,6 +205,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       this.projectHelper.attachArtifact(this.project, format, classifier, outputFile);
     } else {
       this.project.getArtifact().setFile(outputFile);
+
+      // Select the correct artifact handler based of the artifact format (xar or zip)
+      this.project.getArtifact().setArtifactHandler(new DefaultArtifactHandler(format));
     }
   }
 
