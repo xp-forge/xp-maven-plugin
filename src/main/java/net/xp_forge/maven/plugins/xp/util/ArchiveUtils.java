@@ -87,12 +87,14 @@ public final class ArchiveUtils {
     if (extension.equals("xar")) {
       AbstractUnArchiver retVal= new XarUnArchiver(file);
       retVal.enableLogging(ArchiveUtils.logger);
+      retVal.setUseJvmChmod(true);
       return retVal;
     }
 
     if (extension.equals("zip")) {
       AbstractUnArchiver retVal= new ZipUnArchiver(file);
       retVal.enableLogging(ArchiveUtils.logger);
+      retVal.setUseJvmChmod(true);
       return retVal;
     }
 

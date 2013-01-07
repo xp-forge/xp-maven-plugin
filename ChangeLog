@@ -1,4 +1,10 @@
-Version 3.2.8, released ????-??-??
+Version 3.2.9, released ????-??-??
+----------------------------------
+- Bugfix: Use java-implemented chmod in AbstractUnarchiver to avoid bug on linux for filenames with special characters
+  (mrosoiu)
+
+
+Version 3.2.8, released 2013-01-04
 ----------------------------------
 - Bugfix: Select the correct artifact handler based of the artifact format (xar or zip)
   (mrosoiu)
