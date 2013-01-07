@@ -41,7 +41,7 @@ import net.xp_forge.maven.plugins.xp.exec.input.xp.filter.InifileFilter;
  *   * {test.class.Name}::{testName}: A fully qualified class name and a test name
  *   * -e {test method sourcecode}: Evaluate source
  */
-public class UnittestRunnerInput extends AbstractClasspathRunnerInput {
+public class UnittestRunnerInput extends AbstractClasspathRunnerInput implements Cloneable {
   public List<String> arguments;
   public List<File> inifiles;
 
@@ -53,6 +53,29 @@ public class UnittestRunnerInput extends AbstractClasspathRunnerInput {
     super();
     this.arguments = new ArrayList<String>();
     this.inifiles  = new ArrayList<File>();
+  }
+
+  /**
+   * Clone this input
+   *
+   * Note: will not clone inifiles list
+   *
+   * @return net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput pristine
+   */
+  @Override
+  public UnittestRunnerInput clone() {
+
+    // Init clone
+    UnittestRunnerInput clone= new UnittestRunnerInput();
+
+    // Copy fields
+    clone.classpaths = (List<String>)((ArrayList<String>)this.classpaths).clone();
+    clone.verbose    = this.verbose;
+    clone.arguments  = (List<String>)((ArrayList<String>)this.arguments).clone();
+    clone.inifiles   = new ArrayList<File>();
+
+    // Return cloned input
+    return clone;
   }
 
   /**

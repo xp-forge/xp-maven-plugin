@@ -10,11 +10,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-
-import net.xp_forge.maven.plugins.xp.exec.RunnerException;
-import net.xp_forge.maven.plugins.xp.exec.runners.xp.UnittestRunner;
-import net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput;
 
 /**
  * Run integration tests
@@ -22,7 +17,7 @@ import net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput;
  * @goal integration-test
  * @requiresDependencyResolution test
  */
-public class IntegrationTestMojo extends AbstractXpMojo {
+public class IntegrationTestMojo extends AbstractTestMojo {
 
   /**
    * Skip integration tests
@@ -30,33 +25,6 @@ public class IntegrationTestMojo extends AbstractXpMojo {
    * @parameter expression="${maven.it.skip}" default-value="false"
    */
   private boolean skip;
-
-  /**
-   * Display verbose diagnostics
-   *
-   * The -v argument for the unittest runner
-   *
-   * @parameter expression="${xp.test.verbose}" default-value="false"
-   */
-  protected boolean verbose;
-
-  /**
-   * Add path to classpath
-   *
-   * The -cp argument for the unittest runner
-   *
-   * @parameter
-   */
-  protected List<String> classpaths;
-
-  /**
-   * Define argument to pass to tests
-   *
-   * The -a argument for the unittest runner
-   *
-   * @parameter
-   */
-  protected List<String> testArguments;
 
   /**
    * Directory to scan for [*.ini] files
@@ -70,99 +38,84 @@ public class IntegrationTestMojo extends AbstractXpMojo {
    *
    * @parameter
    */
-  protected List<File> iniDirectories;
+  protected List<File> itAdditionalIniDirectories;
+
+  /**
+   * Whether to run all integration tests using a single unittest runner instance. If false, a new unittest runner
+   * instance will be spawned for every [*.ini] file (default).
+   *
+   * @parameter expression="${xp.it.singleInstance}" default-value="false"
+   */
+  protected boolean itSingleInstance;
 
   /**
    * {@inheritDoc}
    *
    */
-  @Override
-  @SuppressWarnings("unchecked")
-  public void execute() throws MojoExecutionException {
-
-    // Skip tests alltogether?
-    if (this.skip) {
-      getLog().info("Not running integration tests (maven.it.skip)");
-      return;
-    }
+  protected boolean isSkip() {
 
     // Can't test "pom" projects
     if (this.packaging.equals("pom")) {
       getLog().info("Not running integration tests for [pom] projects");
-      return;
+      return true;
     }
 
     // Get main artifact that is to be tested
     Artifact artifact= this.getMainArtifact();
     if (null == artifact) {
       getLog().warn("Not running integration tests as no main artifact was found");
-      return;
+      return true;
     }
 
-    // Debug info
-    getLog().info("Running tests from [" + this.iniDirectory + "]");
-    getLog().debug("Additional directories [" + (null == this.iniDirectories ? "NULL" : this.iniDirectories) + "]");
-    getLog().debug("Tested artifact        [" + artifact.getFile() + "]");
-    getLog().debug("Test classes directory [" + this.testClassesDirectory + "]");
-    getLog().debug("Classpaths             [" + (null == this.classpaths ? "NULL" : this.classpaths) + "]");
-    getLog().debug("Test arguments         [" + (null == this.testArguments ? "NULL" : this.testArguments) + "]");
+    return this.skip;
+  }
 
-    // Prepare [unittest] input
-    UnittestRunnerInput input= new UnittestRunnerInput();
-    input.verbose= this.verbose;
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected File getIniDirectory() {
+    return this.iniDirectory;
+  }
 
-    // Add dependency classpaths
-    input.addClasspath(this.getArtifacts(false));
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected List<File> getAdditionalIniDirectories() {
+    return this.itAdditionalIniDirectories;
+  }
 
-    // Add custom classpaths
-    input.addClasspath(this.classpaths);
+  /**
+   * {@inheritDoc}
+   *
+   * Note: for integration tests, return main artifact instead of classes directory
+   */
+  protected File getClassesDirectory() {
 
-    // Add artifact to classpath
-    input.addClasspath(artifact);
-
-    // Add itClassesDirectory to classpath
-    input.addClasspath(this.itClassesDirectory);
-
-    // Add arguments
-    if (null != this.testArguments) {
-      for (String testArgument : this.testArguments) {
-        input.addArgument(testArgument);
-      }
+    // Get main artifact that is to be tested
+    Artifact artifact= this.getMainArtifact();
+    if (null == artifact) {
+      getLog().warn("Not running integration tests as no main artifact was found");
+      return null;
     }
 
-    // Inifiles
-    input.addInifileDirectory(this.iniDirectory);
-    if (null != this.iniDirectories) {
-      for (File dir : this.iniDirectories) {
-        input.addInifileDirectory(dir);
-      }
-    }
+    return artifact.getFile();
+  }
 
-    // Check no tests to run
-    if (0 == input.inifiles.size()) {
-      getLog().info("There are no tests to run");
-      getLog().info(LINE_SEPARATOR);
-      return;
-    }
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected File getTestClassesDirectory() {
+    return this.itClassesDirectory;
+  }
 
-    // Configure [unittest] runner
-    File executable= new File(this.runnersDirectory, "unittest");
-    UnittestRunner runner= new UnittestRunner(executable, input);
-    runner.setLog(getLog());
-
-    // Set runner working directory to [/target]
-    runner.setWorkingDirectory(this.outputDirectory);
-
-    // Set USE_XP environment variable
-    if (null != this.use_xp) {
-      runner.setEnvironmentVariable("USE_XP", this.use_xp);
-    }
-
-    // Execute runner
-    try {
-      runner.execute();
-    } catch (RunnerException ex) {
-      throw new MojoExecutionException("Execution of [unittest] runner failed", ex);
-    }
+  /**
+   * {@inheritDoc}
+   *
+   */
+  protected boolean isSingleInstance() {
+    return this.itSingleInstance;
   }
 }

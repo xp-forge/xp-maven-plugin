@@ -1,6 +1,9 @@
 Version 3.2.9, released ????-??-??
 ----------------------------------
 - Bugfix: Use java-implemented chmod in AbstractUnarchiver to avoid bug on linux for filenames with special characters
+- Refactor TestMojo and IntegrationTestMojo to use the common AbstractTestMojo
+- Add ${xp.test.singleInstance} and ${xp.it.singleInstance} to fix Issue #6; default is "false" so a new unittest
+  runner instance is spawned for every *.ini file found
   (mrosoiu)
 
 
