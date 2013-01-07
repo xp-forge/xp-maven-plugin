@@ -22,7 +22,7 @@ public class TestMojo extends AbstractTestMojo {
    *
    * @parameter expression="${maven.test.skip}" default-value="false"
    */
-  private boolean skip;
+  protected boolean testSkip;
 
   /**
    * Directory to scan for [*.ini] files
@@ -51,7 +51,7 @@ public class TestMojo extends AbstractTestMojo {
    *
    */
   protected boolean isSkip() {
-    return this.skip;
+    return this.testSkip;
   }
 
   /**
