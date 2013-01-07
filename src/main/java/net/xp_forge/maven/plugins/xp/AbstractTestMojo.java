@@ -36,7 +36,7 @@ public abstract class AbstractTestMojo extends AbstractXpMojo {
   protected abstract File getIniDirectory();
 
   /**
-   * Location of additional test [*.ini] files directory
+   * Location of additional test [*.ini] files directories
    *
    * @return java.util.List<java.io.File>
    */
