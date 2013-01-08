@@ -1,4 +1,8 @@
-Version 3.2.9, released ????-??-??
+Version 3.2.10, released ????-??-??
+-----------------------------------
+
+
+Version 3.2.9, released 2013-01-08
 ----------------------------------
 - Bugfix: Use java-implemented chmod in AbstractUnarchiver to avoid bug on linux for filenames with special characters
 - Refactor TestMojo and IntegrationTestMojo to use the common AbstractTestMojo
