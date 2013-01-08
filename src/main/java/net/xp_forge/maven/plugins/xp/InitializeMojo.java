@@ -437,12 +437,28 @@ public class InitializeMojo extends AbstractXpMojo {
       throw new MojoExecutionException("Execution of [php] runner failed: " + runner.getOutput().asString(), ex);
     }
 
-    // Get extensions directory
+    // Get extensions directory as reported by PHP
     File extensionsDirectory= new File(runner.getOutput().asString().trim());
-    getLog().debug(" - PHP extensions directory [" + extensionsDirectory + "]");
+
+    // If PHP reports an invalid [extension_dir] value, try to use [ext] in php.exe directory
+    // See: https://github.com/xp-forge/xp-maven-plugin/issues/5
     if (!extensionsDirectory.exists() || !extensionsDirectory.isDirectory()) {
-      throw new MojoExecutionException("Invalid PHP extensions directory [" + extensionsDirectory +"]");
+      getLog().debug(" - PHP reported a non-existing extensions directory [" + extensionsDirectory + "]");
+
+      File guessedExtensionsDirectory= new File(this.php.getParentFile(), "ext");
+      getLog().debug(" - Trying to guess PHP extensions directory [" + guessedExtensionsDirectory + "]");
+
+      // Guess failed
+      if (!guessedExtensionsDirectory.exists() || !guessedExtensionsDirectory.isDirectory()) {
+        getLog().debug(" - Guess failed. I give up.");
+        throw new MojoExecutionException("PHP extensions directory does not exist [" + extensionsDirectory +"]");
+
+      // Guess worked
+      } else {
+        extensionsDirectory= guessedExtensionsDirectory;
+      }
     }
+    getLog().debug(" - PHP extensions directory [" + extensionsDirectory + "]");
 
     // List directory contents
     File[] entries= extensionsDirectory.listFiles();
