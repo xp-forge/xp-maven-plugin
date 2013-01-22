@@ -1,5 +1,9 @@
-Version 3.2.10, released ????-??-??
+Version 3.3.0, released ????-??-??
 -----------------------------------
+- Backward-compatibility break: xp-maven-plugin 3.3 can create/handle only XP-Framework 5.9 artifacts
+- Remove support for the net.xp-framework::tools artifact as this was removed in XP-Framework 5.9
+- Also remove support for the net.xp-framework::pom meta artifact
+  (mrosoiu)
 
 
 Version 3.2.9, released 2013-01-08

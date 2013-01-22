@@ -31,9 +31,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   public static final String CREATED_BY_NOTICE= "This file was automatically created by xp-maven-plugin";
 
   public static final String XP_FRAMEWORK_GROUP_ID = "net.xp-framework";
-  public static final String POM_ARTIFACT_ID       = "pom";
   public static final String CORE_ARTIFACT_ID      = "core";
-  public static final String TOOLS_ARTIFACT_ID     = "tools";
   public static final String COMPILER_ARTIFACT_ID  = "compiler";
 
   // Application directories mapping (input => output)
@@ -277,9 +275,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
         artifact.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
         null == artifact.getClassifier() &&       // Some projects may require core-tests artifact as dependency
         (
-          artifact.getArtifactId().equals(POM_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(CORE_ARTIFACT_ID) ||
-          artifact.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(COMPILER_ARTIFACT_ID)
         )
       ) continue;

@@ -213,18 +213,11 @@ public class ApidocNoForkMojo extends AbstractXpMojo {
     // A bit hackish atm
     if (
         this.project.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
-        (
-          this.project.getArtifactId().equals(CORE_ARTIFACT_ID) ||
-          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID)
-        )
-      ) {
-
-      // Locate parent project
-      File parentProjectDirectory= this.basedir.getParentFile();
+        this.project.getArtifactId().equals(CORE_ARTIFACT_ID)
+    ) {
 
       // Add classpaths
-      input.addClasspath(new File(parentProjectDirectory, "core/src/main/php"));
-      input.addSourcepath(new File(parentProjectDirectory, "core/src/main/php"));
+      input.addClasspath(new File(this.basedir, "src/main/php"));
     }
 
     // Add project dependecies as sourcepaths

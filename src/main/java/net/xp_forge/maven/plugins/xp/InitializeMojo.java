@@ -61,10 +61,7 @@ public class InitializeMojo extends AbstractXpMojo {
     // Setup XP-Runtime using project resources
     } else if (
         this.project.getGroupId().equals(XP_FRAMEWORK_GROUP_ID) &&
-        (
-          this.project.getArtifactId().equals(CORE_ARTIFACT_ID) ||
-          this.project.getArtifactId().equals(TOOLS_ARTIFACT_ID)
-        )
+        this.project.getArtifactId().equals(CORE_ARTIFACT_ID)
       ) {
       this.setupRuntimeFromThisProject(new File(this.outputDirectory, ".runtime"));
 
@@ -132,7 +129,7 @@ public class InitializeMojo extends AbstractXpMojo {
   /**
    * Prepare our own XP-Runtime into specified directory using *this* project sources
    *
-   * Note: only used if this project is net.xp-framework:core or net.xp-framework:tools
+   * Note: only used if this project is net.xp-framework:core
    *
    * @param  java.io.File targetDirectory
    * @return void
@@ -143,26 +140,29 @@ public class InitializeMojo extends AbstractXpMojo {
 
     // Configure directories
     File bootstrapDirectory = new File(targetDirectory, "bootstrap");
-    File toolsDirectory     = new File(bootstrapDirectory, TOOLS_ARTIFACT_ID);
+    File toolsDirectory     = new File(bootstrapDirectory, "tools");
     this.runnersDirectory   = new File(targetDirectory, "runners");
 
-    // Copy [lang.base.php]
+    // Setup bootstrap
     try {
+
+      // Copy [lang.base.php]
       FileUtils.copyFile(
-        new File(this.basedir.getParentFile(), "core/src/main/php/lang.base.php"),
+        new File(this.basedir, "src/main/php/lang.base.php"),
         new File(bootstrapDirectory, "lang.base.php")
       );
+
+      // Copy tools [class.php, web.php, xar.php]
+      FileUtils.copyFile(new File(this.basedir, "tools/class.php"), new File(toolsDirectory, "class.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/web.php"),   new File(toolsDirectory, "web.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/xar.php"),   new File(toolsDirectory, "xar.php"));
+
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot copy bootstrap files to [" + bootstrapDirectory + "]", ex);
     }
 
-    // Locate parent project
-    File parentProjectDirectory= this.basedir.getParentFile();
-
     // Setup use_xp
-    this.use_xp = bootstrapDirectory.getAbsolutePath();
-    this.use_xp+= File.pathSeparator;
-    this.use_xp+= new File(parentProjectDirectory, "tools").getAbsolutePath();
+    this.use_xp= bootstrapDirectory.getAbsolutePath();
 
     // Setup XP-Runners
     this.setupRunners(this.runnersDirectory, this.use_xp);
@@ -182,19 +182,12 @@ public class InitializeMojo extends AbstractXpMojo {
     PthFile pth= new PthFile();
     pth.addFileEntry(targetDirectory);
 
-    // Locate required XP-artifacts: core & tools
+    // Locate required XP-artifacts: core
     Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
-
-    Artifact toolsArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, TOOLS_ARTIFACT_ID);
-    if (null == toolsArtifact) {
-      throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
-    }
-
     pth.addArtifactEntry(coreArtifact);
-    pth.addArtifactEntry(toolsArtifact);
 
     // Locate optional XP-artifacts: compiler
     Artifact compilerArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, COMPILER_ARTIFACT_ID);
@@ -206,8 +199,8 @@ public class InitializeMojo extends AbstractXpMojo {
     UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
     unArchiver.extract("lang.base.php", targetDirectory);
 
-    File toolsDirectory= new File(targetDirectory, TOOLS_ARTIFACT_ID);
-    unArchiver= ArchiveUtils.getUnArchiver(toolsArtifact);
+    File toolsDirectory= new File(targetDirectory, "tools");
+    unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
     unArchiver.extract("tools/class.php", toolsDirectory);
     unArchiver.extract("tools/web.php", toolsDirectory);
     unArchiver.extract("tools/xar.php", toolsDirectory);

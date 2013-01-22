@@ -126,7 +126,7 @@ If this option is TRUE, xp-maven-plugin will use the locally installed XP-Framew
 Information on how to install XP-Framework on your machine can be found here:
 - https://github.com/xp-framework/xp-framework/wiki/setup.framework
 
-If this option is FALSE, you don't need to have XP-Framework installed on your machine; however, you must have dependencies for `net-xp-framework:core` and `net-xp-framework:tools` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:compiler` dependency defined in `pom.xml`
+If this option is FALSE, you don't need to have XP-Framework installed on your machine; however, you must have dependency for `net-xp-framework:core` defined in `pom.xml` in order to use this option. If you also have *.xp files that need to be compiled, you must also have the `net-xp-framework:compiler` dependency defined in `pom.xml`
 
 xp-maven-plugin will download the needed XP-artifacts from repository (Maven central or as configured) and will create a local XP runtime environment in the `target/.runtime` directory.
 
@@ -200,7 +200,7 @@ This options specifies if project dependencies (excluding XP-artifacts) are to b
 - boolean, default FALSE
 - applies to the package phase
 
-This option is used only when `${xp.runtime.strategy}` is set to 'app' and specifies if XP-artifacts (core & tools) and the XP-runners should also be packed inside the generated artifact. Bootstrap will be packed inside /runtime/bootstrap and XP-artifacts will be packed inside /runtime/lib directory
+This option is used only when `${xp.runtime.strategy}` is set to 'app' and specifies if XP-artifacts (core) and the XP-runners should also be packed inside the generated artifact. Bootstrap will be packed inside /runtime/bootstrap and XP-artifacts will be packed inside /runtime/lib directory
 
 
 ### ${xp.package.mainClass} ###

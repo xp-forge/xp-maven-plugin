@@ -53,7 +53,7 @@ public class PackageMojo extends AbstractPackageMojo {
   protected boolean packDependencies;
 
   /**
-   * Specify if XP-artifacts (core & tools) and the XP-runners should also be packed
+   * Specify if XP-artifacts (core) and the XP-runners should also be packed
    *
    * Bootstrap will be packed inside /lib/bootstrap
    * XP-artifacts will be packed inside /lib/runtime

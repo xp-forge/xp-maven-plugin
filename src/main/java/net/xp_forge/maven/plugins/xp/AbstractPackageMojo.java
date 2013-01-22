@@ -270,25 +270,16 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     // Add bootstrap to pth entries
     this.pth.addEntry("lib/bootstrap");
 
-    // Locate CORE_ARTIFACT_ID and TOOLS_ARTIFACT_ID artifacts
+    // Locate CORE_ARTIFACT_ID artifact
     Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
-    }
-
-    Artifact toolsArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, TOOLS_ARTIFACT_ID);
-    if (null == toolsArtifact) {
-      throw new MojoExecutionException("Missing dependency for [net.xp-framework:tools]");
     }
 
     // Pack XP-artifacts
     getLog().debug(" - Add file [" + coreArtifact.getFile() + "] to [lib/runtime]");
     this.archiver.addFile(coreArtifact.getFile(), "lib/runtime/" + coreArtifact.getFile().getName());
     this.pth.addEntry("lib/runtime/" + coreArtifact.getFile().getName());
-
-    getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [lib/runtime]");
-    this.archiver.addFile(toolsArtifact.getFile(), "lib/runtime/" + toolsArtifact.getFile().getName());
-    this.pth.addEntry("lib/runtime/" + toolsArtifact.getFile().getName());
 
     // Pack bootstrap
     try {
@@ -300,7 +291,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
       entries.put("tools/class.php", "lib/bootstrap/tools/class.php");
       entries.put("tools/web.php", "lib/bootstrap/tools/web.php");
       entries.put("tools/xar.php", "lib/bootstrap/tools/xar.php");
-      ArchiveUtils.copyArchiveEntries(toolsArtifact, this.archiver, entries);
+      ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
 
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot pack XP-runtime", ex);
