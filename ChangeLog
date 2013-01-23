@@ -3,6 +3,7 @@ Version 3.3.0, released ????-??-??
 - Backward-compatibility break: xp-maven-plugin 3.3 can create/handle only XP-Framework 5.9 artifacts
 - Remove support for the net.xp-framework::tools artifact as this was removed in XP-Framework 5.9
 - Also remove support for the net.xp-framework::pom meta artifact
+- Use "lang.base.php" from the "tools" directory; see https://github.com/xp-framework/xp-framework/pull/226
   (mrosoiu)
 
 

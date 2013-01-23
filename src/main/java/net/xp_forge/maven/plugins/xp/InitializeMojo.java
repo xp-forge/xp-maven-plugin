@@ -141,21 +141,13 @@ public class InitializeMojo extends AbstractXpMojo {
     // Configure directories
     File bootstrapDirectory = new File(targetDirectory, "bootstrap");
     File toolsDirectory     = new File(bootstrapDirectory, "tools");
-    this.runnersDirectory   = new File(targetDirectory, "runners");
 
     // Setup bootstrap
     try {
-
-      // Copy [lang.base.php]
-      FileUtils.copyFile(
-        new File(this.basedir, "src/main/php/lang.base.php"),
-        new File(bootstrapDirectory, "lang.base.php")
-      );
-
-      // Copy tools [class.php, web.php, xar.php]
-      FileUtils.copyFile(new File(this.basedir, "tools/class.php"), new File(toolsDirectory, "class.php"));
-      FileUtils.copyFile(new File(this.basedir, "tools/web.php"),   new File(toolsDirectory, "web.php"));
-      FileUtils.copyFile(new File(this.basedir, "tools/xar.php"),   new File(toolsDirectory, "xar.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/lang.base.php"), new File(toolsDirectory, "lang.base.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/class.php"),     new File(toolsDirectory, "class.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/web.php"),       new File(toolsDirectory, "web.php"));
+      FileUtils.copyFile(new File(this.basedir, "tools/xar.php"),       new File(toolsDirectory, "xar.php"));
 
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot copy bootstrap files to [" + bootstrapDirectory + "]", ex);
@@ -165,6 +157,7 @@ public class InitializeMojo extends AbstractXpMojo {
     this.use_xp= bootstrapDirectory.getAbsolutePath();
 
     // Setup XP-Runners
+    this.runnersDirectory= new File(targetDirectory, "runners");
     this.setupRunners(this.runnersDirectory, this.use_xp);
   }
 
@@ -196,11 +189,9 @@ public class InitializeMojo extends AbstractXpMojo {
     }
 
     // Unpack bootstrap
-    UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
-    unArchiver.extract("lang.base.php", targetDirectory);
-
     File toolsDirectory= new File(targetDirectory, "tools");
-    unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
+    UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
+    unArchiver.extract("tools/lang.base.php", toolsDirectory);
     unArchiver.extract("tools/class.php", toolsDirectory);
     unArchiver.extract("tools/web.php", toolsDirectory);
     unArchiver.extract("tools/xar.php", toolsDirectory);
