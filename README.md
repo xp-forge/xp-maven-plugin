@@ -145,6 +145,12 @@ This option is used only when `${xp.runtime.local}` is set to TRUE
 This option is used only when `${xp.runtime.local}` is set to TRUE. It contains the path to the `php` executable
 
 
+### ${xp.compile.forceOverwrite} ###
+- boolean, default FALSE
+- applies to compile phase
+
+If false, copies resources (and that includes PHP source files w/ *.class.php) to the target directory only if the source files are newer than target. Set to true when you need forceful overwrite
+
 ### ${xp.compile.verbose} ###
 - boolean, default FALSE
 - applies to the compile phase

@@ -38,6 +38,14 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
   protected boolean verbose;
 
   /**
+   * Force overwrite of resource files (resources and *.class.php); defaults
+   * to not overwrite unless source file is newer than target.
+   *
+   * @parameter expression="${xp.compile.forceOverwrite}" default-value="false"
+   */
+  protected boolean overwrite;
+
+  /**
    * Add path to classpath
    *
    * The -cp argument for the xcc compiler
@@ -339,7 +347,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
 
       // Filter resources
       try {
-        MavenResourceUtils.copyResources(resources, classesDirectory, this.project, this.session, this.mavenResourcesFiltering);
+        MavenResourceUtils.copyResources(resources, classesDirectory, this.project, this.session, this.mavenResourcesFiltering, this.overwrite);
 
       } catch(IOException ex) {
         throw new MojoExecutionException("Failed to copy PHP sources", ex);
@@ -377,7 +385,7 @@ public abstract class AbstractCompileMojo extends AbstractXpMojo {
       // Copy resources
       try {
         File dstFile= new File(this.outputDirectory, dstName);
-        MavenResourceUtils.copyResource(resource, dstFile, this.project, this.session, this.mavenResourcesFiltering);
+        MavenResourceUtils.copyResource(resource, dstFile, this.project, this.session, this.mavenResourcesFiltering, this.overwrite);
 
       } catch(IOException ex) {
         throw new MojoExecutionException("Failed to copy application resources", ex);

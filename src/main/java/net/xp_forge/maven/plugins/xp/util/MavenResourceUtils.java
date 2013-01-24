@@ -40,12 +40,13 @@ public final class MavenResourceUtils {
    * @param  org.apache.maven.project.MavenProject project
    * @param  org.apache.maven.execution.MavenSession session
    * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @param  boolean overwrite
    * @throws java.io.IOException when I/O errors occur
    */
-  public static void copyResource(Resource resource, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering) throws IOException {
+  public static void copyResource(Resource resource, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering, boolean overwrite) throws IOException {
     List<Resource> resources= new ArrayList<Resource>();
     resources.add(resource);
-    MavenResourceUtils.copyResources(resources, targetDirectory, project, session, mavenResourcesFiltering);
+    MavenResourceUtils.copyResources(resources, targetDirectory, project, session, mavenResourcesFiltering, overwrite);
   }
 
   /**
@@ -56,9 +57,10 @@ public final class MavenResourceUtils {
    * @param  org.apache.maven.project.MavenProject project
    * @param  org.apache.maven.execution.MavenSession session
    * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @param  boolean overwrite
    * @throws java.io.IOException when I/O errors occur
    */
-  public static void copyResources(List<Resource> resources, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering) throws IOException {
+  public static void copyResources(List<Resource> resources, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering, boolean overwrite) throws IOException {
 
     // Check no resources added
     if (resources.isEmpty()) return;
@@ -77,7 +79,7 @@ public final class MavenResourceUtils {
     // Configure executor
     mavenResourcesExecution.setEscapeWindowsPaths(true);
     mavenResourcesExecution.setInjectProjectBuildFilters(false);
-    mavenResourcesExecution.setOverwrite(true);
+    mavenResourcesExecution.setOverwrite(overwrite);
     mavenResourcesExecution.setIncludeEmptyDirs(false);
     mavenResourcesExecution.setSupportMultiLineFiltering(false);
 
