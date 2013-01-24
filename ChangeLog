@@ -1,6 +1,8 @@
 Version 3.2.10, released ????-??-??
 -----------------------------------
 
+- Introduce ${xp.compile.forceOverwrite} to speed up compile phase - see pull request #7
+  (kiesel)
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
