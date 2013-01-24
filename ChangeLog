@@ -6,6 +6,8 @@ Version 3.3.0, released ????-??-??
 - Use "lang.base.php" from the "tools" directory; see https://github.com/xp-framework/xp-framework/pull/226
   (mrosoiu)
 
+- Introduce ${xp.compile.forceOverwrite} to speed up compile phase - see pull request #7
+  (kiesel)
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
