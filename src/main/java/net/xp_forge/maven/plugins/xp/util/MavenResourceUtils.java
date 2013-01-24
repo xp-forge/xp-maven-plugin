@@ -40,6 +40,7 @@ public final class MavenResourceUtils {
    * @param  org.apache.maven.project.MavenProject project
    * @param  org.apache.maven.execution.MavenSession session
    * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @param  boolean overwrite
    * @throws java.io.IOException when I/O errors occur
    */
   public static void copyResource(Resource resource, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering, boolean overwrite) throws IOException {
@@ -56,6 +57,7 @@ public final class MavenResourceUtils {
    * @param  org.apache.maven.project.MavenProject project
    * @param  org.apache.maven.execution.MavenSession session
    * @param  org.apache.maven.shared.filtering.MavenResourcesFiltering mavenResourcesFiltering
+   * @param  boolean overwrite
    * @throws java.io.IOException when I/O errors occur
    */
   public static void copyResources(List<Resource> resources, File targetDirectory, MavenProject project, MavenSession session, MavenResourcesFiltering mavenResourcesFiltering, boolean overwrite) throws IOException {
