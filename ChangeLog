@@ -4,6 +4,9 @@ Version 3.2.10, released ????-??-??
 - Introduce ${xp.compile.forceOverwrite} to speed up compile phase - see pull request #7
   (kiesel)
 
+- Do not rely on "svn" command output as it might be localized in other language than en_US
+  (mrosoiu, thomas)
+
 Version 3.2.9, released 2013-01-08
 ----------------------------------
 - Bugfix: Use java-implemented chmod in AbstractUnarchiver to avoid bug on linux for filenames with special characters

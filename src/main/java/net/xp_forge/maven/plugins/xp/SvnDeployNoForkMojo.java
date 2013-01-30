@@ -306,6 +306,7 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
    * @throws org.apache.maven.plugin.MojoExecutionException
    */
   private boolean tagExists(String remoteUrl) throws MojoExecutionException {
+    getLog().debug("Check SVN tag exists [" + remoteUrl + "]");
 
     // Setup runner input
     SvnRunnerInput input= this.conjureSvnRunnerInput("list");
@@ -320,13 +321,9 @@ public class SvnDeployNoForkMojo extends AbstractXpMojo {
       runner.execute();
     } catch (RunnerException ex) {
 
-      // If output contains 'non-existent in that revision'; tagBase does not exist
-      if (runner.getOutput().contains("non-existent in that revision")) {
-        return false;
-      }
-
-      // Some other error
-      throw new MojoExecutionException("Execution of [svn] runner failed: " + runner.getOutput().asString(), ex);
+      // Execution of "svn list" failed, assume it is because remoteUrl does not exist
+      getLog().debug(runner.getOutput().asString());
+      return false;
     }
 
     // Tag exists
