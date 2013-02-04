@@ -43,7 +43,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
     APP_DIRECTORIES_MAP.put("config", "etc");
     APP_DIRECTORIES_MAP.put("etc", "etc");
     APP_DIRECTORIES_MAP.put("xsl", "xsl");
-    APP_DIRECTORIES_MAP.put("deploy", "config");
+    APP_DIRECTORIES_MAP.put("deploy", "conf");
   }
 
   /**

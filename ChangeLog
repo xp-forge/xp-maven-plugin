@@ -10,7 +10,9 @@ Version 3.3.0, released ????-??-??
   (kiesel)
 
 - Do not rely on "svn" command output as it might be localized in other language than en_US
+- Rename "config" directory to "conf" in generated artifact for "app" packing strategy
   (mrosoiu, thomas)
+
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
