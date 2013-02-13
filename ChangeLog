@@ -8,6 +8,9 @@ Version 3.2.10, released ????-??-??
 - Rename "config" directory to "conf" in generated artifact for "app" packing strategy
   (mrosoiu, thomas)
 
+- Don't escape arguments-with-spaces fed to CommandLine - see issue #8
+  (mrosoiu, ohinckel)
+
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
