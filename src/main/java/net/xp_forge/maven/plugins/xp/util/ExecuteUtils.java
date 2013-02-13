@@ -104,9 +104,6 @@ public final class ExecuteUtils {
     throw new FileNotFoundException("Cannot find executable [" + executableFilename + "] in PATH [" + path + "]");
   }
 
-
-
-
   /**
    * Execute the specified executable with the specified arguments
    *
@@ -141,7 +138,6 @@ public final class ExecuteUtils {
     ExecuteUtils.executeCommand(executable, arguments, workingDirectory, environment, cat, logOutputStream);
   }
 
-
   /**
    * Execute the specified executable with the specified arguments
    *
@@ -174,20 +170,12 @@ public final class ExecuteUtils {
 
     // Add arguments
     for (String arg : arguments) {
+
       // This line makes the resulting command line way shorter (and prettier), but might break a thing or two
-        arg = ExecuteUtils.getRelativeToWorkingDirectory(arg, workingDirectory);
+      arg= ExecuteUtils.getRelativeToWorkingDirectory(arg, workingDirectory);
 
-      // If complex command line arguments like such as for `xp -e <code>` are given,
-      // prevent quoting those...
-      boolean quote = false;
-      if (arg.contains("'") || arg.contains("\"")) {
-        quote = false;
-      } else if (arg.contains(" ")) {
-        quote = true;
-      }
-
-      // Escape arguments that contain spaces
-      commandLine.addArgument(arg, quote);
+      // Don't need to escape arguments
+      commandLine.addArgument(arg, false);
     }
 
     Executor executor= new DefaultExecutor();
