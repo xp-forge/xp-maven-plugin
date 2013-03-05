@@ -8,12 +8,14 @@ package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
 import net.xp_forge.maven.plugins.xp.exec.RunnerException;
 import net.xp_forge.maven.plugins.xp.exec.runners.xp.UnittestRunner;
 import net.xp_forge.maven.plugins.xp.exec.input.xp.UnittestRunnerInput;
+import net.xp_forge.maven.plugins.xp.filter.ExtensionFileFilter;
 
 /**
  * Wrapper around the XP-Framework "UnittestRunner" runner
@@ -96,26 +98,32 @@ public abstract class AbstractTestMojo extends AbstractXpMojo {
     // Add dependency classpaths
     input.addClasspath(this.getArtifacts(false));
 
-    // Add vendor libs to classpath
-    List<File> vendorLibs= this.getVendorLibs();
-    if (null == vendorLibs) {
-      getLog().debug("No vendor libraries found");
-
-    } else {
+    // Add vendor libs
+    File[] files= this.vendorLibDir.listFiles(new ExtensionFileFilter("xar"));
+    if (null != files) {
       getLog().debug("Found vendor libraries:");
-      for (File vendorLib : vendorLibs) {
-        getLog().debug("- " + vendorLib);
-        input.addClasspath(vendorLib);
+      for (File file : Arrays.asList(files)) {
+        getLog().debug("- " + file);
+        input.addClasspath(file);
+      }
+    }
+
+    // Add patch vendor libs
+    files= new File(this.vendorLibDir, "patch").listFiles(new ExtensionFileFilter("xar"));
+    if (null != files) {
+      getLog().debug("Found patch vendor libraries:");
+      for (File file : Arrays.asList(files)) {
+        getLog().debug("- " + file);
+        input.addClasspath(file, true);
       }
     }
 
     // Add classesDirectory to classpath
     if (null != classesDirectory) {
-      if (null != this.classifier && this.classifier.equals("patch")) {
-        input.addClasspath("!" + classesDirectory);
-      } else {
-        input.addClasspath(classesDirectory);
-      }
+      input.addClasspath(
+        classesDirectory,
+        null != this.classifier && this.classifier.equals("patch")
+      );
     }
 
     // Add testClassesDirectory to classpath

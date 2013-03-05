@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import net.xp_forge.maven.plugins.xp.exec.input.xp.filter.InifileFilter;
+import net.xp_forge.maven.plugins.xp.filter.ExtensionFileFilter;
 
 /**
  * Unittest command
@@ -127,12 +127,13 @@ public class UnittestRunnerInput extends AbstractClasspathRunnerInput implements
    */
   public void addInifileDirectory(File inifileDirectory) {
 
-    // Invalid inifile directory
-    if (!inifileDirectory.exists() || !inifileDirectory.isDirectory()) return;
+    // Get ini files
+    File[] files= inifileDirectory.listFiles(new ExtensionFileFilter("ini"));
+    if (null == files) return;
 
-    // Get inifiles
-    for (File ini : Arrays.asList(inifileDirectory.listFiles(new InifileFilter()))) {
-      this.addInifile(ini);
+    // Add to list
+    for (File file : Arrays.asList(files)) {
+      this.addInifile(file);
     }
   }
 }
