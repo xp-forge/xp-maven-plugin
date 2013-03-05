@@ -1,15 +1,28 @@
-Version 3.2.10, released ????-??-??
+Version 3.2.12, released ????-??-??
 -----------------------------------
+- Don't escape arguments-with-spaces fed to CommandLine - see issue #8
+  (mrosoiu, ohinckel)
 
+- Add support for patch vendor libs; Refactor file filtering
+  (mrosoiu, iigor)
+
+- Fail build when trying to pack an empty app resources directory - see issue #9
+  (mrosoiu, kiesel)
+
+
+Version 3.2.11, released 2013-02-04
+-----------------------------------
+- Rename "config" directory to "conf" in generated artifact for "app" packing strategy
+  (mrosoiu, thomas)
+
+
+Version 3.2.10, released 2013-01-31
+-----------------------------------
 - Introduce ${xp.compile.forceOverwrite} to speed up compile phase - see pull request #7
   (kiesel)
 
 - Do not rely on "svn" command output as it might be localized in other language than en_US
-- Rename "config" directory to "conf" in generated artifact for "app" packing strategy
   (mrosoiu, thomas)
-
-- Don't escape arguments-with-spaces fed to CommandLine - see issue #8
-  (mrosoiu, ohinckel)
 
 
 Version 3.2.9, released 2013-01-08
