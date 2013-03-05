@@ -32,6 +32,7 @@ import net.xp_forge.maven.plugins.xp.io.PthFile;
 import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
 import net.xp_forge.maven.plugins.xp.logging.LogLogger;
+import net.xp_forge.maven.plugins.xp.filter.ExtensionFileFilter;
 
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
 
@@ -174,9 +175,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     } else if (strategy.equals("app")) {
       if (packRuntime) this.includeRuntime();
       if (packDependencies) this.includeDependencies();
+      if (packVendorLibs) this.includeVendorLibs();
       this.packClasses("classes/");
       this.packApplicationResources();
-      if (packVendorLibs) this.includeVendorLibs();
       this.packProjectPth();
 
     // Invalid packing strategy
@@ -335,15 +336,24 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
   private void includeVendorLibs() throws MojoExecutionException {
     getLog().info("Including vendor libraries");
 
-    // Get vendor libraries list
-    List<File> vendorLibs= this.getVendorLibs();
-    if (null == vendorLibs) return;
+    // Add vendor libs
+    File[] files= this.vendorLibDir.listFiles(new ExtensionFileFilter("xar"));
+    if (null != files) {
+      for (File file : Arrays.asList(files)) {
+        getLog().info(" + Add vendor library [" + file + "] to [lib/vendor/]");
+        this.archiver.addFile(file, "lib/vendor/" + file.getName());
+        this.pth.addEntry("lib/vendor/" + file.getName(), false);
+      }
+    }
 
-    // Add to archive
-    for (File vendorLib : vendorLibs) {
-      getLog().info(" + Add vendor library [" + vendorLib + "] to [lib/vendor/]");
-      this.archiver.addFile(vendorLib, "lib/vendor/" + vendorLib.getName());
-      this.pth.addEntry("lib/vendor/" + vendorLib.getName(), false);
+    // Add patch vendor libs
+    files= new File(this.vendorLibDir, "patch").listFiles(new ExtensionFileFilter("xar"));
+    if (null != files) {
+      for (File file : Arrays.asList(files)) {
+        getLog().info(" + Add patch vendor library [" + file + "] to [lib/vendor/patch/]");
+        this.archiver.addFile(file, "lib/vendor/patch/" + file.getName());
+        this.pth.addEntry("lib/vendor/patch/" + file.getName(), true);
+      }
     }
   }
 

@@ -286,41 +286,6 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   }
 
   /**
-   * Return list of vendor libraries (${basedir}/lib/*.xar)
-   *
-   * @return java.util.List<java.io.File> null if no vendor libs found
-   */
-  protected List<File> getVendorLibs() {
-
-    // Sanity check
-    if (null == this.vendorLibDir || !this.vendorLibDir.exists() || !this.vendorLibDir.isDirectory()) return null;
-
-    // List directory contents
-    File[] libFiles= this.vendorLibDir.listFiles();
-    if (null == libFiles) {
-      getLog().warn("Failed to list contents of vendor libs directory [" + this.vendorLibDir + "]");
-      return null;
-    }
-
-    List<File> retVal= new ArrayList<File>();
-    for (File libFile : libFiles) {
-
-      // Skip directories
-      if (libFile.isDirectory()) continue;
-
-      // Skip non-xar files
-      String extension= libFile.getName().substring(libFile.getName().lastIndexOf('.') + 1);
-      if (!extension.equals("xar")) continue;
-
-      // Add to list
-      retVal.add(libFile);
-    }
-
-    // Return collected list
-    return (retVal.isEmpty() ? null : retVal);
-  }
-
-  /**
    * Get the main artifact that was attached to this project during the "package" phase
    *
    * @return org.apache.maven.artifact.Artifact null if no artifact was attached to this project
