@@ -16,6 +16,9 @@ Version 3.3.0, released ????-??-??
 - Don't escape arguments-with-spaces fed to CommandLine - see issue #8
   (mrosoiu, ohinckel)
 
+- Add support for patch vendor libraries
+  (mrosoiu, iigor)
+
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
