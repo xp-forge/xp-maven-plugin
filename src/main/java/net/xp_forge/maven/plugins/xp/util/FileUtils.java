@@ -303,4 +303,33 @@ public final class FileUtils {
       throw new IOException("Unable to delete directory [" + directory + "]");
     }
   }
+
+  /**
+   * Checks (recursively) whether the specified directory contains at least one file
+   *
+   * @param  java.io.File directory
+   * @return boolean
+   * @throws java.io.IOException
+   */
+  public static boolean containsAtLeastOneFile(File directory) throws IOException {
+    if (null == directory || !directory.exists() || !directory.isDirectory()) return false;
+
+    // List directory contents
+    File[] entries= directory.listFiles();
+    if (null == entries) {
+      throw new IOException("Failed to list contents of directory [" + directory + "]");
+    }
+
+    for (File entry : entries) {
+
+      // Found one file
+      if (entry.isFile()) return true;
+
+      // Recurse
+      if (true == FileUtils.containsAtLeastOneFile(entry)) return true;
+    }
+
+    // No files found
+    return false;
+  }
 }
