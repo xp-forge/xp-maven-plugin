@@ -441,6 +441,18 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     for (File appDir : appDirs) {
       if (!appDir.exists()) continue;
 
+      // If directory exists but contains no files; it won't be added to artifact
+      // see https://github.com/xp-forge/xp-maven-plugin/issues/9
+      try {
+        if (false == FileUtils.containsAtLeastOneFile(appDir)) {
+          throw new MojoExecutionException(
+            "Application resource directory [" + appDir + "] exists but contains no files"
+          );
+        }
+      } catch (IOException ex) {
+        throw new MojoExecutionException("Cannot pack application resource directory [" + appDir + "]", ex);
+      }
+
       // Add app directory contents to archive
       getLog().debug(" - Add directory [" + appDir + "] to [" + appDir.getName() + "/]");
       DefaultFileSet fileSet= new DefaultFileSet();
