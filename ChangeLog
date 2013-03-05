@@ -19,6 +19,9 @@ Version 3.3.0, released ????-??-??
 - Add support for patch vendor libraries
   (mrosoiu, iigor)
 
+- Fail build when trying to pack an empty app resources directory - see issue #9
+  (mrosoiu, kiesel)
+
 
 Version 3.2.9, released 2013-01-08
 ----------------------------------
