@@ -43,7 +43,9 @@ import java.util.ArrayList;
  */
 public class XpRunnerInput extends AbstractClasspathRunnerInput {
   public String className;
+  public String commandClassName;
   public String code;
+  public List<String> configurations;
   public List<String> arguments;
 
   /**
