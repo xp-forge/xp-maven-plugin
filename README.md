@@ -292,3 +292,9 @@ As configuration, you can either pass:
 
 * `<code>` with inline source code (limitation: either single or double quotes may be used - mixing not supported)
 * `<className>` runs the given class w/ "public static function main($args) {...}"
+
+
+Build status
+-----------------------------------------------------------------------
+
+[![Build Status](https://secure.travis-ci.org/xp-forge/xp-maven-plugin.png)](http://travis-ci.org/xp-forge/xp-maven-plugin)
