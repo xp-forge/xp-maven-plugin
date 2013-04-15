@@ -1,6 +1,6 @@
 XP-Framework Maven plugin
 =======================================================================
-[![Build Status](https://secure.travis-ci.org/xp-forge/xp-maven-plugin.png)](http://travis-ci.org/xp-forge/xp-maven-plugin)
+[![Build Status](https://secure.travis-ci.org/xp-forge/xp-maven-plugin.png?branch=3.2-4-5.8)](http://travis-ci.org/xp-forge/xp-maven-plugin)
 
 xp-maven-plugin is a Maven 2/3 plugin to manage the lifecycle of an XP-Framework project:
 
