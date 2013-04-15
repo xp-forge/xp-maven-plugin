@@ -46,7 +46,17 @@ public class XpRunner extends AbstractClasspathRunner {
     this.setClasspath(this.input.classpaths, pthFile);
 
     // Check what to execute
-    if (null != this.input.className) {
+    if (null != this.input.commandClassName) {
+
+      // Supply all configuration directories
+      for (String c : this.input.configurations) {
+        arguments.add("-c");
+        arguments.add(c);
+      }
+
+      arguments.add(this.input.commandClassName);
+
+    } else if (null != this.input.className) {
         arguments.add(this.input.className);
 
     } else if (null != this.input.code) {
@@ -55,6 +65,10 @@ public class XpRunner extends AbstractClasspathRunner {
 
     } else {
         throw new RunnerException("Neither class nor code given");
+    }
+
+    for (String s : this.input.arguments) {
+      arguments.add(s);
     }
 
     // Execute command
