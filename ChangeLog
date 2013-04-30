@@ -1,4 +1,8 @@
-Version 3.2.12, released ????-??-??
+Version 3.2.13, released ????-??-??
+-----------------------------------
+
+
+Version 3.2.12, released 2013-04-30
 -----------------------------------
 - Don't escape arguments-with-spaces fed to CommandLine - see issue #8
   (mrosoiu, ohinckel)
