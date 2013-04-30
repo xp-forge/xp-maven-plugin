@@ -9,6 +9,8 @@ Version 3.2.12, released ????-??-??
 - Fail build when trying to pack an empty app resources directory - see issue #9
   (mrosoiu, kiesel)
 
+- Initial support for running xpcli commands - see pull request #11
+  (kiesel)
 
 Version 3.2.11, released 2013-02-04
 -----------------------------------
