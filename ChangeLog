@@ -1,5 +1,9 @@
-Version 3.3.0, released ????-??-??
------------------------------------
+Version 3.3.1, released ????-??-??
+----------------------------------
+
+
+Version 3.3.0, released 2013-04-30
+----------------------------------
 - Backward-compatibility break: xp-maven-plugin 3.3 can create/handle only XP-Framework 5.9 artifacts
 - Remove support for the net.xp-framework::tools artifact as this was removed in XP-Framework 5.9
 - Also remove support for the net.xp-framework::pom meta artifact
@@ -7,6 +11,7 @@ Version 3.3.0, released ????-??-??
   (mrosoiu)
 
 - Introduce ${xp.compile.forceOverwrite} to speed up compile phase - see pull request #7
+- Initial support for running xpcli commands - see pull request #11
   (kiesel)
 
 - Do not rely on "svn" command output as it might be localized in other language than en_US
