@@ -1,5 +1,11 @@
-Version 3.2.14, released ????-??-??
+Version 3.2.15, released ????-??-??
 -----------------------------------
+
+
+Version 3.2.14, released 2013-05-02
+-----------------------------------
+- Fix open files leak - see issue #12
+  (mrosoiu, kiesel)
 
 
 Version 3.2.13, released 2013-04-30
