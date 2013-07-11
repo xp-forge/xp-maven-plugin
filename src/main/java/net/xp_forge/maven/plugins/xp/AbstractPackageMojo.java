@@ -272,7 +272,7 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     this.pth.addEntry("lib/bootstrap");
 
     // Locate CORE_ARTIFACT_ID artifact
-    Artifact coreArtifact= this.findArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
+    Artifact coreArtifact= this.findDependencyArtifact(XP_FRAMEWORK_GROUP_ID, CORE_ARTIFACT_ID);
     if (null == coreArtifact) {
       throw new MojoExecutionException("Missing dependency for [net.xp-framework:core]");
     }
@@ -282,17 +282,46 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
     this.archiver.addFile(coreArtifact.getFile(), "lib/runtime/" + coreArtifact.getFile().getName());
     this.pth.addEntry("lib/runtime/" + coreArtifact.getFile().getName());
 
+    // Locate optional (<5.9) TOOLS_ARTIFACT_ID artifact
+    Artifact toolsArtifact= this.findDependencyArtifact(XP_FRAMEWORK_GROUP_ID, TOOLS_ARTIFACT_ID);
+    if (toolsArtifact != null) {
+      getLog().debug(" - Add file [" + toolsArtifact.getFile() + "] to [lib/runtime]");
+      this.archiver.addFile(toolsArtifact.getFile(), "lib/runtime/" + toolsArtifact.getFile().getName());
+      this.pth.addEntry("lib/runtime/" + toolsArtifact.getFile().getName());
+    }
+
     // Pack bootstrap
     try {
-      Map<String, String> entries= new HashMap<String, String>();
-      entries.put("tools/lang.base.php", "lib/bootstrap/tools/lang.base.php");
-      entries.put("tools/class.php",     "lib/bootstrap/tools/class.php");
-      entries.put("tools/web.php",       "lib/bootstrap/tools/web.php");
-      entries.put("tools/xar.php",       "lib/bootstrap/tools/xar.php");
-      ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
 
+      // If we have it, extract from toolsArtifact
+      if (toolsArtifact != null) {
+        getLog().debug("Extracting runtime files from tools: " + toolsArtifact);
+
+        Map<String, String> entries= new HashMap<String, String>();
+        entries.put("lang.base.php", "lib/bootstrap/tools/lang.base.php");
+        ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
+
+        entries= new HashMap<String, String>();
+        entries.put("tools/class.php",     "lib/bootstrap/tools/class.php");
+        entries.put("tools/web.php",       "lib/bootstrap/tools/web.php");
+        entries.put("tools/xar.php",       "lib/bootstrap/tools/xar.php");
+
+        ArchiveUtils.copyArchiveEntries(toolsArtifact, this.archiver, entries);
+      } else {
+
+        // Otherwise, copy from coreArtifact - the default since 5.9.0
+        getLog().debug("Extracting runtime files from core: " + coreArtifact);
+
+        Map<String, String> entries= new HashMap<String, String>();
+        entries.put("tools/lang.base.php", "lib/bootstrap/tools/lang.base.php");
+        entries.put("tools/class.php",     "lib/bootstrap/tools/class.php");
+        entries.put("tools/web.php",       "lib/bootstrap/tools/web.php");
+        entries.put("tools/xar.php",       "lib/bootstrap/tools/xar.php");
+
+        ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
+      }
     } catch (IOException ex) {
-      throw new MojoExecutionException("Cannot pack XP-runtime", ex);
+        throw new MojoExecutionException("Cannot pack XP-runtime", ex);
     }
   }
 
