@@ -1,6 +1,8 @@
-Version 3.3.2, released ????-??-??
+Version 3.3.2, released 2013-07-12
 ----------------------------------
-
+- Re-added ability to produce apps / libs with XP Framework <5.9 or above built in; the
+  plugin will not be able to produce new XP Releases itself, though.
+  (kiesel)
 
 
 Version 3.3.1, released 2013-05-02
