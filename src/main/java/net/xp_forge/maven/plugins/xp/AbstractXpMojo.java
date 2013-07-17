@@ -32,6 +32,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
 
   public static final String XP_FRAMEWORK_GROUP_ID = "net.xp-framework";
   public static final String CORE_ARTIFACT_ID      = "core";
+  public static final String TOOLS_ARTIFACT_ID     = "tools";
   public static final String COMPILER_ARTIFACT_ID  = "compiler";
 
   // Application directories mapping (input => output)
@@ -254,6 +255,25 @@ public abstract class AbstractXpMojo extends AbstractMojo {
   }
 
   /**
+   * Helper function to find a project artifact - only direct dependencies considered.
+   *
+   * @param  java.lang.String groupId
+   * @param  java.lang.String artifactId
+   * @return org.apache.maven.artifact.Artifact null if the specified artifact cannot be found
+   */
+  @SuppressWarnings("unchecked")
+  protected Artifact findDependencyArtifact(String groupId, String artifactId) {
+    for (Artifact artifact : (Iterable<Artifact>)this.project.getDependencyArtifacts()) {
+      if (artifact.getGroupId().equals(groupId) && artifact.getArtifactId().equals(artifactId)) {
+        return artifact;
+      }
+    }
+
+    // Specified artifact not found
+    return null;
+  }
+
+  /**
    * Helper function to return all project artifacts
    *
    *
@@ -276,6 +296,7 @@ public abstract class AbstractXpMojo extends AbstractMojo {
         null == artifact.getClassifier() &&       // Some projects may require core-tests artifact as dependency
         (
           artifact.getArtifactId().equals(CORE_ARTIFACT_ID) ||
+          artifact.getArtifactId().equals(TOOLS_ARTIFACT_ID) ||
           artifact.getArtifactId().equals(COMPILER_ARTIFACT_ID)
         )
       ) continue;
