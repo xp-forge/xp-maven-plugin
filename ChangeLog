@@ -1,3 +1,9 @@
+Version 3.3.3, released 2013-10-09
+----------------------------------
+- Extend the "ignite" goal with configurable filter and merge functionalities
+  (mrosoiu)
+
+
 Version 3.3.2, released 2013-07-12
 ----------------------------------
 - Re-added ability to produce apps / libs with XP Framework <5.9 or above built in; the

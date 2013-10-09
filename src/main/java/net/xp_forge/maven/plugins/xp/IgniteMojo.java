@@ -53,6 +53,27 @@ public class IgniteMojo extends AbstractXpMojo {
   protected File pthFile;
 
   /**
+   * Libs include pattern by groupId
+   *
+   * @parameter expression="${xp.ignite.groupIdPattern}"
+   */
+  protected String groupIdPattern;
+
+  /**
+   * Libs include pattern by artifactId
+   *
+   * @parameter expression="${xp.ignite.artifactIdPattern}"
+   */
+  protected String artifactIdPattern;
+
+  /**
+   * Merge artifacts rather than creating individual repositories
+   *
+   * @parameter expression="${xp.ignite.mergeArtifacts}" default-value="false"
+   */
+  protected boolean mergeArtifacts;
+
+  /**
    * {@inheritDoc}
    *
    */
@@ -62,8 +83,11 @@ public class IgniteMojo extends AbstractXpMojo {
     ArchiveUtils.enableLogging(new LogLogger(getLog()));
 
     // Debug info
-    getLog().info("Lib directory [" + this.libDirectory + "]");
-    getLog().info("Pth file      [" + this.pthFile + "]");
+    getLog().info("Lib directory    [" + this.libDirectory + "]");
+    getLog().info("Pth file         [" + this.pthFile + "]");
+    getLog().info("Group pattern    [" + (null == this.groupIdPattern ? "null" : this.groupIdPattern ) + "]");
+    getLog().info("Artifact pattern [" + (null == this.artifactIdPattern ? "null" : this.artifactIdPattern ) + "]");
+    getLog().info("Merge artifacts  [" + this.mergeArtifacts + "]");
 
     // Init .pth file
     PthFile pth= new PthFile();
@@ -78,10 +102,27 @@ public class IgniteMojo extends AbstractXpMojo {
 
     // Dump artifacts to lib directory
     for (Artifact artifact : this.getArtifacts(true)) {
-      File artifactFile= artifact.getFile();
+      File artifactFile = artifact.getFile();
+      String groupId    = artifact.getGroupId();
+      String artifactId = artifact.getArtifactId();
 
       // Skip non-xar artifacts
-      if (!artifact.getType().equals("xar")) continue;
+      if (!artifact.getType().equals("xar")) {
+        getLog().info(" - Ignore dependency [" + groupId + ":" + artifactId + "]: non-xar");
+        continue;
+      }
+
+      // Filter by groupId
+      if (null != this.groupIdPattern && !artifact.getGroupId().matches(this.groupIdPattern)) {
+        getLog().info(" - Ignore dependency [" + groupId + ":" + artifactId + "]: groupId pattern missmatch");
+        continue;
+      }
+
+      // Filter by artifactId
+      if (null != this.artifactIdPattern && !artifact.getArtifactId().matches(this.artifactIdPattern)) {
+        getLog().info(" - Ignore dependency [" + groupId + ":" + artifactId + "]: artifactId pattern missmatch");
+        continue;
+      }
 
       // No unpack needed
       if (!this.unpackArtifacts) {
@@ -90,7 +131,7 @@ public class IgniteMojo extends AbstractXpMojo {
         File dstFile= new File(this.libDirectory, artifactFile.getName());
 
         try {
-          getLog().info("- Copy [" + artifactFile.getName() + "] to [" + dstFile + "]");
+          getLog().info(" + Copy [" + artifactFile.getName() + "] to [" + dstFile + "]");
           FileUtils.copyFile(artifactFile, dstFile);
         } catch (IOException ex) {
           throw new MojoExecutionException("Cannot copy [" + artifactFile + "] to [" + dstFile + "]", ex);
@@ -103,18 +144,25 @@ public class IgniteMojo extends AbstractXpMojo {
       } else {
 
         // Dump artifact to libDirectory
-        File dstDirectory= new File(this.libDirectory, artifactFile.getName().replaceFirst("[.][^.]+$", ""));
+        File dstDirectory;
+        if (this.mergeArtifacts) {
+          dstDirectory= this.libDirectory;
+        } else {
+          dstDirectory= new File(this.libDirectory, artifactFile.getName().replaceFirst("[.][^.]+$", ""));
+        }
 
         try {
-          getLog().info("- Unpack [" + artifactFile.getName() + "] to [" + dstDirectory + "]");
+          getLog().info(" + Unpack [" + artifactFile.getName() + "] to [" + dstDirectory + "]");
           ArchiveUtils.dumpArtifact(artifactFile, dstDirectory, true);
         } catch (ArchiverException ex) {
           throw new MojoExecutionException("Cannot unpack [" + artifactFile + "] to [" + dstDirectory + "]", ex);
         }
 
         // Add to pth
-        boolean isPatch= null != artifact.getClassifier() && artifact.getClassifier().equals("patch");
-        pth.addFileEntry(dstDirectory, isPatch);
+        if (!this.mergeArtifacts) {
+          boolean isPatch= null != artifact.getClassifier() && artifact.getClassifier().equals("patch");
+          pth.addFileEntry(dstDirectory, isPatch);
+        }
       }
     }
 
