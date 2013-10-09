@@ -148,7 +148,7 @@ public class IgniteMojo extends AbstractXpMojo {
         if (this.mergeArtifacts) {
           dstDirectory= this.libDirectory;
         } else {
-          dstDirectory= new File(this.libDirectory, artifactFile.getName().replaceFirst("[.][^.]+$", ""));
+          dstDirectory= new File(this.libDirectory, artifactId);
         }
 
         try {
