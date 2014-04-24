@@ -1,3 +1,10 @@
+Version 3.4.0, released ????-??-??
+----------------------------------
+- Add support for XP-6 series
+  (kiesel)
+
+
+
 Version 3.3.4, released 2013-10-09
 ----------------------------------
 - Fix target directory of the "ignite" goal when unpacking artifacts
