@@ -7,33 +7,41 @@
 package net.xp_forge.maven.plugins.xp;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.ArrayList;
-
-import org.apache.commons.exec.OS;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugin.MojoExecutionException;
-
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.archiver.UnArchiver;
-
-import net.xp_forge.maven.plugins.xp.io.PthFile;
-import net.xp_forge.maven.plugins.xp.util.FileUtils;
-import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
-import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
-import net.xp_forge.maven.plugins.xp.io.IniFile;
-import net.xp_forge.maven.plugins.xp.logging.LogLogger;
-import net.xp_forge.maven.plugins.xp.exec.RunnerOutput;
-import net.xp_forge.maven.plugins.xp.exec.RunnerException;
-import net.xp_forge.maven.plugins.xp.exec.runners.php.PhpRunner;
-import net.xp_forge.maven.plugins.xp.exec.input.php.PhpRunnerInput;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.plaf.metal.MetalIconFactory;
 
 import static net.xp_forge.maven.plugins.xp.AbstractXpMojo.*;
+import net.xp_forge.maven.plugins.xp.exec.RunnerException;
+import net.xp_forge.maven.plugins.xp.exec.RunnerOutput;
+import net.xp_forge.maven.plugins.xp.exec.input.php.PhpRunnerInput;
+import net.xp_forge.maven.plugins.xp.exec.runners.php.PhpRunner;
+import net.xp_forge.maven.plugins.xp.io.IniFile;
+import net.xp_forge.maven.plugins.xp.io.PthFile;
+import net.xp_forge.maven.plugins.xp.logging.LogLogger;
+import net.xp_forge.maven.plugins.xp.util.ArchiveUtils;
+import net.xp_forge.maven.plugins.xp.util.ExecuteUtils;
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import org.apache.commons.exec.OS;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.archiver.UnArchiver;
+
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Initialize phase that bootstraps XP-Framework
@@ -139,22 +147,53 @@ public class InitializeMojo extends AbstractXpMojo {
     getLog().debug("Preparing XP-Runtime from this project sources into [" + targetDirectory + "]");
 
     // Configure directories
-    File bootstrapDirectory = new File(targetDirectory, "bootstrap");
-    File toolsDirectory     = new File(bootstrapDirectory, "tools");
+    final Path bootstrapDirectory = targetDirectory.toPath().resolve("bootstrap");
+    final Path toolsDirectory = bootstrapDirectory.resolve("tools");
+
+    getLog().debug("Will copy to toolsDirectory: " + toolsDirectory.toString());
 
     // Setup bootstrap
     try {
-      FileUtils.copyFile(new File(this.basedir, "tools/lang.base.php"), new File(toolsDirectory, "lang.base.php"));
-      FileUtils.copyFile(new File(this.basedir, "tools/class.php"),     new File(toolsDirectory, "class.php"));
-      FileUtils.copyFile(new File(this.basedir, "tools/web.php"),       new File(toolsDirectory, "web.php"));
-      FileUtils.copyFile(new File(this.basedir, "tools/xar.php"),       new File(toolsDirectory, "xar.php"));
 
+        // Find files to copy
+        Path folder = this.basedir.toPath().resolve("tools");
+
+        // Copy files in tools/ into the target directory, by using a file
+        // visitor
+        Files.walkFileTree(folder, new FileVisitor<Path>() {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (attrs.isDirectory()) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                if (!attrs.isRegularFile()) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                getLog().debug("Copying " + file);
+                Files.copy(file, toolsDirectory.resolve(file.getFileName()), StandardCopyOption.REPLACE_EXISTING);
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+        });
     } catch (IOException ex) {
       throw new MojoExecutionException("Cannot copy bootstrap files to [" + bootstrapDirectory + "]", ex);
     }
 
     // Setup use_xp
-    this.use_xp= bootstrapDirectory.getAbsolutePath();
+    this.use_xp= bootstrapDirectory.toFile().getAbsolutePath();
 
     // Setup XP-Runners
     this.runnersDirectory= new File(targetDirectory, "runners");
