@@ -155,6 +155,9 @@ public class InitializeMojo extends AbstractXpMojo {
     // Setup bootstrap
     try {
 
+        // Make sure target directory exists
+        Files.createDirectories(toolsDirectory);
+
         // Find files to copy
         Path folder = this.basedir.toPath().resolve("tools");
 
