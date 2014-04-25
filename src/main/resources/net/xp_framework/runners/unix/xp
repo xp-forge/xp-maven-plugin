@@ -1,14 +1,6 @@
 #!/bin/sh
-
-
-
-
-
-
 PATHSEP=':'
 DIRSEP='/'
-
-
 if [ -L "$0" ] ; then
   link="$(readlink "$0")"
   case "$link" in
@@ -30,18 +22,11 @@ translate_path() {
     ~*) path=$HOME$DIRSEP${path#"~"} ;; # ~/lib
     *) path=$base$DIRSEP$path ;; # lib, ../lib, ./classes
   esac
-
-
-
-
   echo $path
-
 }
-
 translate_paths() {
   base="$1"
   path="$2"
-
   translated=""
   IFS="$PATHSEP"
   for i in $path ; do
@@ -49,12 +34,10 @@ translate_paths() {
   done
   echo "${translated#$PATHSEP}"
 }
-
 locate() {
   path="$1"
   file="$2"
   expect=$3
-
   IFS="$PATHSEP"
   for i in $path ; do
     qualified="$i/$file"
@@ -126,6 +109,7 @@ for i in "." "$HOME/.xp" "$base" ; do
   if [ -e "$i/xp.ini" ] ; then
     section=default
     while read line || [ -n "$line" ] ; do
+      line="${line%"${line##*[![:space:]]}"}"
       case "$section.$line" in
         default.use=*)
           USE_XP=${USE_XP-$(translate_paths "$i" "${line#*=}")}
@@ -178,7 +162,10 @@ if [ "" = "$USE_XP" ] ; then
   exit 255
 fi
 args="-C${ifs}-q${ifs}-dinclude_path=\".$PATHSEP$USE_XP$PATHSEP$PATHSEP$INCLUDE\"${ifs}-dmagic_quotes_gpc=0$RT_ARG"
-tool=$(locate "$USE_XP" "tools/"${RUNNER}".php" 1)
+tool=$(locate "$USE_XP" "tools/"${RUNNER}"-main.php" 0)
+if [ "" = "$tool" ] ; then
+  tool=$(locate "$USE_XP" "tools/"${RUNNER}".php" 1)
+fi
 export XP_EXE
 IFS="|"
-${XP_EXE}${ifs}${args}${ifs}$tool ${ARGS} "$@"
+exec ${XP_EXE}${ifs}${args}${ifs}$tool ${ARGS} "$@"
