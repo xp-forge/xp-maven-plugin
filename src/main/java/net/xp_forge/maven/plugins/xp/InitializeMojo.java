@@ -40,6 +40,9 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.components.io.fileselectors.FileInfo;
+import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 
 import org.codehaus.plexus.util.StringUtils;
 
@@ -213,6 +216,10 @@ public class InitializeMojo extends AbstractXpMojo {
   private void setupBootstrapFromDependencies(File targetDirectory) throws MojoExecutionException {
     getLog().debug("- Preparing XP-Bootstrap from project dependencies into [" + targetDirectory + "]");
 
+    if (!targetDirectory.exists()) {
+        targetDirectory.mkdirs();
+    }
+
     // Init [boot.pth] entries
     PthFile pth= new PthFile();
     pth.addFileEntry(targetDirectory);
@@ -231,12 +238,15 @@ public class InitializeMojo extends AbstractXpMojo {
     }
 
     // Unpack bootstrap
-    File toolsDirectory= new File(targetDirectory, "tools");
+    IncludeExcludeFileSelector toolsFilesSelector = new IncludeExcludeFileSelector();
+    toolsFilesSelector.setIncludes(new String[] { "tools/**" });
+    toolsFilesSelector.setCaseSensitive(true);
+
     UnArchiver unArchiver= ArchiveUtils.getUnArchiver(coreArtifact);
-    unArchiver.extract("tools/lang.base.php", toolsDirectory);
-    unArchiver.extract("tools/class.php", toolsDirectory);
-    unArchiver.extract("tools/web.php", toolsDirectory);
-    unArchiver.extract("tools/xar.php", toolsDirectory);
+    unArchiver.setDestDirectory(targetDirectory);
+    unArchiver.setFileSelectors(new FileSelector[] { toolsFilesSelector });
+
+    unArchiver.extract();
 
     // Create [target/bootstrap/boot.pth]
     File pthFile= new File(targetDirectory, "boot.pth");

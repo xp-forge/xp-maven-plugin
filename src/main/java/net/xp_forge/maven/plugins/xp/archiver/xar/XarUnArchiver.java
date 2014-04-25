@@ -10,12 +10,14 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileOutputStream;
+import java.net.URL;
 
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.AbstractUnArchiver;
 
 import net.xp_forge.xar.XarEntry;
 import net.xp_forge.xar.XarArchive;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 
 /**
  * A plexus unarchiver implementation for XAR file format
@@ -63,7 +65,13 @@ public class XarUnArchiver extends AbstractUnArchiver {
 
     // Extract archive entries
     for (XarEntry entry : archive.getEntries()) {
-      File outFile= new File(destDirectory, entry.getName().replace('/', File.separatorChar));
+      String lname= entry.getName().replace('/', File.separatorChar);
+
+      if (!this.isSelected(lname, new PlexusIoXarEntryResource(entry))) {
+          continue;
+      }
+
+      File outFile= new File(destDirectory, lname);
       try {
         getLogger().debug("Expanding [" + entry.getName() + "] into [" + outFile + "]");
         this.setFileContents(outFile, entry.getInputStream());
@@ -176,4 +184,44 @@ public class XarUnArchiver extends AbstractUnArchiver {
       }
     }
   }
+
+    class PlexusIoXarEntryResource implements PlexusIoResource {
+        private XarEntry entry = null;
+
+        public PlexusIoXarEntryResource(XarEntry entry) {
+            this.entry = entry;
+        }
+
+        public long getLastModified() {
+            return 0;
+        }
+
+        public boolean isExisting() {
+            return true;
+        }
+
+        public long getSize() {
+            return this.entry.getLength();
+        }
+
+        public URL getURL() throws IOException {
+            throw new IOException("No URL available for Xar entry.");
+        }
+
+        public String getName() {
+            return this.entry.getName();
+        }
+
+        public InputStream getContents() throws IOException {
+            return this.entry.getInputStream();
+        }
+
+        public boolean isFile() {
+            return true;
+        }
+
+        public boolean isDirectory() {
+            return false;
+        }
+    }
 }
