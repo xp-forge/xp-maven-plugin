@@ -216,6 +216,10 @@ public class InitializeMojo extends AbstractXpMojo {
   private void setupBootstrapFromDependencies(File targetDirectory) throws MojoExecutionException {
     getLog().debug("- Preparing XP-Bootstrap from project dependencies into [" + targetDirectory + "]");
 
+    // Due to a vagary in the UnArchiver's base class (AbstractUnArchiver)
+    // the target directory must exist before being extracted to. If not,
+    // the destDirectory will be regarded as "actually a file", and this
+    // changes behaviour.
     if (!targetDirectory.exists()) {
         targetDirectory.mkdirs();
     }

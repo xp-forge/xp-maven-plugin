@@ -313,12 +313,9 @@ public abstract class AbstractPackageMojo extends AbstractXpMojo {
         getLog().debug("Extracting runtime files from core: " + coreArtifact);
 
         Map<String, String> entries= new HashMap<String, String>();
-        entries.put("tools/lang.base.php", "lib/bootstrap/tools/lang.base.php");
-        entries.put("tools/class.php",     "lib/bootstrap/tools/class.php");
-        entries.put("tools/web.php",       "lib/bootstrap/tools/web.php");
-        entries.put("tools/xar.php",       "lib/bootstrap/tools/xar.php");
+        entries.put("tools/**", "lib/bootstrap/");
 
-        ArchiveUtils.copyArchiveEntries(coreArtifact, this.archiver, entries);
+        ArchiveUtils.copyArchiveEntriesRecursive(coreArtifact, this.archiver, entries);
       }
     } catch (IOException ex) {
         throw new MojoExecutionException("Cannot pack XP-runtime", ex);

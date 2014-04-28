@@ -9,20 +9,21 @@ package net.xp_forge.maven.plugins.xp.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.maven.artifact.Artifact;
-
-import org.codehaus.plexus.archiver.AbstractArchiver;
-import org.codehaus.plexus.archiver.AbstractUnArchiver;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
-import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-
-import org.codehaus.plexus.logging.Logger;
-
-import net.xp_forge.maven.plugins.xp.util.FileUtils;
 import net.xp_forge.maven.plugins.xp.archiver.xar.XarArchiver;
 import net.xp_forge.maven.plugins.xp.archiver.xar.XarUnArchiver;
+
+import net.xp_forge.maven.plugins.xp.util.FileUtils;
+import org.apache.maven.artifact.Artifact;
+import org.codehaus.plexus.archiver.AbstractArchiver;
+import org.codehaus.plexus.archiver.AbstractUnArchiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
+import org.codehaus.plexus.components.io.fileselectors.FileSelector;
+import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
+import org.codehaus.plexus.logging.Logger;
 
 /**
  * Utility class
@@ -170,6 +171,51 @@ public final class ArchiveUtils {
       // Unpack & pack entry
       unArchiver.extract(srcEntry, tmpDirectory);
       archiver.addFile(new File(tmpDirectory, entryName), destEntry);
+    }
+  }
+
+  public static void copyArchiveEntriesRecursive(Artifact coreArtifact, AbstractArchiver archiver, Map<String, String> entries) throws IOException {
+    ArchiveUtils.copyArchiveEntriesRecursive(ArchiveUtils.getUnArchiver(coreArtifact), archiver, entries);
+  }
+
+  /**
+   * Copy entries from one archive to another; note that the directory from the
+   * srcFile will be appended to the destination path.
+   *
+   * @param  org.codehaus.plexus.archiver.UnArchiver src
+   * @param  org.codehaus.plexus.archiver.Archiver dest
+   * @param  java.util.Map<String, String> entries
+   */
+  public static void copyArchiveEntriesRecursive(AbstractUnArchiver unArchiver, AbstractArchiver archiver, Map<String, String> entries) throws IOException {
+
+    // Copy entries
+    File tmpDirectory= FileUtils.getTempDirectory();
+    for (Map.Entry<String, String> entry: entries.entrySet()) {
+      String srcEntry  = entry.getKey();
+      String destEntry = entry.getValue();
+
+      if (!srcEntry.endsWith("/**")) {
+        throw new IllegalArgumentException("Expected recursive directive.");
+      }
+
+      File destDir = new File(tmpDirectory, destEntry);
+      destDir.mkdirs();
+
+      IncludeExcludeFileSelector filesSelector = new IncludeExcludeFileSelector();
+      filesSelector.setIncludes(new String[] { srcEntry });
+      filesSelector.setCaseSensitive(true);
+
+      unArchiver.setFileSelectors(new FileSelector[] { filesSelector });
+      unArchiver.setDestDirectory(destDir);
+
+      // Unpack & pack entry
+      unArchiver.extract();
+
+      DefaultFileSet fileSet = new DefaultFileSet();
+      fileSet.setDirectory(tmpDirectory);
+      fileSet.setIncludingEmptyDirectories(true);
+
+      archiver.addFileSet(fileSet);
     }
   }
 
